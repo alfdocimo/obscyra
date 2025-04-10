@@ -3,9 +3,60 @@
   <head>
     <title>survival-game</title>
   </head>
+
   <body style="overflow: hidden">
+    <style>
+      #game-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+      }
+
+      main {
+        display: grid;
+        width: 100vw;
+        height: 100vh;
+        grid-template-areas:
+          "header   header  header"
+          "board    game    game"
+          "footer   footer  footer";
+      }
+
+      main > header {
+        grid-area: header;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+      }
+      main > .board {
+        grid-area: board;
+        background-color: #eb8989;
+      }
+      main > .game {
+        grid-area: game;
+        background-color: #60d189;
+      }
+      main > footer {
+        grid-area: footer;
+        background-color: #b822f8;
+        border-top: 1px solid #ccc;
+      }
+    </style>
+
     <script src="src/main.ts" type="module"></script>
-    <h1>Elmjor juego del mundo</h1>
-    <div id="game-container"></div>
+    <main>
+      <header>
+        <h1>Elmjor juego del mundo</h1>
+      </header>
+      <div class="board">
+        <h2>Tablero</h2>
+        <p>Tablero de juego</p>
+      </div>
+      <div class="game">
+        <div id="game-container"></div>
+      </div>
+      <footer>Arepa creations</footer>
+    </main>
   </body>
 </html>
