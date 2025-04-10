@@ -1,5 +1,6 @@
 const HP = 30;
 const SPEED = 200;
+const BULLET_SPEED = 800;
 
 let player;
 
@@ -22,6 +23,44 @@ const initPlayer = () => {
     anchor("left"),
     "health-bar",
   ]);
+
+  const aimCircle = add([
+    circle(8), // circle with radius 8
+    pos(0, 0), // initial position doesn't matter, it's going to follow the mouse
+    color(255, 0, 0), // red color
+    anchor("center"), // anchor to center, so it follows the mouse cleanly
+  ]);
+
+  aimCircle.onUpdate(() => {
+    aimCircle.pos = mousePos();
+  });
+
+  onMouseDown("left", () => {
+    if (player.canShoot) {
+      shootBullet();
+      player.canShoot = false;
+      wait(0.01, () => {
+        player.canShoot = true;
+      });
+    }
+  });
+
+  function shootBullet() {
+    // Get direction from player to mouse
+    const dir = mousePos().sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+
+    // Create bullet
+    add([
+      rect(12, 12), // bullet shape (12x12)
+      pos(player.pos), // spawn it at the player's position
+      move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+      area(),
+      anchor("center"),
+      offscreen({ destroy: true }),
+      color(0, 255, 255), // blue bullet color
+      "player-bullet", // tag for bullet (useful for collision detection)
+    ]);
+  }
 
   player.onUpdate(() => {
     const touching = player.getCollisions();
