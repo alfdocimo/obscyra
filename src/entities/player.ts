@@ -1,4 +1,4 @@
-export const HP = 30;
+const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 
@@ -17,12 +17,13 @@ const initPlayer = () => {
       canShoot: true,
       level: 1,
       expPoints: 0,
-      nextLevelExpPoints: 100,
-      maxHp: HP,
+      nextLevelExpPoints: 10,
       attackDamage: 1,
       attackSpeed: 1,
     },
   ]);
+
+  player.setMaxHP(HP);
 
   player.add([
     rect(100, 10),
@@ -95,15 +96,34 @@ const initPlayer = () => {
     if (player.expPoints >= player.nextLevelExpPoints) {
       player.level += 1;
       player.attackDamage += 1;
+      player.setMaxHP(player.maxHP() + 10);
 
       player.expPoints = 0;
-      player.nextLevelExpPoints *= 10;
+      player.nextLevelExpPoints += 10;
 
       const levelUpText = add([text("Level Up!"), pos(center())]);
       wait(1, () => {
         destroy(levelUpText);
       });
     }
+  });
+
+  let statsDebug = add([
+    text(
+      `Level: ${player.level}\nExp: ${player.expPoints}/${
+        player.nextLevelExpPoints
+      }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
+        player.attackDamage
+      }`
+    ),
+    pos(10, 10),
+  ]);
+  player.onUpdate(() => {
+    statsDebug.text = `Level: ${player.level}\nExp: ${player.expPoints}/${
+      player.nextLevelExpPoints
+    }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
+      player.attackDamage
+    }`;
   });
 
   player.on("death", () => {
@@ -139,7 +159,7 @@ function playerTakeDamage({ damage }: { damage: number }) {
   shake(20);
 
   player.hurt(damage);
-  player.get("health-bar")[0].width = (player.hp() * 100) / HP;
+  player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
 
   player.use(color(255, 0, 0));
 

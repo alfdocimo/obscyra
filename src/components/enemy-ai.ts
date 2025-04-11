@@ -6,7 +6,7 @@ import {
   AreaComp,
   AnchorComp,
 } from "kaplay";
-import { HP as PLAYER_MAX_HP, player } from "../entities/player";
+import { player } from "../entities/player";
 import { initHeart } from "../entities/heart";
 
 type EnemyAIConfig = {

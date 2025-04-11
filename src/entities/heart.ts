@@ -1,4 +1,4 @@
-import { player, HP as PLAYER_MAX_HP } from "./player";
+import { player } from "./player";
 
 export function initHeart({
   x,
@@ -20,12 +20,12 @@ export function initHeart({
   heart.onCollide("player", () => {
     const HEAL_AMOUNT = healAmount;
 
-    if (player.hp() + HEAL_AMOUNT >= PLAYER_MAX_HP) {
-      player.setHP(PLAYER_MAX_HP);
+    if (player.hp() + HEAL_AMOUNT >= player.maxHP()) {
+      player.setHP(player.maxHP());
     } else {
       player.heal(HEAL_AMOUNT);
     }
-    player.get("health-bar")[0].width = (player.hp() * 100) / PLAYER_MAX_HP;
+    player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
     destroy(heart);
   });
 
