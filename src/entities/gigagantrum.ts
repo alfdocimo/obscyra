@@ -4,6 +4,7 @@ const initGigagantrum = (x: number, y: number) => {
   return add([
     sprite("gigagantrum"),
     pos(x, y),
+    body(),
     anchor("center"),
     area(),
     health(200),

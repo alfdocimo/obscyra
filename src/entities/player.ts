@@ -9,6 +9,7 @@ const initPlayer = () => {
     sprite("bean"),
     pos(center()),
     area(),
+    body(),
     anchor("center"),
     health(HP),
     "player",
@@ -63,7 +64,7 @@ const initPlayer = () => {
     const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
 
     // Create bullet
-    add([
+    let playerBullet = add([
       rect(12, 12), // bullet shape (12x12)
       pos(player.pos), // spawn it at the player's position
       move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
@@ -73,6 +74,10 @@ const initPlayer = () => {
       color(0, 255, 255), // blue bullet color
       "player-bullet", // tag for bullet (useful for collision detection)
     ]);
+
+    playerBullet.onCollide("wall", () => {
+      playerBullet.destroy();
+    });
   }
 
   player.onUpdate(() => {

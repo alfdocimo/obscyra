@@ -69,7 +69,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         if (p.exists() && self.exists()) {
           const dir = p.pos.sub(self.pos).unit();
 
-          add([
+          let enemyBullet = add([
             pos(self.pos),
             move(dir, bulletSpeed),
             rect(bulletSize, bulletSize),
@@ -79,6 +79,14 @@ export function enemyAI(config: EnemyAIConfig = {}) {
             color(bulletColor),
             "bullet",
           ]);
+
+          enemyBullet.onCollide("player", () => {
+            destroy(enemyBullet);
+          });
+
+          enemyBullet.onCollide("wall", () => {
+            destroy(enemyBullet);
+          });
         }
 
         await wait(attackDuration);

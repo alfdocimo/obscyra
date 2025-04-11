@@ -4,6 +4,7 @@ const initGhosty = (x: number, y: number) => {
   return add([
     sprite("ghosty"),
     pos(x, y),
+    body(),
     anchor("center"),
     area(),
     health(30),

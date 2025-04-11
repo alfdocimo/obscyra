@@ -11,8 +11,8 @@ export default function getMobRandomPos(playerPos: Vec2, radius = 600) {
   let x = playerPos.x + Math.cos(angle) * distance;
   let y = playerPos.y + Math.sin(angle) * distance;
 
-  x = clamp(x, 0, GAME.MAX_GAME_WIDTH);
-  y = clamp(y, 0, GAME.MAX_GAME_HEIGHT);
+  x = clamp(x, 0, GAME.MAX_GAME_WIDTH - 60);
+  y = clamp(y, 0, GAME.MAX_GAME_HEIGHT - 60);
 
   return { x, y };
 }

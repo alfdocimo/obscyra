@@ -4,6 +4,7 @@ const initTinyGhosty = (x: number, y: number) => {
   return add([
     sprite("tiny-ghosty"),
     pos(x, y),
+    body(),
     anchor("center"),
     area(),
     health(15),
