@@ -27,43 +27,54 @@ loadSprite("heart", "/sprites/heart.png");
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("level", "/bg/level.png");
 
-addBackground();
-addWorldBounds();
-spawnRandomWalls();
-
-initPlayer();
-
-loop(1, () => {
-  if (!player.exists()) return;
-
-  let { x, y } = getMobRandomPos(player.pos);
-  initGhosty(x, y);
+scene("menu", () => {
+  add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
+  onKeyPress("enter", () => {
+    go("game");
+  });
 });
 
-loop(1, () => {
-  if (!player.exists()) return;
+scene("game", ({ godMode }) => {
+  addBackground();
+  addWorldBounds();
+  spawnRandomWalls();
 
-  let { x, y } = getMobRandomPos(player.pos);
+  const player = initPlayer();
 
-  initTinyGhosty(x, y);
+  loop(1, () => {
+    if (!player.exists()) return;
+
+    let { x, y } = getMobRandomPos(player.pos);
+    initGhosty(x, y);
+  });
+
+  loop(1, () => {
+    if (!player.exists()) return;
+
+    let { x, y } = getMobRandomPos(player.pos);
+
+    initTinyGhosty(x, y);
+  });
+
+  loop(10, () => {
+    if (!player.exists()) return;
+
+    let { x, y } = getMobRandomPos(player.pos);
+
+    initGigagantrum(x, y);
+  });
+
+  onUpdate(() => {
+    if (!player.exists()) return;
+
+    const halfW = width() / 2;
+    const halfH = height() / 2;
+
+    const camX = clamp(player.pos.x, halfW, GAME.MAX_GAME_WIDTH - halfW);
+    const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
+
+    setCamPos(camX, camY);
+  });
 });
 
-loop(10, () => {
-  if (!player.exists()) return;
-
-  let { x, y } = getMobRandomPos(player.pos);
-
-  initGigagantrum(x, y);
-});
-
-onUpdate(() => {
-  if (!player.exists()) return;
-
-  const halfW = width() / 2;
-  const halfH = height() / 2;
-
-  const camX = clamp(player.pos.x, halfW, GAME.MAX_GAME_WIDTH - halfW);
-  const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
-
-  setCamPos(camX, camY);
-});
+go("menu");
