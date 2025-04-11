@@ -34,7 +34,7 @@ scene("menu", () => {
   });
 });
 
-scene("game", ({ godMode }) => {
+scene("game", () => {
   addBackground();
   addWorldBounds();
   spawnRandomWalls();
