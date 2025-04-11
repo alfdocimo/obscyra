@@ -50,8 +50,12 @@ export function addWorldBounds() {
 
 export function addBackground() {
   const background = add([
-    sprite("level"),
+    sprite("level", {
+      width: GAME.MAX_GAME_WIDTH,
+      height: GAME.MAX_GAME_HEIGHT,
+    }),
     pos(0, 0),
+    z(-100),
     anchor("topleft"),
     "background",
   ]);

@@ -33,36 +33,37 @@ addLevelItems();
 
 initPlayer();
 
-loop(10, () => {
+loop(1, () => {
   if (!player.exists()) return;
 
   let { x, y } = getMobRandomPos(player.pos);
   initGhosty(x, y);
 });
 
-// loop(1, () => {
-//   if (!player.exists()) return;
+loop(1, () => {
+  if (!player.exists()) return;
 
-//   let { x, y } = getMobRandomPos(player.pos);
+  let { x, y } = getMobRandomPos(player.pos);
 
-//   initTinyGhosty(x, y);
-// });
+  initTinyGhosty(x, y);
+});
 
-// loop(10, () => {
-//   if (!player.exists()) return;
+loop(10, () => {
+  if (!player.exists()) return;
 
-//   let { x, y } = getMobRandomPos(player.pos);
+  let { x, y } = getMobRandomPos(player.pos);
 
-//   initGigagantrum(x, y);
-// });
+  initGigagantrum(x, y);
+});
 
 onUpdate(() => {
-  if (player.exists()) {
-    const halfScreen = vec2(width() / 2, height() / 2);
+  if (!player.exists()) return;
 
-    const camX = clamp(player.pos.x, halfScreen.x, 5000 - halfScreen.x);
-    const camY = clamp(player.pos.y, halfScreen.y, 5000 - halfScreen.y);
+  const halfW = width() / 2;
+  const halfH = height() / 2;
 
-    setCamPos(camX, camY);
-  }
+  const camX = clamp(player.pos.x, halfW, GAME.MAX_GAME_WIDTH - halfW);
+  const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
+
+  setCamPos(camX, camY);
 });
