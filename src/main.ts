@@ -13,8 +13,8 @@ import getMobRandomPos from "./utils/get-mob-random-pos";
 
 kaplay({
   root: document.querySelector("#game-container"),
-  width: GAME.WIDTH,
-  height: GAME.HEIGHT,
+  width: GAME.CANVAS_WIDTH,
+  height: GAME.CANVAS_HEIGHT,
   scale: 1,
   background: [0, 0, 0],
 });
@@ -27,23 +27,31 @@ loadSprite("heart", "/sprites/heart.png");
 
 initPlayer();
 
-loop(2, () => {
+loop(1, () => {
   if (!player.exists()) return;
 
-  let { x, y } = getMobRandomPos();
+  let { x, y } = getMobRandomPos(player.pos);
   initGhosty(x, y);
 });
 
 loop(1, () => {
   if (!player.exists()) return;
 
-  let { x, y } = getMobRandomPos();
+  let { x, y } = getMobRandomPos(player.pos);
+
   initTinyGhosty(x, y);
 });
 
 loop(10, () => {
   if (!player.exists()) return;
 
-  let { x, y } = getMobRandomPos();
+  let { x, y } = getMobRandomPos(player.pos);
+
   initGigagantrum(x, y);
+});
+
+onUpdate(() => {
+  if (player) {
+    setCamPos(player.pos);
+  }
 });

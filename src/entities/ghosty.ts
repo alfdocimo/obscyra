@@ -3,7 +3,7 @@ import { enemyAI } from "../components/enemy-ai";
 const initGhosty = (x: number, y: number) => {
   return add([
     sprite("ghosty"),
-    pos(width() - x, height() - y),
+    pos(x, y),
     anchor("center"),
     area(),
     health(30),

@@ -1,29 +1,18 @@
+import { Vec2 } from "kaplay";
 import { GAME } from "../config";
 
-export default function getMobRandomPos() {
-  // Randomly choose a side to spawn from
-  const side = choose(["top", "bottom", "left", "right"]);
+const clamp = (val: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, val));
 
-  let x, y;
+export default function getMobRandomPos(playerPos: Vec2, radius = 600) {
+  const angle = rand(0, Math.PI * 2);
+  const distance = rand(radius * 0.8, radius);
 
-  switch (side) {
-    case "top":
-      x = rand(0, GAME.WIDTH);
-      y = -50;
-      break;
-    case "bottom":
-      x = rand(0, GAME.WIDTH);
-      y = 650;
-      break;
-    case "left":
-      x = -50;
-      y = rand(0, GAME.HEIGHT);
-      break;
-    case "right":
-      x = 650;
-      y = rand(0, GAME.HEIGHT);
-      break;
-  }
+  let x = playerPos.x + Math.cos(angle) * distance;
+  let y = playerPos.y + Math.sin(angle) * distance;
+
+  x = clamp(x, 0, GAME.MAX_GAME_WIDTH);
+  y = clamp(y, 0, GAME.MAX_GAME_HEIGHT);
 
   return { x, y };
 }

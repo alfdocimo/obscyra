@@ -3,7 +3,7 @@ import { enemyAI } from "../components/enemy-ai";
 const initGigagantrum = (x: number, y: number) => {
   return add([
     sprite("gigagantrum"),
-    pos(width() - x, height() - y),
+    pos(x, y),
     anchor("center"),
     area(),
     health(200),

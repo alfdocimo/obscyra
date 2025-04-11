@@ -1,4 +1,4 @@
-const HP = 30;
+const HP = 9999999;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 
@@ -23,7 +23,7 @@ const initPlayer = () => {
     },
   ]);
 
-  player.setMaxHP(HP);
+  player.setMaxHP(9999999);
 
   player.add([
     rect(100, 10),
@@ -35,14 +35,15 @@ const initPlayer = () => {
   ]);
 
   const aimCircle = add([
-    circle(8), // circle with radius 8
-    pos(0, 0), // initial position doesn't matter, it's going to follow the mouse
-    color(255, 0, 0), // red color
-    anchor("center"), // anchor to center, so it follows the mouse cleanly
+    pos(toWorld(mousePos())),
+    circle(4),
+    color(255, 0, 0),
+    z(1000),
+    "cursor",
   ]);
 
   aimCircle.onUpdate(() => {
-    aimCircle.pos = mousePos();
+    aimCircle.pos = toWorld(mousePos());
   });
 
   onMouseDown("left", () => {
@@ -59,7 +60,7 @@ const initPlayer = () => {
 
   function shootBullet() {
     // Get direction from player to mouse
-    const dir = mousePos().sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+    const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
 
     // Create bullet
     add([
