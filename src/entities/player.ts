@@ -1,4 +1,4 @@
-const HP = 30;
+export const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 

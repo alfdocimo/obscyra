@@ -23,6 +23,7 @@ loadSprite("bean", "/sprites/bean.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
+loadSprite("heart", "/sprites/heart.png");
 
 initPlayer();
 

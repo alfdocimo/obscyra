@@ -6,7 +6,8 @@ import {
   AreaComp,
   AnchorComp,
 } from "kaplay";
-import { player } from "../entities/player";
+import { HP as PLAYER_MAX_HP, player } from "../entities/player";
+import { initHeart } from "../entities/heart";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -104,6 +105,19 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           self.use(color(255, 255, 255));
         });
       });
+    },
+
+    destroy(
+      this: GameObj<PosComp | StateComp | HealthComp | AreaComp | AnchorComp>
+    ) {
+      const willDropHeart = rand(100);
+      if (willDropHeart > 50) {
+        initHeart({
+          x: this.pos.x,
+          y: this.pos.y,
+          healAmount: 3,
+        });
+      }
     },
   };
 }
