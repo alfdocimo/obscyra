@@ -19,7 +19,7 @@ const initPlayer = () => {
       expPoints: 0,
       nextLevelExpPoints: 10,
       attackDamage: 1,
-      attackSpeed: 1,
+      attackSpeed: 10,
     },
   ]);
 
@@ -51,7 +51,7 @@ const initPlayer = () => {
     if (player.canShoot) {
       shootBullet();
       player.canShoot = false;
-      wait(0.01, () => {
+      wait(1 / player.attackSpeed, () => {
         player.canShoot = true;
       });
     }
@@ -97,7 +97,7 @@ const initPlayer = () => {
       player.level += 1;
       player.attackDamage += 1;
       player.setMaxHP(player.maxHP() + 10);
-
+      player.attackSpeed += 1;
       player.expPoints = 0;
       player.nextLevelExpPoints += 10;
 
