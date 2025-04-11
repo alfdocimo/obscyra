@@ -58,7 +58,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       self.onStateEnter("attack", async () => {
         const p = player;
-        if (p && self.exists()) {
+        if (p.exists() && self.exists()) {
           const dir = p.pos.sub(self.pos).unit();
 
           add([

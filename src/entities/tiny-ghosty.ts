@@ -15,9 +15,10 @@ const initTinyGhosty = (x: number, y: number) => {
       idleDuration: 0.3,
       attackDuration: 0.3,
       moveDuration: 3,
-      bulletSpeed: 300,
+      bulletSpeed: 800,
     }),
     "enemy",
+    { bulletDamage: 1, touchDamage: 1 },
   ]);
 };
 

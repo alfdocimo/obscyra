@@ -70,8 +70,13 @@ const initPlayer = () => {
     for (const obj of touching) {
       if (!player.canTakeDamage) return;
 
-      if (obj.target.is("enemy") || obj.target.is("bullet")) {
-        playerTakeDamage();
+      if (obj.target.is("enemy")) {
+        playerTakeDamage({ damage: obj.target.touchDamage });
+        return; // stop after first valid collision
+      }
+
+      if (obj.target.is("bullet")) {
+        playerTakeDamage({ damage: obj.target.bulletDamage });
         return; // stop after first valid collision
       }
     }
@@ -99,14 +104,14 @@ const initPlayer = () => {
   });
 };
 
-function playerTakeDamage() {
+function playerTakeDamage({ damage }: { damage: number }) {
   if (!player.canTakeDamage) return;
 
   player.canTakeDamage = false;
 
   shake(20);
 
-  player.hurt(1);
+  player.hurt(damage);
   player.get("health-bar")[0].width = (player.hp() * 100) / HP;
 
   player.use(color(255, 0, 0));
