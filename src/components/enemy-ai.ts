@@ -19,6 +19,15 @@ type EnemyAIConfig = {
   speed?: number;
 };
 
+type EnemyAIContext = GameObj<
+  | PosComp
+  | StateComp
+  | HealthComp
+  | AreaComp
+  | AnchorComp
+  | { expPoints: number }
+>;
+
 export function enemyAI(config: EnemyAIConfig = {}) {
   let initialHealth = undefined;
 
@@ -27,9 +36,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
     require: ["pos", "state", "health", "area", "anchor"],
 
-    add(
-      this: GameObj<PosComp | StateComp | HealthComp | AreaComp | AnchorComp>
-    ) {
+    add(this: EnemyAIContext) {
       const self = this;
 
       // Create health bar
@@ -91,9 +98,10 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
 
       self.onCollide("player-bullet", () => {
-        self.hurt(1);
+        console.log(player.attackDamage);
+        self.hurt(player.attackDamage);
 
-        if (self.hp() === 0) {
+        if (self.hp() <= 0) {
           destroy(self);
           return;
         }
@@ -107,9 +115,8 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
     },
 
-    destroy(
-      this: GameObj<PosComp | StateComp | HealthComp | AreaComp | AnchorComp>
-    ) {
+    destroy(this: EnemyAIContext) {
+      const self = this;
       const willDropHeart = rand(100);
       if (willDropHeart > 50) {
         initHeart({
@@ -118,6 +125,8 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           healAmount: 3,
         });
       }
+
+      player.expPoints += self.expPoints;
     },
   };
 }

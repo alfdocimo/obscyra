@@ -12,7 +12,16 @@ const initPlayer = () => {
     anchor("center"),
     health(HP),
     "player",
-    { canTakeDamage: true, canShoot: true },
+    {
+      canTakeDamage: true,
+      canShoot: true,
+      level: 1,
+      expPoints: 0,
+      nextLevelExpPoints: 100,
+      maxHp: HP,
+      attackDamage: 1,
+      attackSpeed: 1,
+    },
   ]);
 
   player.add([
@@ -81,6 +90,22 @@ const initPlayer = () => {
       }
     }
   });
+
+  player.onUpdate(() => {
+    if (player.expPoints >= player.nextLevelExpPoints) {
+      player.level += 1;
+      player.attackDamage += 1;
+
+      player.expPoints = 0;
+      player.nextLevelExpPoints *= 10;
+
+      const levelUpText = add([text("Level Up!"), pos(center())]);
+      wait(1, () => {
+        destroy(levelUpText);
+      });
+    }
+  });
+
   player.on("death", () => {
     destroy(player);
     add([text("lol you suck!?"), pos(center())]);
@@ -102,6 +127,8 @@ const initPlayer = () => {
   onKeyDown("s", () => {
     player.move(0, SPEED);
   });
+
+  return player;
 };
 
 function playerTakeDamage({ damage }: { damage: number }) {

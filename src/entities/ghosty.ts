@@ -10,7 +10,7 @@ const initGhosty = (x: number, y: number) => {
     state("move", ["idle", "attack", "move"]),
     enemyAI({ bulletColor: [244, 0, 0], speed: 100 }),
     "enemy",
-    { bulletDamage: 2, touchDamage: 1 },
+    { bulletDamage: 2, touchDamage: 1, expPoints: 1 },
   ]);
 };
 

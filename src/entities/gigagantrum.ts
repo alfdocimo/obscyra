@@ -18,7 +18,7 @@ const initGigagantrum = (x: number, y: number) => {
       bulletSize: 30,
     }),
     "enemy",
-    { bulletDamage: 7, touchDamage: 15 },
+    { bulletDamage: 7, touchDamage: 15, expPoints: 10 },
   ]);
 };
 
