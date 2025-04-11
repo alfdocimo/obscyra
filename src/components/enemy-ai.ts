@@ -97,8 +97,8 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         self.move(dir.scale(speed));
       });
 
-      self.onCollide("player-bullet", () => {
-        console.log(player.attackDamage);
+      self.onCollide("player-bullet", (playerBullet) => {
+        destroy(playerBullet);
         self.hurt(player.attackDamage);
 
         if (self.hp() <= 0) {

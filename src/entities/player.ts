@@ -118,6 +118,8 @@ const initPlayer = () => {
       }`
     ),
     pos(10, 10),
+    fixed(),
+    z(1000),
   ]);
   player.onUpdate(() => {
     statsDebug.text = `Level: ${player.level}\nExp: ${player.expPoints}/${
@@ -125,6 +127,7 @@ const initPlayer = () => {
     }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
       player.attackDamage
     }`;
+    statsDebug.move;
   });
 
   player.on("death", () => {
