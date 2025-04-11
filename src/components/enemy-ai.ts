@@ -14,6 +14,7 @@ type EnemyAIConfig = {
   moveDuration?: number;
   idleDuration?: number;
   bulletSpeed?: number;
+  bulletSize?: number;
   speed?: number;
 };
 
@@ -48,6 +49,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       const idleDuration = config.idleDuration ?? 0.5;
       const speed = config.speed ?? 200;
       const bulletSpeed = config.bulletSpeed ?? 800;
+      const bulletSize = config.bulletSize ?? 12;
 
       self.onStateEnter("idle", async () => {
         await wait(idleDuration);
@@ -55,14 +57,14 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
 
       self.onStateEnter("attack", async () => {
-        const p = player();
+        const p = player;
         if (p && self.exists()) {
           const dir = p.pos.sub(self.pos).unit();
 
           add([
             pos(self.pos),
             move(dir, bulletSpeed),
-            rect(12, 12),
+            rect(bulletSize, bulletSize),
             area(),
             offscreen({ destroy: true }),
             anchor("center"),

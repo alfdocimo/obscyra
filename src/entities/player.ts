@@ -36,6 +36,8 @@ const initPlayer = () => {
   });
 
   onMouseDown("left", () => {
+    if (!player.exists()) return;
+
     if (player.canShoot) {
       shootBullet();
       player.canShoot = false;

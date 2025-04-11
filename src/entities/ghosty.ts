@@ -1,6 +1,6 @@
 import { enemyAI } from "../components/enemy-ai";
 
-const initEnemy = (x: number, y: number) => {
+const initGhosty = (x: number, y: number) => {
   return add([
     sprite("ghosty"),
     pos(width() - x, height() - y),
@@ -8,9 +8,9 @@ const initEnemy = (x: number, y: number) => {
     area(),
     health(30),
     state("move", ["idle", "attack", "move"]),
-    enemyAI({ bulletColor: [244, 0, 0] }),
+    enemyAI({ bulletColor: [244, 0, 0], speed: 100 }),
     "enemy",
   ]);
 };
 
-export { initEnemy };
+export { initGhosty };
