@@ -6,7 +6,7 @@ import { initTinyGhosty } from "./entities/tiny-ghosty";
 import { initGigagantrum } from "./entities/gigagantrum";
 import { GAME } from "./config";
 import getMobRandomPos from "./utils/get-mob-random-pos";
-import { addBackground, addLevelItems, addWorldBounds } from "./level";
+import { addBackground, addWorldBounds, spawnRandomWalls } from "./level";
 
 // @ts-check
 
@@ -29,7 +29,7 @@ loadSprite("level", "/bg/level.png");
 
 addBackground();
 addWorldBounds();
-addLevelItems();
+spawnRandomWalls();
 
 initPlayer();
 
