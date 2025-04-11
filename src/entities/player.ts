@@ -1,4 +1,4 @@
-const HP = 9999999;
+const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 
@@ -23,7 +23,7 @@ const initPlayer = () => {
     },
   ]);
 
-  player.setMaxHP(9999999);
+  player.setMaxHP(30);
 
   player.add([
     rect(100, 10),
