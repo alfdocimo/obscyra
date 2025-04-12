@@ -11,6 +11,8 @@ import {
 const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
+const INITAL_MANA = 20;
+const INITAL_STAMINA = 20;
 
 type Skill = {
   name: string;
@@ -47,7 +49,11 @@ let player: GameObj<
       level: number;
       attackDamage: number;
       canSlash: boolean;
-      // skills: (RangedSkill | MeleeSkill)[];
+
+      maxMana: number;
+      maxStamina: number;
+      mana: number;
+      stamina: number;
       rangedSKills: RangedSkill[];
       meeleSkills: MeleeSkill[];
       selectedRangedSkill?: RangedSkill; // This ensures only "ranged" skills can be assigned here
@@ -73,73 +79,11 @@ const initPlayer = () => {
       attackDamage: 1,
       attackSpeed: 10,
       canSlash: true,
-      // skills: [
-      //   {
-      //     name: "Fireball",
-      //     damage: 1,
-      //     isUnlocked: true,
-      //     manaCost: 1,
-      //     staminaCost: 3,
-      //     unlockLevel: 1,
-      //     type: "ranged",
-      //     invoke: () => {
-      //       const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+      maxMana: INITAL_MANA,
+      maxStamina: INITAL_STAMINA,
+      mana: INITAL_MANA,
+      stamina: INITAL_STAMINA,
 
-      //       // Create bullet
-      //       let playerBullet = add([
-      //         rect(12, 12), // bullet shape (12x12)
-      //         pos(player.pos), // spawn it at the player's position
-      //         move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
-      //         area(),
-      //         anchor("center"),
-      //         offscreen({ destroy: true }),
-      //         color(0, 255, 255), // blue bullet color
-      //         "player-bullet", // tag for bullet (useful for collision detection)
-      //       ]);
-
-      //       playerBullet.onCollide("wall", () => {
-      //         playerBullet.destroy();
-      //       });
-      //     },
-      //   },
-      //   {
-      //     name: "Slash",
-      //     isUnlocked: true,
-      //     manaCost: 0,
-      //     staminaCost: 5,
-      //     unlockLevel: 1,
-      //     type: "melee",
-      //     damage: 2,
-      //     invoke: () => {
-      //       const SLASH_LENGTH = 60;
-      //       const SLASH_WIDTH = 10;
-
-      //       let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
-      //       let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
-
-      //       let duration = 0.2;
-
-      //       const slash = player.add([
-      //         pos(dir.scale(35)),
-      //         rect(SLASH_LENGTH, SLASH_WIDTH),
-      //         anchor(vec2(-1, 0)),
-      //         rotate(angle - 90),
-      //         color(255, 0, 0),
-      //         area(),
-      //         opacity(1),
-      //         animate(),
-      //         lifespan(duration, { fade: 0.5 }),
-      //         z(50),
-      //         "player-slash",
-      //       ]);
-
-      //       slash.animate("angle", [angle - 130, angle + 130], {
-      //         duration: duration,
-      //         loops: 1,
-      //       });
-      //     },
-      //   },
-      // ],
       meeleSkills: [
         {
           name: "Slash",
@@ -242,6 +186,12 @@ const initPlayer = () => {
     if (!player.exists()) return;
 
     if (player.selectedRangedSkill.isUnlocked) {
+      if (player.mana < player.selectedRangedSkill.manaCost) {
+        return;
+      }
+      if (player.stamina < player.selectedRangedSkill.staminaCost) {
+        return;
+      }
       castRangedSkill();
     }
 
@@ -287,6 +237,7 @@ const initPlayer = () => {
     });
   }
 
+  // Take damage on collision with enemies
   player.onUpdate(() => {
     const touching = player.getCollisions();
 
@@ -305,6 +256,7 @@ const initPlayer = () => {
     }
   });
 
+  // Level up system
   player.onUpdate(() => {
     if (player.expPoints >= player.nextLevelExpPoints) {
       player.level += 1;
@@ -321,13 +273,23 @@ const initPlayer = () => {
     }
   });
 
+  // Regen stamina
+  loop(0.5, () => {
+    if (player.stamina < player.maxStamina) {
+      player.stamina += 2;
+    }
+  });
+
   let statsDebug = add([
     text(
       `Level: ${player.level}\nExp: ${player.expPoints}/${
         player.nextLevelExpPoints
       }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
         player.attackDamage
-      }`
+      }
+      Mana: ${player.mana}/${player.maxMana}\nStamina: ${player.stamina}/${
+        player.maxStamina
+      }\n`
     ),
     pos(10, 10),
     fixed(),
@@ -338,8 +300,11 @@ const initPlayer = () => {
       player.nextLevelExpPoints
     }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
       player.attackDamage
-    }`;
-    statsDebug.move;
+    }
+    Mana: ${player.mana}/${player.maxMana}\nStamina: ${player.stamina}/${
+      player.maxStamina
+    }\n`;
+    // statsDebug.move;
   });
 
   player.on("death", () => {
@@ -415,7 +380,12 @@ function spawnMeleeSlash() {
 }
 
 function castRangedSkill() {
-  player.selectedRangedSkill?.invoke();
+  let selectedSkill = player.selectedRangedSkill;
+  selectedSkill?.invoke();
+  if (selectedSkill) {
+    player.mana -= player.selectedRangedSkill.manaCost;
+    player.stamina -= player.selectedRangedSkill.staminaCost;
+  }
 }
 
 export { initPlayer, player };
