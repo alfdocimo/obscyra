@@ -1,8 +1,34 @@
+import {
+  SpriteComp,
+  PosComp,
+  AreaComp,
+  BodyComp,
+  AnchorComp,
+  HealthComp,
+  GameObj,
+} from "kaplay";
+
 const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 
-let player;
+let player: GameObj<
+  | SpriteComp
+  | PosComp
+  | AreaComp
+  | BodyComp
+  | AnchorComp
+  | HealthComp
+  | {
+      canTakeDamage: boolean;
+      canShoot: boolean;
+      attackSpeed: number;
+      nextLevelExpPoints: number;
+      expPoints: number;
+      level: number;
+      attackDamage: number;
+    }
+>;
 
 const initPlayer = () => {
   player = add([
@@ -57,6 +83,10 @@ const initPlayer = () => {
         player.canShoot = true;
       });
     }
+  });
+
+  onMouseDown("right", () => {
+    spawnMeleeSlash();
   });
 
   function shootBullet() {
@@ -177,6 +207,34 @@ function playerTakeDamage({ damage }: { damage: number }) {
     player.use(color(255, 255, 255)); // Revert to white or original color
     player.canTakeDamage = true;
   });
+}
+function spawnMeleeSlash() {
+  const SLASH_LENGTH = 60;
+  const SLASH_WIDTH = 10;
+
+  let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+  let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+
+  let duration = 0.2;
+
+  const slash = player.add([
+    pos(dir.scale(35)),
+    rect(SLASH_LENGTH, SLASH_WIDTH),
+    anchor(vec2(-1, 0)),
+    rotate(angle - 90),
+    color(255, 0, 0),
+    opacity(1),
+    animate(),
+    lifespan(duration, { fade: 0.5 }),
+    z(50),
+    "meleeSlash",
+  ]);
+
+  slash.animate("angle", [angle - 130, angle + 130], {
+    duration: duration,
+    loops: 1,
+  });
+  // slash.animate("pos", [vec2(50, 50), vec2(100, 50)], { duration: 2 });
 }
 
 export { initPlayer, player };
