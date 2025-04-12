@@ -12,6 +12,25 @@ const HP = 30;
 const SPEED = 200;
 const BULLET_SPEED = 800;
 
+type Skill = {
+  name: string;
+  damage: number;
+  manaCost?: number;
+  staminaCost?: number;
+  unlockLevel?: number;
+  isSlected?: boolean;
+  isUnlocked?: boolean;
+  invoke: () => void;
+};
+
+type RangedSkill = Skill & {
+  type: "ranged";
+};
+
+type MeleeSkill = Skill & {
+  type: "melee";
+};
+
 let player: GameObj<
   | SpriteComp
   | PosComp
@@ -28,6 +47,11 @@ let player: GameObj<
       level: number;
       attackDamage: number;
       canSlash: boolean;
+      // skills: (RangedSkill | MeleeSkill)[];
+      rangedSKills: RangedSkill[];
+      meeleSkills: MeleeSkill[];
+      selectedRangedSkill?: RangedSkill; // This ensures only "ranged" skills can be assigned here
+      selectedMeleeSkill?: MeleeSkill; // This ensures only "melee" skills can be assigned here
     }
 >;
 
@@ -49,8 +73,147 @@ const initPlayer = () => {
       attackDamage: 1,
       attackSpeed: 10,
       canSlash: true,
+      // skills: [
+      //   {
+      //     name: "Fireball",
+      //     damage: 1,
+      //     isUnlocked: true,
+      //     manaCost: 1,
+      //     staminaCost: 3,
+      //     unlockLevel: 1,
+      //     type: "ranged",
+      //     invoke: () => {
+      //       const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+
+      //       // Create bullet
+      //       let playerBullet = add([
+      //         rect(12, 12), // bullet shape (12x12)
+      //         pos(player.pos), // spawn it at the player's position
+      //         move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+      //         area(),
+      //         anchor("center"),
+      //         offscreen({ destroy: true }),
+      //         color(0, 255, 255), // blue bullet color
+      //         "player-bullet", // tag for bullet (useful for collision detection)
+      //       ]);
+
+      //       playerBullet.onCollide("wall", () => {
+      //         playerBullet.destroy();
+      //       });
+      //     },
+      //   },
+      //   {
+      //     name: "Slash",
+      //     isUnlocked: true,
+      //     manaCost: 0,
+      //     staminaCost: 5,
+      //     unlockLevel: 1,
+      //     type: "melee",
+      //     damage: 2,
+      //     invoke: () => {
+      //       const SLASH_LENGTH = 60;
+      //       const SLASH_WIDTH = 10;
+
+      //       let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+      //       let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+
+      //       let duration = 0.2;
+
+      //       const slash = player.add([
+      //         pos(dir.scale(35)),
+      //         rect(SLASH_LENGTH, SLASH_WIDTH),
+      //         anchor(vec2(-1, 0)),
+      //         rotate(angle - 90),
+      //         color(255, 0, 0),
+      //         area(),
+      //         opacity(1),
+      //         animate(),
+      //         lifespan(duration, { fade: 0.5 }),
+      //         z(50),
+      //         "player-slash",
+      //       ]);
+
+      //       slash.animate("angle", [angle - 130, angle + 130], {
+      //         duration: duration,
+      //         loops: 1,
+      //       });
+      //     },
+      //   },
+      // ],
+      meeleSkills: [
+        {
+          name: "Slash",
+          isUnlocked: true,
+          manaCost: 0,
+          staminaCost: 5,
+          unlockLevel: 1,
+          type: "melee",
+          damage: 2,
+          invoke: () => {
+            const SLASH_LENGTH = 60;
+            const SLASH_WIDTH = 10;
+
+            let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+
+            let duration = 0.2;
+
+            const slash = player.add([
+              pos(dir.scale(35)),
+              rect(SLASH_LENGTH, SLASH_WIDTH),
+              anchor(vec2(-1, 0)),
+              rotate(angle - 90),
+              color(255, 0, 0),
+              area(),
+              opacity(1),
+              animate(),
+              lifespan(duration, { fade: 0.5 }),
+              z(50),
+              "player-slash",
+            ]);
+
+            slash.animate("angle", [angle - 130, angle + 130], {
+              duration: duration,
+              loops: 1,
+            });
+          },
+        },
+      ],
+      rangedSKills: [
+        {
+          name: "Fireball",
+          damage: 1,
+          isUnlocked: true,
+          manaCost: 1,
+          staminaCost: 3,
+          unlockLevel: 1,
+          type: "ranged",
+          invoke: () => {
+            const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+
+            // Create bullet
+            let playerBullet = add([
+              rect(12, 12), // bullet shape (12x12)
+              pos(player.pos), // spawn it at the player's position
+              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              area(),
+              anchor("center"),
+              offscreen({ destroy: true }),
+              color(0, 255, 255), // blue bullet color
+              "player-bullet", // tag for bullet (useful for collision detection)
+            ]);
+
+            playerBullet.onCollide("wall", () => {
+              playerBullet.destroy();
+            });
+          },
+        },
+      ],
     },
   ]);
+
+  player.selectedRangedSkill = player.rangedSKills[0];
+  player.selectedMeleeSkill = player.meeleSkills[0];
 
   player.setMaxHP(30);
 
@@ -78,13 +241,17 @@ const initPlayer = () => {
   onMouseDown("left", () => {
     if (!player.exists()) return;
 
-    if (player.canShoot) {
-      shootBullet();
-      player.canShoot = false;
-      wait(1 / player.attackSpeed, () => {
-        player.canShoot = true;
-      });
+    if (player.selectedRangedSkill.isUnlocked) {
+      castRangedSkill();
     }
+
+    // if (player.canShoot) {
+    //   shootBullet();
+    //   player.canShoot = false;
+    //   wait(1 / player.attackSpeed, () => {
+    //     player.canShoot = true;
+    //   });
+    // }
   });
 
   onMouseDown("right", () => {
@@ -245,6 +412,10 @@ function spawnMeleeSlash() {
     duration: duration,
     loops: 1,
   });
+}
+
+function castRangedSkill() {
+  player.selectedRangedSkill?.invoke();
 }
 
 export { initPlayer, player };
