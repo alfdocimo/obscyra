@@ -93,7 +93,7 @@ const initPlayer = () => {
           staminaCost: 5,
           unlockLevel: 1,
           type: "melee",
-          damage: 2,
+          damage: 30,
           cooldownTime: 1,
           isCoolingDown: false,
           invoke: () => {

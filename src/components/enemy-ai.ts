@@ -107,11 +107,11 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       self.onCollide("player-bullet", (playerBullet) => {
         destroy(playerBullet);
-        takeDamage(player);
+        takeDamageFromSkill("ranged");
       });
 
       self.onCollide("player-slash", (playerBullet) => {
-        takeDamage(player);
+        takeDamageFromSkill("melee");
       });
 
       self.onUpdate(() => {
@@ -121,8 +121,13 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         }
       });
 
-      function takeDamage(player) {
-        self.hurt(player.attackDamage);
+      function takeDamageFromSkill(skillType: "ranged" | "melee") {
+        if (skillType === "ranged") {
+          self.hurt(player.selectedRangedSkill.damage);
+        }
+        if (skillType === "melee") {
+          self.hurt(player.selectedMeleeSkill.damage);
+        }
 
         if (self.hp() <= 0) {
           destroy(self);
