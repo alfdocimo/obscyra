@@ -23,6 +23,8 @@ type Skill = {
   isSlected?: boolean;
   isUnlocked?: boolean;
   invoke: () => void;
+  isCoolingDown?: boolean;
+  cooldownTime?: number;
 };
 
 type RangedSkill = Skill & {
@@ -49,7 +51,6 @@ let player: GameObj<
       level: number;
       attackDamage: number;
       canSlash: boolean;
-
       maxMana: number;
       maxStamina: number;
       mana: number;
@@ -93,6 +94,8 @@ const initPlayer = () => {
           unlockLevel: 1,
           type: "melee",
           damage: 2,
+          cooldownTime: 1,
+          isCoolingDown: false,
           invoke: () => {
             const SLASH_LENGTH = 60;
             const SLASH_WIDTH = 10;
@@ -132,6 +135,8 @@ const initPlayer = () => {
           staminaCost: 3,
           unlockLevel: 1,
           type: "ranged",
+          cooldownTime: 0.5,
+          isCoolingDown: false,
           invoke: () => {
             const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
 
@@ -192,27 +197,21 @@ const initPlayer = () => {
       if (player.stamina < player.selectedRangedSkill.staminaCost) {
         return;
       }
-      castRangedSkill();
+      castSelectedRangedSkill();
     }
-
-    // if (player.canShoot) {
-    //   shootBullet();
-    //   player.canShoot = false;
-    //   wait(1 / player.attackSpeed, () => {
-    //     player.canShoot = true;
-    //   });
-    // }
   });
 
   onMouseDown("right", () => {
     if (!player.exists()) return;
 
-    if (player.canSlash) {
-      spawnMeleeSlash();
-      player.canSlash = false;
-      wait(0.6, () => {
-        player.canSlash = true;
-      });
+    if (player.selectedMeleeSkill.isUnlocked) {
+      if (player.mana < player.selectedMeleeSkill.manaCost) {
+        return;
+      }
+      if (player.stamina < player.selectedMeleeSkill.staminaCost) {
+        return;
+      }
+      castSelectedMeeleSkill();
     }
   });
 
@@ -379,13 +378,32 @@ function spawnMeleeSlash() {
   });
 }
 
-function castRangedSkill() {
+function castSelectedRangedSkill() {
   let selectedSkill = player.selectedRangedSkill;
+  if (selectedSkill.isCoolingDown) return;
   selectedSkill?.invoke();
-  if (selectedSkill) {
-    player.mana -= player.selectedRangedSkill.manaCost;
-    player.stamina -= player.selectedRangedSkill.staminaCost;
-  }
+
+  selectedSkill.isCoolingDown = true;
+
+  player.mana -= player.selectedRangedSkill.manaCost;
+  player.stamina -= player.selectedRangedSkill.staminaCost;
+  wait(selectedSkill.cooldownTime, () => {
+    selectedSkill.isCoolingDown = false;
+  });
+}
+
+function castSelectedMeeleSkill() {
+  let selectedSkill = player.selectedMeleeSkill;
+  if (selectedSkill.isCoolingDown) return;
+  selectedSkill?.invoke();
+
+  selectedSkill.isCoolingDown = true;
+
+  player.mana -= player.selectedMeleeSkill.manaCost;
+  player.stamina -= player.selectedMeleeSkill.staminaCost;
+  wait(selectedSkill.cooldownTime, () => {
+    selectedSkill.isCoolingDown = false;
+  });
 }
 
 export { initPlayer, player };
