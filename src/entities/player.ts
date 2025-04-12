@@ -27,6 +27,7 @@ let player: GameObj<
       expPoints: number;
       level: number;
       attackDamage: number;
+      canSlash: boolean;
     }
 >;
 
@@ -47,6 +48,7 @@ const initPlayer = () => {
       nextLevelExpPoints: 10,
       attackDamage: 1,
       attackSpeed: 10,
+      canSlash: true,
     },
   ]);
 
@@ -86,7 +88,15 @@ const initPlayer = () => {
   });
 
   onMouseDown("right", () => {
-    spawnMeleeSlash();
+    if (!player.exists()) return;
+
+    if (player.canSlash) {
+      spawnMeleeSlash();
+      player.canSlash = false;
+      wait(0.6, () => {
+        player.canSlash = true;
+      });
+    }
   });
 
   function shootBullet() {
@@ -223,18 +233,18 @@ function spawnMeleeSlash() {
     anchor(vec2(-1, 0)),
     rotate(angle - 90),
     color(255, 0, 0),
+    area(),
     opacity(1),
     animate(),
     lifespan(duration, { fade: 0.5 }),
     z(50),
-    "meleeSlash",
+    "player-slash",
   ]);
 
   slash.animate("angle", [angle - 130, angle + 130], {
     duration: duration,
     loops: 1,
   });
-  // slash.animate("pos", [vec2(50, 50), vec2(100, 50)], { duration: 2 });
 }
 
 export { initPlayer, player };

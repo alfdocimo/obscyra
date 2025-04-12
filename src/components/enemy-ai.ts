@@ -107,6 +107,21 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       self.onCollide("player-bullet", (playerBullet) => {
         destroy(playerBullet);
+        takeDamage(player);
+      });
+
+      self.onCollide("player-slash", (playerBullet) => {
+        takeDamage(player);
+      });
+
+      self.onUpdate(() => {
+        const DIST_LIMIT = 1200;
+        if (self.pos.dist(player.pos) > DIST_LIMIT) {
+          destroy(self);
+        }
+      });
+
+      function takeDamage(player) {
         self.hurt(player.attackDamage);
 
         if (self.hp() <= 0) {
@@ -120,14 +135,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         wait(0.05, () => {
           self.use(color(255, 255, 255));
         });
-      });
-
-      self.onUpdate(() => {
-        const DIST_LIMIT = 1200;
-        if (self.pos.dist(player.pos) > DIST_LIMIT) {
-          destroy(self);
-        }
-      });
+      }
     },
 
     destroy(this: EnemyAIContext) {
