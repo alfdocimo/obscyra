@@ -49,7 +49,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       // Create health bar
       const hpBar = self.add([
         rect(50, 5),
-        pos(-25, -25),
+        pos(-25, -45),
         outline(1),
         color(255, 0, 100),
         anchor("left"),
@@ -110,6 +110,32 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         self.move(dir.scale(speed));
       });
 
+      self.onStateEnter("destroy", () => {
+        // self.use(color(255, 0, 0));
+
+        let flashCount = 0;
+        const maxFlashes = 4;
+        const flashInterval = 0.1;
+
+        const flashTimer = loop(flashInterval, () => {
+          // Alternate color between red and white
+          self.use(
+            color(flashCount % 2 === 0 ? rgb(255, 0, 0) : rgb(255, 255, 255))
+          );
+
+          flashCount++;
+
+          if (flashCount >= maxFlashes) {
+            flashTimer.cancel(); // stop the loop
+            self.destroy(); // finally destroy the enemy
+          }
+        });
+
+        // wait(1, () => {
+        //   destroy(self);
+        // });
+      });
+
       self.onCollide("player-bullet", (playerBullet) => {
         destroy(playerBullet);
         takeDamageFromSkill("ranged");
@@ -136,12 +162,12 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           self.hurt(damage);
         }
 
+        hpBar.width = (self.hp() * 50) / initialHealth;
+
         if (self.hp() <= 0) {
-          destroy(self);
+          self.enterState("destroy");
           return;
         }
-
-        hpBar.width = (self.hp() * 50) / initialHealth;
 
         self.use(color(255, 0, 0));
         wait(0.05, () => {

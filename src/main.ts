@@ -54,6 +54,17 @@ loadSprite("blade", "/sprites/blade.png", {
 });
 loadSprite("gun", "/sprites/gun.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
+loadSprite("tri-mob", "/sprites/tri-mob.png", {
+  sliceX: 4,
+  sliceY: 2,
+  anims: {
+    float: {
+      from: 0,
+      to: 3,
+      loop: true,
+    },
+  },
+});
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
 loadSprite("heart", "/sprites/heart.png");

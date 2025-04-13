@@ -2,14 +2,14 @@ import { enemyAI } from "../components/enemy-ai";
 
 const initGhosty = (x: number, y: number) => {
   return add([
-    sprite("ghosty", { width: 32, height: 32 }),
+    sprite("tri-mob", { width: 32, height: 64, anim: "float" }),
     pos(x, y),
     body(),
+    area({ shape: new Rect(vec2(-8, -8), 16, 32) }),
     anchor("center"),
-    area(),
     health(30),
     z(1500),
-    state("move", ["idle", "attack", "move"]),
+    state("move", ["idle", "attack", "move", "destroy"]),
     enemyAI({ bulletColor: [244, 0, 0], speed: 100 }),
     "enemy",
     { bulletDamage: 2, touchDamage: 1, expPoints: 1 },
