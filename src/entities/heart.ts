@@ -14,6 +14,8 @@ export function initHeart({
     pos(x, y),
     anchor("center"),
     area(),
+    opacity(1),
+    lifespan(3, { fade: 0.5 }),
     body({ isStatic: true }),
   ]);
 
