@@ -177,6 +177,17 @@ const initPlayer = () => {
     "health-bar",
   ]);
 
+  let gun = player.add([
+    sprite("gun", { width: 32, height: 8 }),
+    rotate(0),
+    anchor(vec2(-1, 0)),
+  ]);
+
+  onMouseMove(() => {
+    gun.angle = toWorld(mousePos()).sub(player.pos).angle();
+    gun.flipY = Math.abs(gun.angle) > 90;
+  });
+
   const aimCircle = add([
     pos(toWorld(mousePos())),
     circle(4),

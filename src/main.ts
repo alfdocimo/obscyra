@@ -40,6 +40,7 @@ loadSprite("player", "/sprites/cosito32.png", {
     },
   },
 });
+loadSprite("gun", "/sprites/gun.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
@@ -94,6 +95,7 @@ scene("game", () => {
     const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
 
     setCamPos(camX, camY);
+    setCamScale(4);
   });
 });
 
