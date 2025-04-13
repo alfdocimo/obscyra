@@ -381,6 +381,7 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.canTakeDamage = false;
 
+  player.play("hurt");
   shake(20);
 
   player.hurt(damage);

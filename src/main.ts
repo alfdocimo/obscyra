@@ -35,7 +35,7 @@ loadSprite("player", "/sprites/cosito32.png", {
     },
     hurt: {
       from: 4,
-      to: 7,
+      to: 6,
       loop: true,
     },
   },
