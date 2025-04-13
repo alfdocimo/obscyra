@@ -7,6 +7,7 @@ import { initGigagantrum } from "./entities/gigagantrum";
 import { GAME } from "./config";
 import getMobRandomPos from "./utils/get-mob-random-pos";
 import { addBackground, addWorldBounds, spawnRandomWalls } from "./level";
+import { gameState } from "./game-state";
 
 // @ts-check
 
@@ -76,8 +77,12 @@ scene("game", () => {
   loop(1, () => {
     if (!player.exists()) return;
 
+    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
     let { x, y } = getMobRandomPos(player.pos);
     initGhosty(x, y);
+    gameState.currentMobs++;
+    gameState.totalMobsSpawned++;
   });
 
   // loop(1, () => {

@@ -156,7 +156,7 @@ const initPlayer = () => {
               area(),
               anchor("center"),
               offscreen({ destroy: true }),
-              color(0, 255, 255), // blue bullet color
+              color(212, 30, 255), // blue bullet color
               "player-bullet", // tag for bullet (useful for collision detection)
             ]);
 
@@ -389,7 +389,7 @@ function takeDamage({ damage }: { damage: number }) {
   player.canTakeDamage = false;
 
   player.play("hurt");
-  shake(20);
+  shake(5);
 
   player.hurt(damage);
   player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();

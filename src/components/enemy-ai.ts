@@ -12,6 +12,7 @@ import {
   player,
 } from "../entities/player";
 import { initHeart } from "../entities/heart";
+import { gameState } from "../game-state";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -161,6 +162,8 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       }
 
       player.expPoints += self.expPoints;
+      gameState.currentMobs--;
+      gameState.totalMobsKilled++;
     },
   };
 }
