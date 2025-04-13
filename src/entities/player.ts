@@ -69,7 +69,7 @@ const initPlayer = () => {
       anim: "idle",
     }),
     pos(center()),
-    area(),
+    area({ shape: new Rect(vec2(0, 0), 16, 32) }),
     body(),
     anchor("center"),
     health(HP),

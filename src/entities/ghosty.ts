@@ -5,7 +5,7 @@ const initGhosty = (x: number, y: number) => {
     sprite("tri-mob", { width: 32, height: 64, anim: "float" }),
     pos(x, y),
     body(),
-    area({ shape: new Rect(vec2(-8, -8), 16, 32) }),
+    area({ shape: new Rect(vec2(0, -8), 16, 32) }),
     anchor("center"),
     health(30),
     z(1500),

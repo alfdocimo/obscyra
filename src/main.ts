@@ -83,6 +83,8 @@ scene("game", () => {
   addWorldBounds();
   spawnRandomWalls();
 
+  // debug.inspect = true;
+
   const player = initPlayer();
 
   loop(1, () => {
