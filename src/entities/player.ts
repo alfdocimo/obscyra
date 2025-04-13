@@ -205,7 +205,9 @@ const initPlayer = () => {
   registerPlayerDeathHandler();
 
   // Register input handlers & movement
+  registerPlayerFlipOnXAxis();
   registerMovementControls();
+  registerAnimationsOnKeyPressed();
 
   return player;
 };
@@ -257,7 +259,6 @@ function registerPlayerDeathHandler() {
 function registerMovementControls() {
   onKeyDown("a", () => {
     player.move(-SPEED, 0);
-    player.play("walk");
   });
 
   onKeyDown("d", () => {
@@ -295,7 +296,7 @@ function handleLevelUp() {
 
       player.setMaxHP(player.maxHP() + 10);
       player.setHP(player.maxHP());
-      player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
+      player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
 
       player.expPoints = 0;
       player.nextLevelExpPoints += 10;
@@ -411,12 +412,36 @@ function castSelectedMeeleSkill() {
   });
 }
 
+function registerAnimationsOnKeyPressed() {
+  ["a", "w", "s", "d"].forEach((key) => {
+    onKeyPress(key, () => {
+      player.play("walk");
+    });
+    onKeyRelease(key, () => {
+      if (
+        !isKeyDown("a") &&
+        !isKeyDown("w") &&
+        !isKeyDown("s") &&
+        !isKeyDown("d")
+      ) {
+        player.play("idle");
+      }
+    });
+  });
+}
+
 export function getSelectedRangedSkillDamage() {
   return player.selectedRangedSkill.damage + player.baseRangedDamage;
 }
 
 export function getSelectedMeleeSkillDamage() {
   return player.selectedMeleeSkill.damage + player.baseMeeleDamage;
+}
+
+function registerPlayerFlipOnXAxis() {
+  player.onUpdate(() => {
+    player.flipX = toWorld(mousePos()).x < player.pos.x;
+  });
 }
 
 export { initPlayer, player };

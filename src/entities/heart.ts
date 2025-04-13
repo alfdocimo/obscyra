@@ -27,7 +27,7 @@ export function initHeart({
     } else {
       player.heal(HEAL_AMOUNT);
     }
-    player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
+    player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
     destroy(heart);
   });
 
