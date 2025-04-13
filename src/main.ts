@@ -65,9 +65,20 @@ loadSprite("tri-mob", "/sprites/tri-mob.png", {
     },
   },
 });
+loadSprite("player-bullet-basic", "/sprites/player-bullet.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
-loadSprite("heart", "/sprites/heart.png");
+loadSprite("heart", "/sprites/heart.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    idle: {
+      from: 0,
+      to: 6,
+      loop: true,
+    },
+  },
+});
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("level", "/bg/level.png");
 
@@ -124,7 +135,7 @@ scene("game", () => {
     const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
 
     setCamPos(camX, camY);
-    setCamScale(2);
+    setCamScale(1);
   });
 });
 

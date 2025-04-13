@@ -111,14 +111,12 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
 
       self.onStateEnter("destroy", () => {
-        // self.use(color(255, 0, 0));
-
         let flashCount = 0;
         const maxFlashes = 4;
         const flashInterval = 0.1;
 
         const flashTimer = loop(flashInterval, () => {
-          // Alternate color between red and white
+          console.log("flashinggg");
           self.use(
             color(flashCount % 2 === 0 ? rgb(255, 0, 0) : rgb(255, 255, 255))
           );
@@ -127,10 +125,9 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
           if (flashCount >= maxFlashes) {
             flashTimer.cancel();
+            die();
           }
         });
-
-        die();
       });
 
       self.onCollide("player-bullet", (playerBullet) => {
