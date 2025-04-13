@@ -36,17 +36,17 @@ loadSprite("player", "/sprites/cosito32.png", {
     hurt: {
       from: 4,
       to: 6,
-      loop: true,
+      loop: false,
     },
   },
 });
-loadSprite("testsword", "/sprites/testsword.png", {
+loadSprite("blade", "/sprites/blade.png", {
   sliceX: 4,
-  sliceY: 2,
+  sliceY: 3,
   anims: {
     attack: {
       from: 0,
-      to: 3,
+      to: 11,
       loop: false,
     },
   },
@@ -106,7 +106,7 @@ scene("game", () => {
     const camY = clamp(player.pos.y, halfH, GAME.MAX_GAME_HEIGHT - halfH);
 
     setCamPos(camX, camY);
-    setCamScale(4);
+    setCamScale(2);
   });
 });
 

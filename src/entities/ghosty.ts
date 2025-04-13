@@ -8,6 +8,7 @@ const initGhosty = (x: number, y: number) => {
     anchor("center"),
     area(),
     health(30),
+    z(1500),
     state("move", ["idle", "attack", "move"]),
     enemyAI({ bulletColor: [244, 0, 0], speed: 100 }),
     "enemy",

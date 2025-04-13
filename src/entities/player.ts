@@ -73,6 +73,7 @@ const initPlayer = () => {
     body(),
     anchor("center"),
     health(HP),
+    z(3000),
     "player",
     {
       canTakeDamage: true,
@@ -105,19 +106,18 @@ const initPlayer = () => {
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
 
-            let duration = 0.2;
+            let duration = 0.5;
 
-            const slash = player.add([
+            player.add([
               pos(dir.scale(10)),
-              sprite("testsword", { width: 64, height: 64, anim: "attack" }),
+              sprite("blade", { anim: "attack", animSpeed: 2.7 }),
               anchor(vec2(-1, 0)),
               rotate(angle),
-              color(255, 0, 0),
               area(),
               opacity(1),
               animate(),
               lifespan(duration, { fade: 0.2 }),
-              z(50),
+              z(2000),
               "player-slash",
             ]);
 
@@ -144,12 +144,14 @@ const initPlayer = () => {
           cooldownTime: 0.5,
           isCoolingDown: false,
           invoke: () => {
-            const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
 
+            let bulletStartPos = player.worldPos().add(gunOffset);
             // Create bullet
             let playerBullet = add([
-              rect(12, 12), // bullet shape (12x12)
-              pos(player.pos), // spawn it at the player's position
+              rect(4, 4), // bullet shape (12x12)
+              pos(bulletStartPos), // spawn it at the player's position
               move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
               area(),
               anchor("center"),
