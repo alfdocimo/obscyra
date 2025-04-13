@@ -63,7 +63,11 @@ let player: GameObj<
 
 const initPlayer = () => {
   player = add([
-    sprite("bean"),
+    sprite("player", {
+      width: 32,
+      height: 32,
+      anim: "idle",
+    }),
     pos(center()),
     area(),
     body(),
@@ -165,9 +169,9 @@ const initPlayer = () => {
   player.setMaxHP(30);
 
   player.add([
-    rect(100, 10),
-    pos(-50, -50),
-    outline(4),
+    rect(50, 5),
+    pos(-25, -25),
+    outline(1),
     color(255, 0, 100),
     anchor("left"),
     "health-bar",
@@ -253,6 +257,7 @@ function registerPlayerDeathHandler() {
 function registerMovementControls() {
   onKeyDown("a", () => {
     player.move(-SPEED, 0);
+    player.play("walk");
   });
 
   onKeyDown("d", () => {
@@ -367,7 +372,7 @@ function takeDamage({ damage }: { damage: number }) {
   shake(20);
 
   player.hurt(damage);
-  player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
+  player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
 
   player.use(color(255, 0, 0));
 

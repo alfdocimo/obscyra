@@ -19,7 +19,27 @@ kaplay({
   scale: 1,
 });
 
-loadSprite("bean", "/sprites/bean.png");
+loadSprite("player", "/sprites/cosito32.png", {
+  sliceX: 4,
+  sliceY: 2,
+  anims: {
+    idle: {
+      from: 0,
+      to: 0,
+      loop: false,
+    },
+    walk: {
+      from: 0,
+      to: 3,
+      loop: true,
+    },
+    hurt: {
+      from: 4,
+      to: 7,
+      loop: true,
+    },
+  },
+});
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");

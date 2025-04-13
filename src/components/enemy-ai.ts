@@ -43,17 +43,17 @@ export function enemyAI(config: EnemyAIConfig = {}) {
     add(this: EnemyAIContext) {
       const self = this;
 
+      initialHealth = self.hp();
+
       // Create health bar
       const hpBar = self.add([
-        rect(100, 10),
-        pos(-50, -50),
-        outline(4),
+        rect(50, 5),
+        pos(-25, -25),
+        outline(1),
         color(255, 0, 100),
         anchor("left"),
         "enemy-health-bar",
       ]);
-
-      initialHealth = self.hp();
 
       const bulletColor = config.bulletColor ?? [0, 255, 255];
       const attackDuration = config.attackDuration ?? 1;
@@ -140,7 +140,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           return;
         }
 
-        hpBar.width = (self.hp() * 100) / initialHealth;
+        hpBar.width = (self.hp() * 50) / initialHealth;
 
         self.use(color(255, 0, 0));
         wait(0.05, () => {
