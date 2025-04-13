@@ -48,21 +48,21 @@ scene("game", () => {
     initGhosty(x, y);
   });
 
-  loop(1, () => {
-    if (!player.exists()) return;
+  // loop(1, () => {
+  //   if (!player.exists()) return;
 
-    let { x, y } = getMobRandomPos(player.pos);
+  //   let { x, y } = getMobRandomPos(player.pos);
 
-    initTinyGhosty(x, y);
-  });
+  //   initTinyGhosty(x, y);
+  // });
 
-  loop(10, () => {
-    if (!player.exists()) return;
+  // loop(10, () => {
+  //   if (!player.exists()) return;
 
-    let { x, y } = getMobRandomPos(player.pos);
+  //   let { x, y } = getMobRandomPos(player.pos);
 
-    initGigagantrum(x, y);
-  });
+  //   initGigagantrum(x, y);
+  // });
 
   onUpdate(() => {
     if (!player.exists()) return;

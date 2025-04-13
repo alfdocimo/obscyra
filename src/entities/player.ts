@@ -44,13 +44,12 @@ let player: GameObj<
   | HealthComp
   | {
       canTakeDamage: boolean;
-      canShoot: boolean;
-      attackSpeed: number;
+      baseMeeleDamage: number;
+      baseRangedDamage: number;
+      cooldownReductionPercentage: number;
       nextLevelExpPoints: number;
       expPoints: number;
       level: number;
-      attackDamage: number;
-      canSlash: boolean;
       maxMana: number;
       maxStamina: number;
       mana: number;
@@ -73,13 +72,12 @@ const initPlayer = () => {
     "player",
     {
       canTakeDamage: true,
-      canShoot: true,
       level: 1,
       expPoints: 0,
-      nextLevelExpPoints: 10,
-      attackDamage: 1,
-      attackSpeed: 10,
-      canSlash: true,
+      nextLevelExpPoints: 1,
+      baseMeeleDamage: 5,
+      baseRangedDamage: 10,
+      cooldownReductionPercentage: 0.3,
       maxMana: INITAL_MANA,
       maxStamina: INITAL_STAMINA,
       mana: INITAL_MANA,
@@ -93,7 +91,7 @@ const initPlayer = () => {
           staminaCost: 5,
           unlockLevel: 1,
           type: "melee",
-          damage: 30,
+          damage: 5,
           cooldownTime: 1,
           isCoolingDown: false,
           invoke: () => {
@@ -187,6 +185,151 @@ const initPlayer = () => {
     aimCircle.pos = toWorld(mousePos());
   });
 
+  registerInputHandlers();
+
+  // Take damage on collision with enemies
+  handlePlayerCollisions();
+
+  // Level up system
+  handleLevelUp();
+
+  // Regen stamina
+  staminaRegenLoop();
+
+  displayPlayerStats();
+
+  registerPlayerDeathHandler();
+
+  // Register input handlers & movement
+  registerMovementControls();
+
+  return player;
+};
+
+function displayPlayerStats() {
+  // display all player stats
+  let textStats = `
+  HP: ${player.hp()}/${player.maxHP()} \n
+  Mana: ${player.mana}/${player.maxMana} \n
+  Stamina: ${player.stamina}/${player.maxStamina} \n
+  Level: ${player.level} \n
+  Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
+  Attack: ${player.baseMeeleDamage} \n
+  Ranged Attack: ${player.baseRangedDamage} \n
+  Cooldown Reduction: ${player.cooldownReductionPercentage * 100}% \n
+  Melee Skill: ${player.selectedMeleeSkill?.name} \n
+  Ranged Skill: ${player.selectedRangedSkill?.name} \n
+  `;
+  let statsDebug = add([
+    text(textStats),
+    scale(0.4),
+    pos(10, 10),
+    fixed(),
+    z(1000),
+  ]);
+  player.onUpdate(() => {
+    statsDebug.text = `
+  HP: ${player.hp()}/${player.maxHP()} \n
+  Mana: ${player.mana}/${player.maxMana} \n
+  Stamina: ${player.stamina}/${player.maxStamina} \n
+  Level: ${player.level} \n
+  Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
+  Attack: ${player.baseMeeleDamage} \n
+  Ranged Attack: ${player.baseRangedDamage} \n
+  Cooldown Reduction: ${player.cooldownReductionPercentage * 100}% \n
+  Melee Skill: ${player.selectedMeleeSkill?.name} \n
+  Ranged Skill: ${player.selectedRangedSkill?.name} \n
+  `;
+  });
+}
+
+function registerPlayerDeathHandler() {
+  player.on("death", () => {
+    destroy(player);
+    add([text("lol you suck!?"), pos(center())]);
+  });
+}
+
+function registerMovementControls() {
+  onKeyDown("a", () => {
+    player.move(-SPEED, 0);
+  });
+
+  onKeyDown("d", () => {
+    player.move(SPEED, 0);
+  });
+
+  onKeyDown("w", () => {
+    player.move(0, -SPEED);
+  });
+
+  onKeyDown("s", () => {
+    player.move(0, SPEED);
+  });
+}
+
+function staminaRegenLoop() {
+  loop(0.5, () => {
+    if (player.stamina < player.maxStamina) {
+      player.stamina += 2;
+    }
+  });
+}
+
+function handleLevelUp() {
+  onUpdate(() => {
+    if (player.expPoints >= player.nextLevelExpPoints) {
+      player.level += 1;
+      player.baseMeeleDamage += 2;
+      player.baseRangedDamage += 1;
+      player.cooldownReductionPercentage += 0.1;
+      player.maxMana += 5;
+      player.maxStamina += 5;
+      player.mana = player.maxMana;
+      player.stamina = player.maxStamina;
+
+      player.setMaxHP(player.maxHP() + 10);
+      player.setHP(player.maxHP());
+      player.get("health-bar")[0].width = (player.hp() * 100) / player.maxHP();
+
+      player.expPoints = 0;
+      player.nextLevelExpPoints += 10;
+
+      player.add([
+        text("Level Up!"),
+        anchor("center"),
+        pos(0, -50),
+        opacity(1),
+        lifespan(1, {
+          fade: 0.5,
+        }),
+        z(1000),
+      ]);
+    }
+  });
+}
+
+function handlePlayerCollisions() {
+  player.onUpdate(() => {
+    const touching = player.getCollisions();
+
+    for (const obj of touching) {
+      if (!player.canTakeDamage) return;
+
+      if (obj.target.is("enemy")) {
+        takeDamage({ damage: obj.target.touchDamage });
+        return; // stop after first valid collision
+      }
+
+      if (obj.target.is("bullet")) {
+        takeDamage({ damage: obj.target.bulletDamage });
+        return;
+      }
+    }
+  });
+}
+
+function registerInputHandlers() {
   onMouseDown("left", () => {
     if (!player.exists()) return;
 
@@ -214,124 +357,9 @@ const initPlayer = () => {
       castSelectedMeeleSkill();
     }
   });
+}
 
-  function shootBullet() {
-    // Get direction from player to mouse
-    const dir = toWorld(mousePos()).sub(player.pos).unit(); // vector from player to mouse, normalized to unit vector
-
-    // Create bullet
-    let playerBullet = add([
-      rect(12, 12), // bullet shape (12x12)
-      pos(player.pos), // spawn it at the player's position
-      move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
-      area(),
-      anchor("center"),
-      offscreen({ destroy: true }),
-      color(0, 255, 255), // blue bullet color
-      "player-bullet", // tag for bullet (useful for collision detection)
-    ]);
-
-    playerBullet.onCollide("wall", () => {
-      playerBullet.destroy();
-    });
-  }
-
-  // Take damage on collision with enemies
-  player.onUpdate(() => {
-    const touching = player.getCollisions();
-
-    for (const obj of touching) {
-      if (!player.canTakeDamage) return;
-
-      if (obj.target.is("enemy")) {
-        playerTakeDamage({ damage: obj.target.touchDamage });
-        return; // stop after first valid collision
-      }
-
-      if (obj.target.is("bullet")) {
-        playerTakeDamage({ damage: obj.target.bulletDamage });
-        return; // stop after first valid collision
-      }
-    }
-  });
-
-  // Level up system
-  player.onUpdate(() => {
-    if (player.expPoints >= player.nextLevelExpPoints) {
-      player.level += 1;
-      player.attackDamage += 1;
-      player.setMaxHP(player.maxHP() + 10);
-      player.attackSpeed += 1;
-      player.expPoints = 0;
-      player.nextLevelExpPoints += 10;
-
-      const levelUpText = add([text("Level Up!"), pos(center())]);
-      wait(1, () => {
-        destroy(levelUpText);
-      });
-    }
-  });
-
-  // Regen stamina
-  loop(0.5, () => {
-    if (player.stamina < player.maxStamina) {
-      player.stamina += 2;
-    }
-  });
-
-  let statsDebug = add([
-    text(
-      `Level: ${player.level}\nExp: ${player.expPoints}/${
-        player.nextLevelExpPoints
-      }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
-        player.attackDamage
-      }
-      Mana: ${player.mana}/${player.maxMana}\nStamina: ${player.stamina}/${
-        player.maxStamina
-      }\n`
-    ),
-    pos(10, 10),
-    fixed(),
-    z(1000),
-  ]);
-  player.onUpdate(() => {
-    statsDebug.text = `Level: ${player.level}\nExp: ${player.expPoints}/${
-      player.nextLevelExpPoints
-    }\nHP: ${player.hp()}/${player.maxHP()}\nAttack Damage: ${
-      player.attackDamage
-    }
-    Mana: ${player.mana}/${player.maxMana}\nStamina: ${player.stamina}/${
-      player.maxStamina
-    }\n`;
-    // statsDebug.move;
-  });
-
-  player.on("death", () => {
-    destroy(player);
-    add([text("lol you suck!?"), pos(center())]);
-  });
-
-  // Register input handlers & movement
-  onKeyDown("a", () => {
-    player.move(-SPEED, 0);
-  });
-
-  onKeyDown("d", () => {
-    player.move(SPEED, 0);
-  });
-
-  onKeyDown("w", () => {
-    player.move(0, -SPEED);
-  });
-
-  onKeyDown("s", () => {
-    player.move(0, SPEED);
-  });
-
-  return player;
-};
-
-function playerTakeDamage({ damage }: { damage: number }) {
+function takeDamage({ damage }: { damage: number }) {
   if (!player.canTakeDamage) return;
 
   player.canTakeDamage = false;
@@ -347,34 +375,6 @@ function playerTakeDamage({ damage }: { damage: number }) {
   wait(1, () => {
     player.use(color(255, 255, 255)); // Revert to white or original color
     player.canTakeDamage = true;
-  });
-}
-function spawnMeleeSlash() {
-  const SLASH_LENGTH = 60;
-  const SLASH_WIDTH = 10;
-
-  let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
-  let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
-
-  let duration = 0.2;
-
-  const slash = player.add([
-    pos(dir.scale(35)),
-    rect(SLASH_LENGTH, SLASH_WIDTH),
-    anchor(vec2(-1, 0)),
-    rotate(angle - 90),
-    color(255, 0, 0),
-    area(),
-    opacity(1),
-    animate(),
-    lifespan(duration, { fade: 0.5 }),
-    z(50),
-    "player-slash",
-  ]);
-
-  slash.animate("angle", [angle - 130, angle + 130], {
-    duration: duration,
-    loops: 1,
   });
 }
 
@@ -404,6 +404,14 @@ function castSelectedMeeleSkill() {
   wait(selectedSkill.cooldownTime, () => {
     selectedSkill.isCoolingDown = false;
   });
+}
+
+export function getSelectedRangedSkillDamage() {
+  return player.selectedRangedSkill.damage + player.baseRangedDamage;
+}
+
+export function getSelectedMeleeSkillDamage() {
+  return player.selectedMeleeSkill.damage + player.baseMeeleDamage;
 }
 
 export { initPlayer, player };

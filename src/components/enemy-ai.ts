@@ -6,7 +6,11 @@ import {
   AreaComp,
   AnchorComp,
 } from "kaplay";
-import { player } from "../entities/player";
+import {
+  getSelectedMeleeSkillDamage,
+  getSelectedRangedSkillDamage,
+  player,
+} from "../entities/player";
 import { initHeart } from "../entities/heart";
 
 type EnemyAIConfig = {
@@ -123,10 +127,12 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       function takeDamageFromSkill(skillType: "ranged" | "melee") {
         if (skillType === "ranged") {
-          self.hurt(player.selectedRangedSkill.damage);
+          let damage = getSelectedRangedSkillDamage();
+          self.hurt(damage);
         }
         if (skillType === "melee") {
-          self.hurt(player.selectedMeleeSkill.damage);
+          let damage = getSelectedMeleeSkillDamage();
+          self.hurt(damage);
         }
 
         if (self.hp() <= 0) {
