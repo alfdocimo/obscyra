@@ -40,6 +40,17 @@ loadSprite("player", "/sprites/cosito32.png", {
     },
   },
 });
+loadSprite("testsword", "/sprites/testsword.png", {
+  sliceX: 4,
+  sliceY: 2,
+  anims: {
+    attack: {
+      from: 0,
+      to: 3,
+      loop: false,
+    },
+  },
+});
 loadSprite("gun", "/sprites/gun.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");

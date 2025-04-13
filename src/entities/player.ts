@@ -99,8 +99,8 @@ const initPlayer = () => {
           cooldownTime: 1,
           isCoolingDown: false,
           invoke: () => {
-            const SLASH_LENGTH = 60;
-            const SLASH_WIDTH = 10;
+            // const SLASH_LENGTH = 60;
+            // const SLASH_WIDTH = 10;
 
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
@@ -108,23 +108,27 @@ const initPlayer = () => {
             let duration = 0.2;
 
             const slash = player.add([
-              pos(dir.scale(35)),
-              rect(SLASH_LENGTH, SLASH_WIDTH),
+              pos(dir.scale(10)),
+              sprite("testsword", { width: 64, height: 64, anim: "attack" }),
               anchor(vec2(-1, 0)),
-              rotate(angle - 90),
+              rotate(angle),
               color(255, 0, 0),
               area(),
               opacity(1),
               animate(),
-              lifespan(duration, { fade: 0.5 }),
+              lifespan(duration, { fade: 0.2 }),
               z(50),
               "player-slash",
             ]);
 
-            slash.animate("angle", [angle - 130, angle + 130], {
-              duration: duration,
-              loops: 1,
-            });
+            // slash.animate("angle", [angle - 130, angle + 130], {
+            //   duration: duration,
+            //   loops: 1,
+            // });
+
+            // let slash = player.add([
+            //   sprite("testsword", { width: 64, height: 64, anim: "attack" }),
+            // ]);
           },
         },
       ],
@@ -179,6 +183,7 @@ const initPlayer = () => {
 
   let gun = player.add([
     sprite("gun", { width: 32, height: 8 }),
+    "player-gun",
     rotate(0),
     anchor(vec2(-1, 0)),
   ]);
