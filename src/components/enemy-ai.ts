@@ -126,14 +126,11 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           flashCount++;
 
           if (flashCount >= maxFlashes) {
-            flashTimer.cancel(); // stop the loop
-            self.destroy(); // finally destroy the enemy
+            flashTimer.cancel();
           }
         });
 
-        // wait(1, () => {
-        //   destroy(self);
-        // });
+        die();
       });
 
       self.onCollide("player-bullet", (playerBullet) => {
@@ -148,7 +145,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       self.onUpdate(() => {
         const DIST_LIMIT = 1200;
         if (self.pos.dist(player.pos) > DIST_LIMIT) {
-          destroy(self);
+          removeOutOfBounds();
         }
       });
 
@@ -174,22 +171,45 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           self.use(color(255, 255, 255));
         });
       }
-    },
 
-    destroy(this: EnemyAIContext) {
-      const self = this;
-      const willDropHeart = rand(100);
-      if (willDropHeart > 50) {
-        initHeart({
-          x: this.pos.x,
-          y: this.pos.y,
-          healAmount: 3,
-        });
+      function die() {
+        const willDropHeart = rand(100);
+        if (willDropHeart > 50) {
+          initHeart({
+            x: self.pos.x,
+            y: self.pos.y,
+            healAmount: 3,
+          });
+        }
+
+        player.expPoints += self.expPoints;
+        gameState.currentMobs--;
+        gameState.totalMobsKilled++;
+
+        destroy(self);
       }
 
-      player.expPoints += self.expPoints;
-      gameState.currentMobs--;
-      gameState.totalMobsKilled++;
+      function removeOutOfBounds() {
+        console.log("remove out of bounds");
+        gameState.currentMobs--;
+        destroy(self);
+      }
     },
+
+    // destroy(this: EnemyAIContext) {
+    //   const self = this;
+    //   const willDropHeart = rand(100);
+    //   if (willDropHeart > 50) {
+    //     initHeart({
+    //       x: this.pos.x,
+    //       y: this.pos.y,
+    //       healAmount: 3,
+    //     });
+    //   }
+
+    //   player.expPoints += self.expPoints;
+    //   gameState.currentMobs--;
+    //   gameState.totalMobsKilled++;
+    // },
   };
 }
