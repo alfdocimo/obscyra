@@ -3,9 +3,9 @@ import { player } from "./player";
 export function initEnergyOrb({
   x,
   y,
-  healAmount = 3,
+  amount = 3,
 }: {
-  healAmount: number;
+  amount: number;
   x: number;
   y: number;
 }) {
@@ -20,14 +20,15 @@ export function initEnergyOrb({
   ]);
 
   energyOrb.onCollide("player", () => {
-    const HEAL_AMOUNT = healAmount;
+    const AMOUNT = amount;
 
-    if (player.hp() + HEAL_AMOUNT >= player.maxHP()) {
-      player.setHP(player.maxHP());
+    if (player.mana + AMOUNT >= player.maxMana) {
+      player.mana = player.maxMana;
     } else {
-      player.heal(HEAL_AMOUNT);
+      player.mana += AMOUNT;
     }
-    player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
+    // TODO: when mana UI bar is implemented
+    // player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
     destroy(energyOrb);
   });
 

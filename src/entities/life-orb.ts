@@ -3,9 +3,9 @@ import { player } from "./player";
 export function initLifeOrb({
   x,
   y,
-  healAmount = 3,
+  amount = 3,
 }: {
-  healAmount: number;
+  amount: number;
   x: number;
   y: number;
 }) {
@@ -20,12 +20,12 @@ export function initLifeOrb({
   ]);
 
   lifeOrb.onCollide("player", () => {
-    const HEAL_AMOUNT = healAmount;
+    const AMOUNT = amount;
 
-    if (player.hp() + HEAL_AMOUNT >= player.maxHP()) {
+    if (player.hp() + AMOUNT >= player.maxHP()) {
       player.setHP(player.maxHP());
     } else {
-      player.heal(HEAL_AMOUNT);
+      player.heal(AMOUNT);
     }
     player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
     destroy(lifeOrb);

@@ -192,7 +192,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
             initLifeOrb({
               x: self.pos.x,
               y: self.pos.y,
-              healAmount: 3,
+              amount: 3,
             });
           }
 
@@ -200,7 +200,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
             initEnergyOrb({
               x: self.pos.x + 20,
               y: self.pos.y,
-              healAmount: 3,
+              amount: 5,
             });
           }
         }
