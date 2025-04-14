@@ -148,13 +148,15 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
 
       function takeDamageFromSkill(skillType: "ranged" | "melee") {
+        let playerCorruption = player.corruption;
+
         if (skillType === "ranged") {
           let damage = getSelectedRangedSkillDamage();
-          self.hurt(damage);
+          self.hurt(damage + playerCorruption * 1.5);
         }
         if (skillType === "melee") {
           let damage = getSelectedMeleeSkillDamage();
-          self.hurt(damage);
+          self.hurt(damage + playerCorruption * 1.5);
         }
         shake(2);
 

@@ -20,12 +20,12 @@ export function initCrystal({
   ]);
 
   crystal.onCollide("player", () => {
-    const HEAL_AMOUNT = healAmount;
+    player.corruption -= 5;
+    player.corruptionTimer = 0;
+    player.isDecaying = true;
 
-    if (player.hp() + HEAL_AMOUNT >= player.maxHP()) {
-      player.setHP(player.maxHP());
-    } else {
-      player.heal(HEAL_AMOUNT);
+    if (player.corruption <= 0) {
+      player.enterState("normal");
     }
 
     destroy(crystal);

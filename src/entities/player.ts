@@ -17,7 +17,7 @@ const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 20;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
-const CORRUPTION_INCREMENT = 1;
+const CORRUPTION_INCREMENT = 3;
 
 type Skill = {
   name: string;
@@ -91,7 +91,7 @@ const initPlayer = () => {
       canTakeDamage: true,
       level: 1,
       expPoints: 0,
-      nextLevelExpPoints: 1,
+      nextLevelExpPoints: 20,
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
       cooldownReductionPercentage: 0.3,
@@ -257,11 +257,7 @@ const initPlayer = () => {
   registerAnimationsOnKeyPressed();
   // Helper function to increase corruption and reset decay timer
   function handleCorruptionGain() {
-    player.corruption = Math.min(
-      player.corruption +
-        rand(CORRUPTION_INCREMENT * 2, 3 * CORRUPTION_INCREMENT),
-      player.maxCorruption
-    );
+    player.corruption += randi(1, CORRUPTION_INCREMENT);
     player.corruptionTimer = CORRUPTION_DECAY_DELAY;
     player.isDecaying = false;
   }
@@ -281,23 +277,29 @@ const initPlayer = () => {
     }
 
     if (player.isDecaying && player.corruption > 0) {
-      player.corruption = Math.max(player.corruption - dt(), 0);
-      if (player.corruption === 0) {
+      player.corruption = Math.max(player.corruption - dt() * 8, 0);
+      if (player.corruption <= 0) {
+        player.corruption = 0;
+        player.corruptionTimer = 0;
+        player.isDecaying = false;
         player.enterState("normal");
         debug.log("Player is now CLEAN (normal).");
       }
     }
   });
 
+  // Corruption bar: temp
   onUpdate(() => {
     const percent = player.corruption / player.maxCorruption;
     corruptionBar.width = percent * 50;
   });
 
+  // HP bar temp
   onUpdate(() => {
     healthBar.width = (player.hp() * 50) / player.maxHP();
   });
 
+  // Max corruption effect
   onUpdate(() => {
     // Check if player is corrupted
     if (player.corruption >= player.maxCorruption) {
@@ -371,7 +373,14 @@ function displayPlayerStats() {
 function registerPlayerDeathHandler() {
   player.on("death", () => {
     destroy(player);
-    add([text("lol you suck!?"), pos(center())]);
+    add([
+      text("Morido", { size: 16 }),
+      pos(player.worldPos().x, player.worldPos().y - 40),
+      opacity(1),
+      color(255, 0, 0),
+      lifespan(1, { fade: 0.5 }),
+      z(999),
+    ]);
   });
 }
 
@@ -417,17 +426,16 @@ function handleLevelUp() {
       player.setHP(player.maxHP());
 
       player.expPoints = 0;
-      player.nextLevelExpPoints += 10;
+      player.nextLevelExpPoints *= 1.5;
 
-      player.add([
-        text("Level Up!"),
-        anchor("center"),
-        pos(0, -50),
+      debug.log("LEVEL UP!");
+      add([
+        text("LEVEL UP OVERLOAD!", { size: 16 }),
+        pos(player.worldPos().x, player.worldPos().y - 40),
         opacity(1),
-        lifespan(1, {
-          fade: 0.5,
-        }),
-        z(1000),
+        color(0, 100, 100),
+        lifespan(1, { fade: 0.5 }),
+        z(999),
       ]);
     }
   });
