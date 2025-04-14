@@ -6,6 +6,7 @@ import {
   AnchorComp,
   HealthComp,
   GameObj,
+  StateComp,
 } from "kaplay";
 
 const HP = 30;
@@ -13,6 +14,10 @@ const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_MANA = 20;
 const INITAL_STAMINA = 20;
+const INITIAL_CORRUPTION = 0;
+const MAX_CORRUPTION = 20;
+const CORRUPTION_DECAY_DELAY = 3; // in seconds
+const CORRUPTION_INCREMENT = 1;
 
 type Skill = {
   name: string;
@@ -42,6 +47,7 @@ let player: GameObj<
   | BodyComp
   | AnchorComp
   | HealthComp
+  | StateComp
   | {
       canTakeDamage: boolean;
       baseMeeleDamage: number;
@@ -54,6 +60,11 @@ let player: GameObj<
       maxStamina: number;
       mana: number;
       stamina: number;
+      corruption: number;
+      maxCorruption: number;
+      corruptionTimer: number;
+      isDecaying: boolean;
+
       rangedSKills: RangedSkill[];
       meeleSkills: MeleeSkill[];
       selectedRangedSkill?: RangedSkill; // This ensures only "ranged" skills can be assigned here
@@ -72,6 +83,7 @@ const initPlayer = () => {
     area({ shape: new Rect(vec2(0, 0), 16, 32) }),
     body(),
     anchor("center"),
+    state("normal", ["normal", "corrupted"]),
     health(HP),
     z(3000),
     "player",
@@ -87,6 +99,10 @@ const initPlayer = () => {
       maxStamina: INITAL_STAMINA,
       mana: INITAL_MANA,
       stamina: INITAL_STAMINA,
+      corruption: 0, // current corruption points
+      maxCorruption: 20, // maximum allowed corruption
+      corruptionTimer: 0, // countdown timer (in seconds)
+      isDecaying: false, // flag to indicate we are in decay mode
 
       meeleSkills: [
         {
@@ -178,13 +194,22 @@ const initPlayer = () => {
 
   player.setMaxHP(30);
 
-  player.add([
+  let healthBar = player.add([
     rect(50, 5),
     pos(-25, -25),
     outline(1),
     color(255, 0, 100),
     anchor("left"),
     "health-bar",
+  ]);
+
+  let corruptionBar = player.add([
+    rect(0, 5),
+    pos(-25, -35),
+    outline(1),
+    color(0, 255, 200),
+    anchor("left"),
+    "corruption-bar",
   ]);
 
   let gun = player.add([
@@ -230,6 +255,78 @@ const initPlayer = () => {
   registerPlayerFlipOnXAxis();
   registerMovementControls();
   registerAnimationsOnKeyPressed();
+  // Helper function to increase corruption and reset decay timer
+  function handleCorruptionGain() {
+    player.corruption = Math.min(
+      player.corruption +
+        rand(CORRUPTION_INCREMENT * 2, 3 * CORRUPTION_INCREMENT),
+      player.maxCorruption
+    );
+    player.corruptionTimer = CORRUPTION_DECAY_DELAY;
+    player.isDecaying = false;
+  }
+
+  // When the player enters "corrupted", we apply the corruption logic
+  player.onStateEnter("corrupted", () => {
+    handleCorruptionGain();
+    debug.log("Player is now CORRUPTED! (corruption =", player.corruption, ")");
+  });
+
+  // While in "corrupted", manage the timer and decay
+  player.onStateUpdate("corrupted", () => {
+    if (player.corruptionTimer > 0) {
+      player.corruptionTimer -= dt();
+    } else {
+      player.isDecaying = true;
+    }
+
+    if (player.isDecaying && player.corruption > 0) {
+      player.corruption = Math.max(player.corruption - dt(), 0);
+      if (player.corruption === 0) {
+        player.enterState("normal");
+        debug.log("Player is now CLEAN (normal).");
+      }
+    }
+  });
+
+  onUpdate(() => {
+    const percent = player.corruption / player.maxCorruption;
+    corruptionBar.width = percent * 50;
+  });
+
+  onUpdate(() => {
+    healthBar.width = (player.hp() * 50) / player.maxHP();
+  });
+
+  onUpdate(() => {
+    // Check if player is corrupted
+    if (player.corruption >= player.maxCorruption) {
+      // 💥 Trigger max corruption effect
+      handleMaxCorruption();
+    }
+  });
+
+  function handleMaxCorruption() {
+    // Reset corruption state
+    player.corruption = 0;
+    player.corruptionTimer = 0;
+    player.isDecaying = false;
+    player.enterState("normal"); // if you’re using state system, clear the current one
+
+    // Reduce HP by half (rounded down)
+    player.setHP(player.hp() / 2);
+
+    // Optional: Show a visual cue / flash / sound
+    debug.log("MAX CORRUPTION REACHED ⚠️ — HP HALVED!");
+    add([
+      text("CORRUPTION OVERLOAD!", { size: 16 }),
+      pos(player.worldPos().x, player.worldPos().y - 40),
+      opacity(1),
+      color(255, 0, 0),
+      lifespan(1, { fade: 0.5 }),
+      z(999),
+    ]);
+  }
 
   return player;
 };
@@ -318,7 +415,6 @@ function handleLevelUp() {
 
       player.setMaxHP(player.maxHP() + 10);
       player.setHP(player.maxHP());
-      player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
 
       player.expPoints = 0;
       player.nextLevelExpPoints += 10;
@@ -396,7 +492,6 @@ function takeDamage({ damage }: { damage: number }) {
   shake(5);
 
   player.hurt(damage);
-  player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
 
   player.use(color(255, 0, 0));
 

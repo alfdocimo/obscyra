@@ -27,7 +27,7 @@ export function initLifeOrb({
     } else {
       player.heal(AMOUNT);
     }
-    player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
+
     destroy(lifeOrb);
   });
 

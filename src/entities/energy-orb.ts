@@ -28,7 +28,7 @@ export function initEnergyOrb({
       player.mana += AMOUNT;
     }
     // TODO: when mana UI bar is implemented
-    // player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
+
     destroy(energyOrb);
   });
 

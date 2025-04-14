@@ -172,6 +172,9 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       }
 
       function die() {
+        player.corruption += 1;
+        player.enterState("corrupted");
+
         const willDropItem = rand(100);
         let index = randi(0, 3);
 

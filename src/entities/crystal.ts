@@ -27,7 +27,7 @@ export function initCrystal({
     } else {
       player.heal(HEAL_AMOUNT);
     }
-    player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
+
     destroy(crystal);
   });
 
