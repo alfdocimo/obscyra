@@ -65,6 +65,17 @@ loadSprite("tri-mob", "/sprites/tri-mob.png", {
     },
   },
 });
+loadSprite("diamond", "/sprites/diamond.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    idle: {
+      from: 0,
+      to: 6,
+      loop: true,
+    },
+  },
+});
 loadSprite("player-bullet-basic", "/sprites/player-bullet.png");
 loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
@@ -81,6 +92,9 @@ loadSprite("heart", "/sprites/heart.png", {
 });
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("level", "/bg/level.png");
+loadSprite("test-map", "/bg/test-map.png", {
+  singular: true,
+});
 
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);

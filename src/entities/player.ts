@@ -9,7 +9,7 @@ import {
 } from "kaplay";
 
 const HP = 30;
-const SPEED = 200;
+const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_MANA = 20;
 const INITAL_STAMINA = 20;

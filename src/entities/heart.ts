@@ -10,12 +10,12 @@ export function initHeart({
   y: number;
 }) {
   const heart = add([
-    sprite("heart", { width: 24, height: 24, anim: "idle" }),
+    sprite("diamond", { width: 25, height: 25, anim: "idle" }),
     pos(x, y),
     anchor("center"),
     area(),
     opacity(3),
-    lifespan(3, { fade: 0.5 }),
+    lifespan(10, { fade: 0.5 }),
     body({ isStatic: true }),
   ]);
 

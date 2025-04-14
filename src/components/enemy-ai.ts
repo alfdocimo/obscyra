@@ -155,6 +155,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
           let damage = getSelectedMeleeSkillDamage();
           self.hurt(damage);
         }
+        shake(2);
 
         hpBar.width = (self.hp() * 50) / initialHealth;
 
