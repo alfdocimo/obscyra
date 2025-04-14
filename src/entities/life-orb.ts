@@ -1,6 +1,6 @@
 import { player } from "./player";
 
-export function initHeart({
+export function initLifeOrb({
   x,
   y,
   healAmount = 3,
@@ -9,8 +9,8 @@ export function initHeart({
   x: number;
   y: number;
 }) {
-  const heart = add([
-    sprite("diamond", { width: 25, height: 25, anim: "idle" }),
+  const lifeOrb = add([
+    sprite("life-orb", { width: 25, height: 25, anim: "idle" }),
     pos(x, y),
     anchor("center"),
     area(),
@@ -19,7 +19,7 @@ export function initHeart({
     body({ isStatic: true }),
   ]);
 
-  heart.onCollide("player", () => {
+  lifeOrb.onCollide("player", () => {
     const HEAL_AMOUNT = healAmount;
 
     if (player.hp() + HEAL_AMOUNT >= player.maxHP()) {
@@ -28,8 +28,8 @@ export function initHeart({
       player.heal(HEAL_AMOUNT);
     }
     player.get("health-bar")[0].width = (player.hp() * 50) / player.maxHP();
-    destroy(heart);
+    destroy(lifeOrb);
   });
 
-  return heart;
+  return lifeOrb;
 }

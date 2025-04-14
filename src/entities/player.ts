@@ -152,8 +152,8 @@ const initPlayer = () => {
             let playerBullet = add([
               // rect(4, 4), // bullet shape (12x12)
               sprite("player-bullet-basic", {
-                width: 4,
-                height: 4,
+                width: 6,
+                height: 6,
               }),
               pos(bulletStartPos), // spawn it at the player's position
               move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED

@@ -11,8 +11,10 @@ import {
   getSelectedRangedSkillDamage,
   player,
 } from "../entities/player";
-import { initHeart } from "../entities/heart";
+import { initCrystal } from "../entities/crystal";
 import { gameState } from "../game-state";
+import { initLifeOrb } from "../entities/life-orb";
+import { initEnergyOrb } from "../entities/energy-orb";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -116,7 +118,6 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         const flashInterval = 0.1;
 
         const flashTimer = loop(flashInterval, () => {
-          console.log("flashinggg");
           self.use(
             color(flashCount % 2 === 0 ? rgb(255, 0, 0) : rgb(255, 255, 255))
           );
@@ -171,13 +172,37 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       }
 
       function die() {
-        const willDropHeart = rand(100);
-        if (willDropHeart > 50) {
-          initHeart({
-            x: self.pos.x,
-            y: self.pos.y,
-            healAmount: 3,
-          });
+        const willDropItem = rand(100);
+        let index = randi(0, 3);
+
+        const itemToDrop = ["crystal", "life-orb", "energy-orb"][index];
+
+        // Maybe start with larger drop % and then reduce it as game gets more
+        // Difficult
+        if (willDropItem > 40) {
+          if (itemToDrop === "crystal") {
+            initCrystal({
+              x: self.pos.x,
+              y: self.pos.y,
+              healAmount: 3,
+            });
+          }
+
+          if (itemToDrop === "life-orb") {
+            initLifeOrb({
+              x: self.pos.x,
+              y: self.pos.y,
+              healAmount: 3,
+            });
+          }
+
+          if (itemToDrop === "energy-orb") {
+            initEnergyOrb({
+              x: self.pos.x + 20,
+              y: self.pos.y,
+              healAmount: 3,
+            });
+          }
         }
 
         player.expPoints += self.expPoints;

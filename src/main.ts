@@ -65,7 +65,7 @@ loadSprite("tri-mob", "/sprites/tri-mob.png", {
     },
   },
 });
-loadSprite("diamond", "/sprites/diamond.png", {
+loadSprite("crystal", "/sprites/crystal.png", {
   sliceX: 3,
   sliceY: 3,
   anims: {
@@ -94,6 +94,28 @@ loadSprite("steel", "/sprites/steel.png");
 loadSprite("level", "/bg/level.png");
 loadSprite("test-map", "/bg/test-map.png", {
   singular: true,
+});
+loadSprite("life-orb", "/sprites/life-orb.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    idle: {
+      from: 0,
+      to: 6,
+      loop: true,
+    },
+  },
+});
+loadSprite("energy-orb", "/sprites/energy-orb.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    idle: {
+      from: 0,
+      to: 6,
+      loop: true,
+    },
+  },
 });
 
 scene("menu", () => {
