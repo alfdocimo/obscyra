@@ -196,12 +196,176 @@ const initPlayer = () => {
       ],
     },
   ]);
-
-  player.selectedRangedSkill = player.rangedSKills[0];
-  player.selectedMeleeSkill = player.meeleSkills[0];
-
   player.setMaxHP(INITIAL_HP);
 
+  setDefaultPlayerSkills();
+
+  let gun = initPlayerGun();
+
+  let {
+    corruptionBar,
+    corruptionText,
+    healthBar,
+    heathBarText,
+    energyBar,
+    energyText,
+    staminaBar,
+    staminaText,
+  } = initPlayerStatsUI();
+
+  const aimCircle = initializeAimIndicator();
+
+  registerInputHandlers();
+
+  // Take damage on collision with enemies
+  handlePlayerCollisions();
+
+  // Level up system
+  handleLevelUp();
+
+  // Regen stamina
+  staminaRegenLoop();
+
+  displayPlayerStats();
+
+  registerPlayerDeathHandler();
+
+  // Register input handlers & movement
+  registerPlayerFlipOnXAxis();
+  registerMovementControls();
+  registerAnimationsOnKeyPressed();
+
+  // When the player enters "corrupted", we apply the corruption logic
+  player.onStateEnter("corrupted", () => {
+    handleCorruptionGain();
+  });
+
+  // While in "corrupted", manage the timer and decay
+  player.onStateUpdate("corrupted", () => {
+    if (player.corruptionTimer >= 0) {
+      player.corruptionTimer -= dt();
+    } else {
+      player.isDecaying = true;
+    }
+
+    if (player.isDecaying && player.corruption >= 0) {
+      player.corruption = Math.max(player.corruption - dt() * 8, 0);
+      if (player.corruption <= 0) {
+        player.corruption = 0;
+        player.corruptionTimer = 0;
+        player.isDecaying = false;
+        player.enterState("normal");
+      }
+    }
+  });
+
+  // Update player stats in UI
+  updatePlayerStatsInUI(
+    corruptionBar,
+    corruptionText,
+    healthBar,
+    heathBarText,
+    energyBar,
+    energyText,
+    staminaBar,
+    staminaText
+  );
+
+  checkCorrutionAmountInPlayer();
+
+  return player;
+};
+
+function updatePlayerStatsInUI(
+  corruptionBar,
+  corruptionText,
+  healthBar,
+  heathBarText,
+  energyBar,
+  energyText,
+  staminaBar,
+  staminaText
+) {
+  // CORRUPTION BAR 🟣
+  onUpdate(() => {
+    // const percent = player.corruption / player.maxCorruption;
+    // corruptionBar.width = percent * 50;
+    corruptionBar.width =
+      (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
+
+    corruptionText.text = `Corruption \t ${Math.round(player.corruption)}/${
+      player.maxCorruption
+    }`;
+  });
+
+  // HP BAR 🟥
+  onUpdate(() => {
+    healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
+    heathBarText.text = `Health \t ${player.hp()}/${player.maxHP()}`;
+  });
+
+  // ENERGY BAR 🟦
+  onUpdate(() => {
+    energyBar.width = (player.energy * ENERGY_STATUS_WIDTH) / player.maxEnergy;
+    energyText.text = `Energy \t ${player.energy}/${player.maxEnergy}`;
+  });
+
+  // STAMINA BAR 🟩
+  onUpdate(() => {
+    staminaBar.width =
+      (player.stamina * STAMINA_STATUS_WIDTH) / player.maxStamina;
+    staminaText.text = `Stamina \t ${player.stamina}/${player.maxStamina}`;
+  });
+}
+
+function handleMaxCorruption() {
+  // Reset corruption state
+  player.corruption = 0;
+  player.corruptionTimer = 0;
+  player.isDecaying = false;
+  player.enterState("normal"); // if you’re using state system, clear the current one
+
+  // Reduce HP by half (rounded down)
+  player.hurt(player.maxHP() / 2);
+
+  add([
+    text("CORRUPTION OVERLOAD!", { size: 16 }),
+    pos(player.worldPos().x, player.worldPos().y - 40),
+    opacity(1),
+    color(255, 0, 0),
+    lifespan(1, { fade: 0.5 }),
+    z(999),
+  ]);
+}
+
+function checkCorrutionAmountInPlayer() {
+  // Max corruption effect
+  onUpdate(() => {
+    // Check if player is corrupted
+    if (player.corruption >= player.maxCorruption) {
+      // 💥 Trigger max corruption effect
+      handleMaxCorruption();
+    }
+  });
+}
+
+function initializeAimIndicator() {
+  let aimCircle = add([
+    pos(toWorld(mousePos())),
+    circle(4),
+    color(255, 0, 0),
+    z(1000),
+    "cursor",
+  ]);
+
+  aimCircle.onUpdate(() => {
+    aimCircle.pos = toWorld(mousePos());
+  });
+
+  return aimCircle;
+}
+
+function initPlayerGun() {
   let gun = player.add([
     sprite("gun", { width: 32, height: 8 }),
     "player-gun",
@@ -209,12 +373,21 @@ const initPlayer = () => {
     anchor(vec2(-1, 0)),
   ]);
 
+  onMouseMove(() => {
+    gun.angle = toWorld(mousePos()).sub(player.pos).angle();
+    gun.flipY = Math.abs(gun.angle) > 90;
+  });
+
+  return gun;
+}
+
+function initPlayerStatsUI() {
   let playerStats = add([
     sprite("player-stats", { anim: "idle" }),
     pos(40, 40),
     anchor("topleft"),
     fixed(),
-    z(1000),
+    z(10000),
   ]);
 
   let healthBar = playerStats.add([
@@ -284,140 +457,22 @@ const initPlayer = () => {
     anchor("left"),
     z(1000),
   ]);
+  return {
+    corruptionBar,
+    corruptionText,
+    healthBar,
+    heathBarText,
+    energyBar,
+    energyText,
+    staminaBar,
+    staminaText,
+  };
+}
 
-  onMouseMove(() => {
-    gun.angle = toWorld(mousePos()).sub(player.pos).angle();
-    gun.flipY = Math.abs(gun.angle) > 90;
-  });
-
-  const aimCircle = add([
-    pos(toWorld(mousePos())),
-    circle(4),
-    color(255, 0, 0),
-    z(1000),
-    "cursor",
-  ]);
-
-  aimCircle.onUpdate(() => {
-    aimCircle.pos = toWorld(mousePos());
-  });
-
-  registerInputHandlers();
-
-  // Take damage on collision with enemies
-  handlePlayerCollisions();
-
-  // Level up system
-  handleLevelUp();
-
-  // Regen stamina
-  staminaRegenLoop();
-
-  displayPlayerStats();
-
-  registerPlayerDeathHandler();
-
-  // Register input handlers & movement
-  registerPlayerFlipOnXAxis();
-  registerMovementControls();
-  registerAnimationsOnKeyPressed();
-  // Helper function to increase corruption and reset decay timer
-  function handleCorruptionGain() {
-    player.corruption += randi(1, CORRUPTION_INCREMENT);
-    player.corruptionTimer = CORRUPTION_DECAY_DELAY;
-    player.isDecaying = false;
-  }
-
-  // When the player enters "corrupted", we apply the corruption logic
-  player.onStateEnter("corrupted", () => {
-    handleCorruptionGain();
-    debug.log("Player is now CORRUPTED! (corruption =", player.corruption, ")");
-  });
-
-  // While in "corrupted", manage the timer and decay
-  player.onStateUpdate("corrupted", () => {
-    if (player.corruptionTimer >= 0) {
-      player.corruptionTimer -= dt();
-    } else {
-      player.isDecaying = true;
-    }
-
-    if (player.isDecaying && player.corruption >= 0) {
-      player.corruption = Math.max(player.corruption - dt() * 8, 0);
-      if (player.corruption <= 0) {
-        player.corruption = 0;
-        player.corruptionTimer = 0;
-        player.isDecaying = false;
-        player.enterState("normal");
-        debug.log("Player is now CLEAN (normal).");
-      }
-    }
-  });
-
-  // Corruption bar: temp
-  onUpdate(() => {
-    // const percent = player.corruption / player.maxCorruption;
-    // corruptionBar.width = percent * 50;
-    corruptionBar.width =
-      (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
-
-    corruptionText.text = `Corruption \t ${Math.round(player.corruption)}/${
-      player.maxCorruption
-    }`;
-  });
-
-  // HP bar temp
-  onUpdate(() => {
-    healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
-    heathBarText.text = `Health \t ${player.hp()}/${player.maxHP()}`;
-  });
-
-  // Energy bar temp
-  onUpdate(() => {
-    energyBar.width = (player.energy * ENERGY_STATUS_WIDTH) / player.maxEnergy;
-    energyText.text = `Energy \t ${player.energy}/${player.maxEnergy}`;
-  });
-
-  // Stamina bar temp
-  onUpdate(() => {
-    staminaBar.width =
-      (player.stamina * STAMINA_STATUS_WIDTH) / player.maxStamina;
-    staminaText.text = `Stamina \t ${player.stamina}/${player.maxStamina}`;
-  });
-
-  // Max corruption effect
-  onUpdate(() => {
-    // Check if player is corrupted
-    if (player.corruption >= player.maxCorruption) {
-      // 💥 Trigger max corruption effect
-      handleMaxCorruption();
-    }
-  });
-
-  function handleMaxCorruption() {
-    // Reset corruption state
-    player.corruption = 0;
-    player.corruptionTimer = 0;
-    player.isDecaying = false;
-    player.enterState("normal"); // if you’re using state system, clear the current one
-
-    // Reduce HP by half (rounded down)
-    player.setHP(player.hp() / 2);
-
-    // Optional: Show a visual cue / flash / sound
-    debug.log("MAX CORRUPTION REACHED ⚠️ — HP HALVED!");
-    add([
-      text("CORRUPTION OVERLOAD!", { size: 16 }),
-      pos(player.worldPos().x, player.worldPos().y - 40),
-      opacity(1),
-      color(255, 0, 0),
-      lifespan(1, { fade: 0.5 }),
-      z(999),
-    ]);
-  }
-
-  return player;
-};
+function setDefaultPlayerSkills() {
+  player.selectedRangedSkill = player.rangedSKills[0];
+  player.selectedMeleeSkill = player.meeleSkills[0];
+}
 
 function displayPlayerStats() {
   // display all player stats
@@ -454,6 +509,13 @@ function displayPlayerStats() {
   Ranged Skill: ${player.selectedRangedSkill?.name} \n
   `;
   });
+}
+
+// Helper function to increase corruption and reset decay timer
+function handleCorruptionGain() {
+  player.corruption += randi(1, CORRUPTION_INCREMENT);
+  player.corruptionTimer = CORRUPTION_DECAY_DELAY;
+  player.isDecaying = false;
 }
 
 function registerPlayerDeathHandler() {
@@ -521,7 +583,6 @@ function handleLevelUp() {
       player.expPoints = 0;
       player.nextLevelExpPoints *= 1.5;
 
-      debug.log("LEVEL UP!");
       add([
         text("LEVEL UP OVERLOAD!", { size: 16 }),
         pos(player.worldPos().x, player.worldPos().y - 40),
