@@ -25,6 +25,10 @@ export function initCrystal({
     player.isDecaying = true;
 
     if (player.corruption <= 0) {
+      player.corruption = 0;
+      player.isDecaying = false;
+      player.corruptionTimer = 0;
+
       player.enterState("normal");
     }
 

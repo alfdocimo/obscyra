@@ -12,12 +12,20 @@ import {
 const HP = 30;
 const SPEED = 300;
 const BULLET_SPEED = 800;
-const INITAL_MANA = 20;
+const INITAL_ENERGY = 20;
+const INITAL_MAX_ENERGY = 20;
+const INITAL_MAX_STAMINA = 20;
+const INITAL_MAX_HP = 30;
 const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
-const MAX_CORRUPTION = 20;
+const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
 const CORRUPTION_INCREMENT = 3;
+const STAT_WIDTH = 300;
+const HEALTH_STATUS_WIDTH = STAT_WIDTH;
+const ENERGY_STATUS_WIDTH = STAT_WIDTH;
+const STAMINA_STATUS_WIDTH = STAT_WIDTH;
+const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
 
 type Skill = {
   name: string;
@@ -95,12 +103,12 @@ const initPlayer = () => {
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
       cooldownReductionPercentage: 0.3,
-      maxMana: INITAL_MANA,
+      maxMana: INITAL_ENERGY,
       maxStamina: INITAL_STAMINA,
-      mana: INITAL_MANA,
+      mana: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: 0, // current corruption points
-      maxCorruption: 20, // maximum allowed corruption
+      corruption: INITIAL_CORRUPTION, // current corruption points
+      maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
       corruptionTimer: 0, // countdown timer (in seconds)
       isDecaying: false, // flag to indicate we are in decay mode
 
@@ -194,29 +202,71 @@ const initPlayer = () => {
 
   player.setMaxHP(30);
 
-  let healthBar = player.add([
-    rect(50, 5),
-    pos(-25, -25),
-    outline(1),
-    color(255, 0, 100),
-    anchor("left"),
-    "health-bar",
-  ]);
-
-  let corruptionBar = player.add([
-    rect(0, 5),
-    pos(-25, -35),
-    outline(1),
-    color(0, 255, 200),
-    anchor("left"),
-    "corruption-bar",
-  ]);
-
   let gun = player.add([
     sprite("gun", { width: 32, height: 8 }),
     "player-gun",
     rotate(0),
     anchor(vec2(-1, 0)),
+  ]);
+
+  let playerStats = add([
+    sprite("player-stats", { anim: "idle" }),
+    pos(40, 40),
+    anchor("topleft"),
+    fixed(),
+    z(1000),
+  ]);
+
+  let healthBar = playerStats.add([
+    rect(HEALTH_STATUS_WIDTH, 15),
+    pos(90, 20),
+    outline(2.5),
+    color(255, 0, 100),
+    anchor("left"),
+    "health-bar",
+  ]);
+
+  let heathBarText = healthBar.add([
+    text("", { size: 10 }),
+    pos(10, 0),
+    color(255, 255, 255),
+    anchor("left"),
+    z(1000),
+  ]);
+
+  let staminaBar = playerStats.add([
+    rect(STAMINA_STATUS_WIDTH, 15),
+    pos(90, 40),
+    outline(2.5),
+    color(0, 200, 100),
+    anchor("left"),
+    "stamina-bar",
+  ]);
+
+  let staminaText = staminaBar.add([
+    text("", { size: 10 }),
+    pos(10, 0),
+    color(255, 255, 255),
+    anchor("left"),
+    z(1000),
+  ]);
+
+  let energyBar = playerStats.add([
+    rect(ENERGY_STATUS_WIDTH, 15),
+    pos(90, 60),
+    outline(2.5),
+    color(0, 100, 200),
+    anchor("left"),
+    "energy-bar",
+  ]);
+
+  let corruptionBar = playerStats.add([
+    rect(CORRUPTION_STATUS_WIDTH, 15),
+    pos(90, 80),
+    outline(2.5),
+    color(231, 65, 237),
+    anchor("left"),
+    "energy-bar",
   ]);
 
   onMouseMove(() => {
@@ -270,13 +320,13 @@ const initPlayer = () => {
 
   // While in "corrupted", manage the timer and decay
   player.onStateUpdate("corrupted", () => {
-    if (player.corruptionTimer > 0) {
+    if (player.corruptionTimer >= 0) {
       player.corruptionTimer -= dt();
     } else {
       player.isDecaying = true;
     }
 
-    if (player.isDecaying && player.corruption > 0) {
+    if (player.isDecaying && player.corruption >= 0) {
       player.corruption = Math.max(player.corruption - dt() * 8, 0);
       if (player.corruption <= 0) {
         player.corruption = 0;
@@ -290,13 +340,28 @@ const initPlayer = () => {
 
   // Corruption bar: temp
   onUpdate(() => {
-    const percent = player.corruption / player.maxCorruption;
-    corruptionBar.width = percent * 50;
+    // const percent = player.corruption / player.maxCorruption;
+    // corruptionBar.width = percent * 50;
+    corruptionBar.width =
+      (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
   });
 
   // HP bar temp
   onUpdate(() => {
-    healthBar.width = (player.hp() * 50) / player.maxHP();
+    healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
+    heathBarText.text = `Health \t ${player.hp()}/${player.maxHP()}`;
+  });
+
+  // Energy bar temp
+  onUpdate(() => {
+    energyBar.width = (player.mana * ENERGY_STATUS_WIDTH) / player.maxMana;
+  });
+
+  // Stamina bar temp
+  onUpdate(() => {
+    staminaBar.width =
+      (player.stamina * STAMINA_STATUS_WIDTH) / player.maxStamina;
+    staminaText.text = `Stamina \t ${player.stamina}/${player.maxStamina}`;
   });
 
   // Max corruption effect
@@ -404,8 +469,15 @@ function registerMovementControls() {
 
 function staminaRegenLoop() {
   loop(0.5, () => {
-    if (player.stamina < player.maxStamina) {
-      player.stamina += 2;
+    console.log(`${player.stamina} / ${player.maxStamina}`);
+    if (player.exists()) {
+      if (player.stamina < player.maxStamina) {
+        if (player.stamina + 2 >= player.maxStamina) {
+          player.stamina = player.maxStamina;
+        } else {
+          player.stamina += 2;
+        }
+      }
     }
   });
 }

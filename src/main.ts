@@ -118,6 +118,18 @@ loadSprite("energy-orb", "/sprites/energy-orb.png", {
   },
 });
 
+loadSprite("player-stats", "/sprites/player-stats.png", {
+  sliceY: 11,
+  sliceX: 2,
+  anims: {
+    idle: {
+      from: 0,
+      to: 21,
+      loop: true,
+    },
+  },
+});
+
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
   onKeyPress("enter", () => {
