@@ -149,15 +149,36 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       function takeDamageFromSkill(skillType: "ranged" | "melee") {
         let playerCorruption = player.corruption;
+        let damageToTakeAmount = 1;
 
         if (skillType === "ranged") {
-          let damage = getSelectedRangedSkillDamage();
-          self.hurt(damage + playerCorruption * 1.5);
+          damageToTakeAmount =
+            getSelectedRangedSkillDamage() + playerCorruption * 1.5;
+          self.hurt(damageToTakeAmount);
         }
         if (skillType === "melee") {
-          let damage = getSelectedMeleeSkillDamage();
-          self.hurt(damage + playerCorruption * 1.5);
+          damageToTakeAmount =
+            getSelectedMeleeSkillDamage() + playerCorruption * 1.5;
+          self.hurt(damageToTakeAmount);
         }
+        let damageTakenText = add([
+          text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
+          animate(),
+          pos(self.worldPos().x, self.worldPos().y - 30),
+          opacity(1),
+          color(0, 200, 200),
+          lifespan(0.2, { fade: 0.2 }),
+          z(3000),
+        ]);
+        damageTakenText.animate(
+          "pos",
+          [
+            vec2(damageTakenText.pos),
+            vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
+          ],
+          { duration: 0.2, loops: 1 }
+        );
+
         shake(2);
 
         hpBar.width = (self.hp() * 50) / initialHealth;
