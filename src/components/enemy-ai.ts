@@ -32,7 +32,7 @@ type EnemyAIContext = GameObj<
   | HealthComp
   | AreaComp
   | AnchorComp
-  | { expPoints: number }
+  | { expPoints: number; bulletDamage: number }
 >;
 
 export function enemyAI(config: EnemyAIConfig = {}) {
@@ -85,6 +85,7 @@ export function enemyAI(config: EnemyAIConfig = {}) {
             anchor("center"),
             color(bulletColor),
             "bullet",
+            { bulletDamage: self.bulletDamage },
           ]);
 
           enemyBullet.onCollide("player", () => {

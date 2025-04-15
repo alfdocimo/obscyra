@@ -20,7 +20,7 @@ const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
-const CORRUPTION_INCREMENT = 3;
+const CORRUPTION_INCREMENT = 20;
 const STAT_WIDTH = 300;
 const HEALTH_STATUS_WIDTH = STAT_WIDTH;
 const ENERGY_STATUS_WIDTH = STAT_WIDTH;
@@ -325,8 +325,7 @@ function handleMaxCorruption() {
   player.isDecaying = false;
   player.enterState("normal"); // if you’re using state system, clear the current one
 
-  // Reduce HP by half (rounded down)
-  player.hurt(player.maxHP() / 2);
+  takeDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
   add([
     text("CORRUPTION OVERLOAD!", { size: 16 }),
@@ -552,7 +551,6 @@ function registerMovementControls() {
 
 function staminaRegenLoop() {
   loop(0.5, () => {
-    console.log(`${player.stamina} / ${player.maxStamina}`);
     if (player.exists()) {
       if (player.stamina < player.maxStamina) {
         if (player.stamina + 2 >= player.maxStamina) {
@@ -602,12 +600,17 @@ function handlePlayerCollisions() {
     for (const obj of touching) {
       if (!player.canTakeDamage) return;
 
+      console.log("touching", obj.target);
+
       if (obj.target.is("enemy")) {
+        console.log("touch", obj.target.touchDamage);
+
         takeDamage({ damage: obj.target.touchDamage });
         return; // stop after first valid collision
       }
 
       if (obj.target.is("bullet")) {
+        console.log("dmng", obj.target.bulletDamage);
         takeDamage({ damage: obj.target.bulletDamage });
         return;
       }
@@ -654,6 +657,24 @@ function takeDamage({ damage }: { damage: number }) {
   shake(5);
 
   player.hurt(damage);
+
+  let damageTakenText = add([
+    text(`${Math.round(damage)}`, { size: 16 }),
+    animate(),
+    pos(player.worldPos().x, player.worldPos().y - 30),
+    opacity(1),
+    color(230, 0, 100),
+    lifespan(0.2, { fade: 0.2 }),
+    z(3000),
+  ]);
+  damageTakenText.animate(
+    "pos",
+    [
+      vec2(damageTakenText.pos),
+      vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
+    ],
+    { duration: 0.2, loops: 1 }
+  );
 
   player.use(color(255, 0, 0));
 
