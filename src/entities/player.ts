@@ -260,6 +260,14 @@ const initPlayer = () => {
     "energy-bar",
   ]);
 
+  let energyText = energyBar.add([
+    text("", { size: 10 }),
+    pos(10, 0),
+    color(255, 255, 255),
+    anchor("left"),
+    z(1000),
+  ]);
+
   let corruptionBar = playerStats.add([
     rect(CORRUPTION_STATUS_WIDTH, 15),
     pos(90, 80),
@@ -267,6 +275,14 @@ const initPlayer = () => {
     color(231, 65, 237),
     anchor("left"),
     "energy-bar",
+  ]);
+
+  let corruptionText = corruptionBar.add([
+    text("", { size: 10 }),
+    pos(10, 0),
+    color(255, 255, 255),
+    anchor("left"),
+    z(1000),
   ]);
 
   onMouseMove(() => {
@@ -344,6 +360,10 @@ const initPlayer = () => {
     // corruptionBar.width = percent * 50;
     corruptionBar.width =
       (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
+
+    corruptionText.text = `Corruption \t ${Math.round(player.corruption)}/${
+      player.maxCorruption
+    }`;
   });
 
   // HP bar temp
@@ -355,6 +375,7 @@ const initPlayer = () => {
   // Energy bar temp
   onUpdate(() => {
     energyBar.width = (player.energy * ENERGY_STATUS_WIDTH) / player.maxEnergy;
+    energyText.text = `Energy \t ${player.energy}/${player.maxEnergy}`;
   });
 
   // Stamina bar temp
