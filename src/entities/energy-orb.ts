@@ -22,10 +22,10 @@ export function initEnergyOrb({
   energyOrb.onCollide("player", () => {
     const AMOUNT = amount;
 
-    if (player.mana + AMOUNT >= player.maxMana) {
-      player.mana = player.maxMana;
+    if (player.energy + AMOUNT >= player.maxEnergy) {
+      player.energy = player.maxEnergy;
     } else {
-      player.mana += AMOUNT;
+      player.energy += AMOUNT;
     }
     // TODO: when mana UI bar is implemented
 

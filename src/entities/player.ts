@@ -9,13 +9,13 @@ import {
   StateComp,
 } from "kaplay";
 
-const HP = 30;
+const INITIAL_HP = 30;
 const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_ENERGY = 20;
 const INITAL_MAX_ENERGY = 20;
 const INITAL_MAX_STAMINA = 20;
-const INITAL_MAX_HP = 30;
+
 const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
@@ -30,7 +30,7 @@ const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
 type Skill = {
   name: string;
   damage: number;
-  manaCost?: number;
+  energyCost?: number;
   staminaCost?: number;
   unlockLevel?: number;
   isSlected?: boolean;
@@ -64,9 +64,9 @@ let player: GameObj<
       nextLevelExpPoints: number;
       expPoints: number;
       level: number;
-      maxMana: number;
+      maxEnergy: number;
       maxStamina: number;
-      mana: number;
+      energy: number;
       stamina: number;
       corruption: number;
       maxCorruption: number;
@@ -92,7 +92,7 @@ const initPlayer = () => {
     body(),
     anchor("center"),
     state("normal", ["normal", "corrupted"]),
-    health(HP),
+    health(INITIAL_HP),
     z(3000),
     "player",
     {
@@ -103,9 +103,9 @@ const initPlayer = () => {
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
       cooldownReductionPercentage: 0.3,
-      maxMana: INITAL_ENERGY,
-      maxStamina: INITAL_STAMINA,
-      mana: INITAL_ENERGY,
+      maxEnergy: INITAL_MAX_ENERGY,
+      maxStamina: INITAL_MAX_STAMINA,
+      energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
       corruption: INITIAL_CORRUPTION, // current corruption points
       maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
@@ -116,7 +116,7 @@ const initPlayer = () => {
         {
           name: "Slash",
           isUnlocked: true,
-          manaCost: 0,
+          energyCost: 0,
           staminaCost: 5,
           unlockLevel: 1,
           type: "melee",
@@ -161,7 +161,7 @@ const initPlayer = () => {
           name: "Fireball",
           damage: 1,
           isUnlocked: true,
-          manaCost: 1,
+          energyCost: 1,
           staminaCost: 3,
           unlockLevel: 1,
           type: "ranged",
@@ -200,7 +200,7 @@ const initPlayer = () => {
   player.selectedRangedSkill = player.rangedSKills[0];
   player.selectedMeleeSkill = player.meeleSkills[0];
 
-  player.setMaxHP(30);
+  player.setMaxHP(INITIAL_HP);
 
   let gun = player.add([
     sprite("gun", { width: 32, height: 8 }),
@@ -354,7 +354,7 @@ const initPlayer = () => {
 
   // Energy bar temp
   onUpdate(() => {
-    energyBar.width = (player.mana * ENERGY_STATUS_WIDTH) / player.maxMana;
+    energyBar.width = (player.energy * ENERGY_STATUS_WIDTH) / player.maxEnergy;
   });
 
   // Stamina bar temp
@@ -402,7 +402,7 @@ function displayPlayerStats() {
   // display all player stats
   let textStats = `
   HP: ${player.hp()}/${player.maxHP()} \n
-  Mana: ${player.mana}/${player.maxMana} \n
+  Mana: ${player.energy}/${player.maxEnergy} \n
   Stamina: ${player.stamina}/${player.maxStamina} \n
   Level: ${player.level} \n
   Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
@@ -422,7 +422,7 @@ function displayPlayerStats() {
   player.onUpdate(() => {
     statsDebug.text = `
   HP: ${player.hp()}/${player.maxHP()} \n
-  Mana: ${player.mana}/${player.maxMana} \n
+  Mana: ${player.energy}/${player.maxEnergy} \n
   Stamina: ${player.stamina}/${player.maxStamina} \n
   Level: ${player.level} \n
   Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
@@ -489,9 +489,9 @@ function handleLevelUp() {
       player.baseMeeleDamage += 2;
       player.baseRangedDamage += 1;
       player.cooldownReductionPercentage += 0.1;
-      player.maxMana += 5;
+      player.maxEnergy += 5;
       player.maxStamina += 5;
-      player.mana = player.maxMana;
+      player.energy = player.maxEnergy;
       player.stamina = player.maxStamina;
 
       player.setMaxHP(player.maxHP() + 10);
@@ -538,7 +538,7 @@ function registerInputHandlers() {
     if (!player.exists()) return;
 
     if (player.selectedRangedSkill.isUnlocked) {
-      if (player.mana < player.selectedRangedSkill.manaCost) {
+      if (player.energy < player.selectedRangedSkill.energyCost) {
         return;
       }
       if (player.stamina < player.selectedRangedSkill.staminaCost) {
@@ -552,7 +552,7 @@ function registerInputHandlers() {
     if (!player.exists()) return;
 
     if (player.selectedMeleeSkill.isUnlocked) {
-      if (player.mana < player.selectedMeleeSkill.manaCost) {
+      if (player.energy < player.selectedMeleeSkill.energyCost) {
         return;
       }
       if (player.stamina < player.selectedMeleeSkill.staminaCost) {
@@ -589,7 +589,7 @@ function castSelectedRangedSkill() {
 
   selectedSkill.isCoolingDown = true;
 
-  player.mana -= player.selectedRangedSkill.manaCost;
+  player.energy -= player.selectedRangedSkill.energyCost;
   player.stamina -= player.selectedRangedSkill.staminaCost;
   wait(selectedSkill.cooldownTime, () => {
     selectedSkill.isCoolingDown = false;
@@ -603,7 +603,7 @@ function castSelectedMeeleSkill() {
 
   selectedSkill.isCoolingDown = true;
 
-  player.mana -= player.selectedMeleeSkill.manaCost;
+  player.energy -= player.selectedMeleeSkill.energyCost;
   player.stamina -= player.selectedMeleeSkill.staminaCost;
   wait(selectedSkill.cooldownTime, () => {
     selectedSkill.isCoolingDown = false;
