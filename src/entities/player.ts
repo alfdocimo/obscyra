@@ -201,29 +201,46 @@ const initPlayer = () => {
           cooldownTime: 0.5,
           isCoolingDown: false,
           invoke: () => {
-            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
-            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+            const ANGLE_OFFSET = 10; // degrees
+            const BULLET_SPEED_MULTIPLIER = 1.5;
 
-            let bulletStartPos = player.worldPos().add(gunOffset);
-            // Create bullet
-            let playerBullet = add([
-              // rect(4, 4), // bullet shape (12x12)
-              sprite("player-bullet-basic", {
-                width: 10,
-                height: 10,
-              }),
-              pos(bulletStartPos), // spawn it at the player's position
-              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
-              area(),
-              anchor("center"),
-              offscreen({ destroy: true }),
-              color(Color.RED), // blue bullet color
-              "player-bullet", // tag for bullet (useful for collision detection)
-            ]);
+            function degToRad(deg) {
+              return (deg * Math.PI) / 180;
+            }
 
-            playerBullet.onCollide("wall", () => {
-              playerBullet.destroy();
-            });
+            const baseDir = toWorld(mousePos()).sub(player.worldPos()).unit();
+            const baseAngle = Math.atan2(baseDir.y, baseDir.x); // angle in radians
+
+            // List of angles: center, above, below
+            const angles = [
+              baseAngle, // straight
+              baseAngle - degToRad(ANGLE_OFFSET), // slightly up
+              baseAngle + degToRad(ANGLE_OFFSET), // slightly down
+            ];
+
+            for (let angle of angles) {
+              // Rotate vector manually
+              const rotatedDir = vec2(Math.cos(angle), Math.sin(angle));
+              const bulletStartPos = player
+                .worldPos()
+                .add(rotatedDir.scale(16));
+
+              const bullet = add([
+                sprite("player-bullet-basic", {
+                  width: 6,
+                  height: 6,
+                }),
+                pos(bulletStartPos),
+                move(rotatedDir, BULLET_SPEED * BULLET_SPEED_MULTIPLIER),
+                area(),
+                anchor("center"),
+                offscreen({ destroy: true }),
+                color(212, 30, 255),
+                "player-bullet",
+              ]);
+
+              bullet.onCollide("wall", () => bullet.destroy());
+            }
           },
         },
       ],
