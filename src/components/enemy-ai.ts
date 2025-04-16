@@ -137,6 +137,10 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         takeDamageFromSkill("ranged");
       });
 
+      self.onCollide("player-moving-bullet", (playerBullet) => {
+        takeDamageFromSkill("ranged");
+      });
+
       self.onCollide("player-slash", (playerBullet) => {
         takeDamageFromSkill("melee");
       });

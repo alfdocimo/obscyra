@@ -305,6 +305,76 @@ const initPlayer = () => {
             }
           },
         },
+        {
+          name: "skill-moving-shot",
+          damage: 1,
+          energyCost: 1,
+          staminaCost: 3,
+          unlockLevel: 2,
+          type: "ranged",
+          cooldownTime: 0.5,
+          isCoolingDown: false,
+          invoke: () => {
+            const dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+            const speed = BULLET_SPEED / 2;
+
+            const startPos = player.worldPos().add(dir.scale(16));
+
+            const sineBullet = add([
+              sprite("moving-shot", {
+                width: 6,
+                height: 6,
+              }),
+              pos(startPos),
+              opacity(1),
+              lifespan(1, { fade: 0.25 }),
+              area(),
+              anchor("center"),
+              offscreen({ destroy: true }),
+              "player-moving-bullet",
+              {
+                dir,
+                time: 0,
+                amplitude: 5, // start small
+                frequency: 30, // higher = tighter wave
+                maxAmplitude: 600,
+                speed,
+                originalPos: startPos.clone(),
+                update() {
+                  this.time += dt();
+
+                  // Increase amplitude over time, clamp it
+                  this.amplitude = Math.min(
+                    this.amplitude + dt() * 100,
+                    this.maxAmplitude
+                  );
+
+                  // Move forward
+                  const forward = this.dir.scale(this.speed * dt());
+                  this.originalPos = this.originalPos.add(forward);
+
+                  // Get a perpendicular vector for sine motion
+                  const perp = vec2(-this.dir.y, this.dir.x);
+
+                  // Offset with sine wave
+                  const waveOffset = perp.scale(
+                    Math.sin(this.time * this.frequency) * this.amplitude
+                  );
+
+                  // Set final position
+                  this.pos = this.originalPos.add(waveOffset);
+
+                  this.width = this.width + dt() * 50;
+                  this.height = this.height + dt() * 50;
+                },
+              },
+            ]);
+
+            sineBullet.onCollide("wall", () => {
+              sineBullet.destroy();
+            });
+          },
+        },
       ],
     },
   ]);
@@ -351,7 +421,22 @@ const initPlayer = () => {
     z(10000),
   ]);
 
-  const rangedSkillsSlotsGameObjects = [skillSingleShot, skillTriShot];
+  let skillMovingSHot = playerStats.add([
+    sprite("skill-moving-shot"),
+    "skill-moving-shot",
+    anchor("topleft"),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
+    opacity(0),
+    pos(160, 100),
+    fixed(),
+    z(10000),
+  ]);
+
+  const rangedSkillsSlotsGameObjects = [
+    skillSingleShot,
+    skillTriShot,
+    skillMovingSHot,
+  ];
 
   let skillSwordSlash = playerStats.add([
     sprite("skill-sword-slash"),
@@ -378,7 +463,7 @@ const initPlayer = () => {
   const meeleSkillsSlotsGameObjects = [skillSwordSlash, skillLongSlash];
 
   // Assign skill based on level logic
-  const rangedSkillKeyboardInputs = ["1", "2"];
+  const rangedSkillKeyboardInputs = ["1", "2", "3"];
   rangedSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
@@ -418,6 +503,7 @@ const initPlayer = () => {
     if (player.level >= 2) {
       skillTriShot.opacity = 1;
       skillLongSlash.opacity = 1;
+      skillMovingSHot.opacity = 1;
     }
   });
 
