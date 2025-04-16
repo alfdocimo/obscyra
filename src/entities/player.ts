@@ -257,36 +257,50 @@ const initPlayer = () => {
 
   let gun = initPlayerGun();
 
-  let skillSingleShot = add([
+  let {
+    corruptionBar,
+    corruptionText,
+    healthBar,
+    heathBarText,
+    energyBar,
+    energyText,
+    staminaBar,
+    staminaText,
+    playerStats,
+  } = initPlayerStatsUI();
+
+  /// --- SKILLS
+
+  let skillSingleShot = playerStats.add([
     sprite("skill-single-shot"),
     "skill-single-shot",
-    anchor("center"),
+    anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(128, GAME.CANVAS_HEIGHT - 128),
+    pos(85, 100),
     fixed(),
     z(10000),
   ]);
 
-  let skillTriShot = add([
+  let skillTriShot = playerStats.add([
     sprite("skill-tri-shot"),
     "skill-tri-shot",
-    anchor("center"),
+    anchor("topleft"),
     color(255, 255, 255),
     opacity(0),
-    pos(164, GAME.CANVAS_HEIGHT - 128),
+    pos(122, 100),
     fixed(),
     z(10000),
   ]);
 
   const rangedSkillsSlotsGameObjects = [skillSingleShot, skillTriShot];
 
-  let skillSwordSlash = add([
+  let skillSwordSlash = playerStats.add([
     sprite("skill-sword-slash"),
     "skill-sword-slash",
     outline(0.2),
-    anchor("center"),
+    anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(128, GAME.CANVAS_HEIGHT - 60),
+    pos(85, 135),
     fixed(),
     z(10000),
   ]);
@@ -316,16 +330,7 @@ const initPlayer = () => {
     }
   });
 
-  let {
-    corruptionBar,
-    corruptionText,
-    healthBar,
-    heathBarText,
-    energyBar,
-    energyText,
-    staminaBar,
-    staminaText,
-  } = initPlayerStatsUI();
+  /// ----
 
   const aimCircle = initializeAimIndicator();
 
@@ -573,6 +578,7 @@ function initPlayerStatsUI() {
     z(1000),
   ]);
   return {
+    playerStats,
     corruptionBar,
     corruptionText,
     healthBar,
