@@ -30,7 +30,7 @@ const STAMINA_STATUS_WIDTH = STAT_WIDTH;
 const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
 const EXPERIENCE_STATUS_WIDTH = STAT_WIDTH;
 
-const SELECTED_SKILL_COLOR = [200, 255, 240];
+const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 
 type Skill = {
@@ -453,7 +453,7 @@ const initPlayer = () => {
     "skill-single-shot",
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(0, 0),
+    pos(4, 4),
     fixed(),
     z(10000),
   ]);
@@ -464,7 +464,7 @@ const initPlayer = () => {
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(32, 0),
+    pos(32, 4),
     fixed(),
     z(10000),
   ]);
@@ -475,7 +475,7 @@ const initPlayer = () => {
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(64, 0),
+    pos(64, 4),
     fixed(),
     z(10000),
   ]);
@@ -492,7 +492,7 @@ const initPlayer = () => {
     outline(0.2),
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(0, 32),
+    pos(4, 34),
     fixed(),
     z(10000),
   ]);
@@ -503,7 +503,7 @@ const initPlayer = () => {
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(32, 32),
+    pos(32, 34),
     fixed(),
     z(10000),
   ]);
@@ -514,7 +514,7 @@ const initPlayer = () => {
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(64, 32),
+    pos(64, 34),
     fixed(),
     z(10000),
   ]);
