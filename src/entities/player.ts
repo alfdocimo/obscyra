@@ -20,7 +20,7 @@ const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
-const CORRUPTION_INCREMENT = 20;
+const CORRUPTION_INCREMENT = 1;
 const STAT_WIDTH = 300;
 const HEALTH_STATUS_WIDTH = STAT_WIDTH;
 const ENERGY_STATUS_WIDTH = STAT_WIDTH;
@@ -226,7 +226,7 @@ const initPlayer = () => {
   // Regen stamina
   staminaRegenLoop();
 
-  displayPlayerStats();
+  // displayPlayerStats();
 
   registerPlayerDeathHandler();
 
@@ -301,7 +301,9 @@ function updatePlayerStatsInUI(
   // HP BAR 🟥
   onUpdate(() => {
     healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
-    heathBarText.text = `Health \t ${player.hp()}/${player.maxHP()}`;
+    heathBarText.text = `Health \t ${
+      player.hp() >= 0 ? player.hp() : 0
+    }/${player.maxHP()}`;
   });
 
   // ENERGY BAR 🟦
@@ -383,7 +385,7 @@ function initPlayerGun() {
 function initPlayerStatsUI() {
   let playerStats = add([
     sprite("player-stats", { anim: "idle" }),
-    pos(40, 40),
+    pos(8, 8),
     anchor("topleft"),
     fixed(),
     z(10000),
@@ -663,7 +665,7 @@ function takeDamage({ damage }: { damage: number }) {
     animate(),
     pos(player.worldPos().x, player.worldPos().y - 30),
     opacity(1),
-    color(230, 0, 100),
+    color(230, 100, 100),
     lifespan(0.2, { fade: 0.2 }),
     z(3000),
   ]);
