@@ -157,6 +157,65 @@ const initPlayer = () => {
             // ]);
           },
         },
+        {
+          name: "skill-long-slash",
+          energyCost: 0,
+          staminaCost: 10,
+          unlockLevel: 2,
+          type: "melee",
+          damage: 10,
+          cooldownTime: 1,
+          isCoolingDown: false,
+          invoke: () => {
+            // const SLASH_LENGTH = 60;
+            // const SLASH_WIDTH = 10;
+
+            let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+
+            let duration = 0.5;
+
+            player.add([
+              pos(dir.scale(10)),
+              sprite("blade", { anim: "attack", animSpeed: 2.7 }),
+              anchor(vec2(-1, 0)),
+              rotate(angle),
+              area(),
+              opacity(1),
+              animate(),
+              lifespan(duration, { fade: 0.2 }),
+              z(2000),
+              "player-slash",
+            ]);
+
+            let blandOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+
+            let bulletStartPos = player.worldPos().add(blandOffset);
+            // Create bullet
+            let playerLongSlash = add([
+              // rect(4, 4), // bullet shape (12x12)
+              sprite("long-slash", {
+                anim: "play",
+              }),
+              pos(bulletStartPos), // spawn it at the player's position
+              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              area(),
+              opacity(1),
+              lifespan(0.05, {
+                fade: 0.25,
+              }),
+              anchor(vec2(-1, 0)),
+              rotate(angle),
+              offscreen({ destroy: true }),
+              color(212, 30, 255), // blue bullet color
+              "player-long-slash", // tag for bullet (useful for collision detection)
+            ]);
+
+            playerLongSlash.onCollide("wall", () => {
+              playerLongSlash.destroy();
+            });
+          },
+        },
       ],
       rangedSKills: [
         {
@@ -285,7 +344,7 @@ const initPlayer = () => {
     sprite("skill-tri-shot"),
     "skill-tri-shot",
     anchor("topleft"),
-    color(255, 255, 255),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
     pos(122, 100),
     fixed(),
@@ -305,12 +364,25 @@ const initPlayer = () => {
     z(10000),
   ]);
 
+  let skillLongSlash = playerStats.add([
+    sprite("skill-long-slash"),
+    "skill-long-slash",
+    opacity(0),
+    anchor("topleft"),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
+    pos(122, 135),
+    fixed(),
+    z(10000),
+  ]);
+
+  const meeleSkillsSlotsGameObjects = [skillSwordSlash, skillLongSlash];
+
   // Assign skill based on level logic
   const rangedSkillKeyboardInputs = ["1", "2"];
-  rangedSkillKeyboardInputs.forEach((key) => {
+  rangedSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
-      let skillKey = parseInt(key) - 1;
+      let skillKey = index;
 
       if (player.level >= player.rangedSKills[skillKey].unlockLevel) {
         rangedSkillsSlotsGameObjects.forEach((skillSlot) => {
@@ -324,9 +396,28 @@ const initPlayer = () => {
     });
   });
 
+  const meeleeSkillKeyboardInputs = ["z", "x"];
+  meeleeSkillKeyboardInputs.forEach((key, index) => {
+    onKeyDown(key, () => {
+      if (!player.exists()) return;
+      let skillKey = index;
+
+      if (player.level >= player.meeleSkills[skillKey].unlockLevel) {
+        meeleSkillsSlotsGameObjects.forEach((skillSlot) => {
+          skillSlot.color = Color.fromArray(UNSELECTED_SKILL_COLOR);
+        });
+
+        meeleSkillsSlotsGameObjects[skillKey].color =
+          Color.fromArray(SELECTED_SKILL_COLOR);
+        player.selectedMeleeSkill = player.meeleSkills[skillKey];
+      }
+    });
+  });
+
   onUpdate(() => {
     if (player.level >= 2) {
       skillTriShot.opacity = 1;
+      skillLongSlash.opacity = 1;
     }
   });
 

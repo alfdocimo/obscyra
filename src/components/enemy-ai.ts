@@ -141,6 +141,10 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         takeDamageFromSkill("melee");
       });
 
+      self.onCollide("player-long-slash", (playerBullet) => {
+        takeDamageFromSkill("melee");
+      });
+
       self.onUpdate(() => {
         const DIST_LIMIT = 1200;
         if (self.pos.dist(player.pos) > DIST_LIMIT) {

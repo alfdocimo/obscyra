@@ -133,7 +133,18 @@ loadSprite("player-stats", "/sprites/player-stats.png", {
 loadSprite("skill-single-shot", "/sprites/skill-single-shot.png");
 loadSprite("skill-sword-slash", "/sprites/skill-sword-slash.png");
 loadSprite("skill-tri-shot", "/sprites/skill-tri-shot.png");
-loadSprite("long-slash", "/sprites/long-slash.png");
+loadSprite("skill-long-slash", "/sprites/skill-long-slash.png");
+loadSprite("long-slash", "/sprites/long-slash.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    play: {
+      loop: true,
+      from: 0,
+      to: 7,
+    },
+  },
+});
 
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
