@@ -216,6 +216,47 @@ const initPlayer = () => {
             });
           },
         },
+        {
+          name: "skill-circle-slash",
+          energyCost: 0,
+          staminaCost: 10,
+          unlockLevel: 2,
+          type: "melee",
+          damage: 10,
+          cooldownTime: 1,
+          isCoolingDown: false,
+          invoke: () => {
+            // const SLASH_LENGTH = 60;
+            // const SLASH_WIDTH = 10;
+
+            let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+
+            let duration = 0.5;
+
+            player.add([
+              pos(dir),
+              sprite("circle-slash", { anim: "attack", animSpeed: 2.7 }),
+              anchor(vec2(0, 0)),
+              rotate(angle),
+              area(),
+              opacity(1),
+              animate(),
+              lifespan(duration, { fade: 0.2 }),
+              z(2000),
+              "player-circle-slash",
+            ]);
+
+            // slash.animate("angle", [angle - 130, angle + 130], {
+            //   duration: duration,
+            //   loops: 1,
+            // });
+
+            // let slash = player.add([
+            //   sprite("testsword", { width: 64, height: 64, anim: "attack" }),
+            // ]);
+          },
+        },
       ],
       rangedSKills: [
         {
@@ -460,7 +501,22 @@ const initPlayer = () => {
     z(10000),
   ]);
 
-  const meeleSkillsSlotsGameObjects = [skillSwordSlash, skillLongSlash];
+  let skillCircleSlash = playerStats.add([
+    sprite("skill-circle-slash"),
+    "skill-circle-slash",
+    opacity(0),
+    anchor("topleft"),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
+    pos(160, 135),
+    fixed(),
+    z(10000),
+  ]);
+
+  const meeleSkillsSlotsGameObjects = [
+    skillSwordSlash,
+    skillLongSlash,
+    skillCircleSlash,
+  ];
 
   // Assign skill based on level logic
   const rangedSkillKeyboardInputs = ["1", "2", "3"];
@@ -481,7 +537,7 @@ const initPlayer = () => {
     });
   });
 
-  const meeleeSkillKeyboardInputs = ["z", "x"];
+  const meeleeSkillKeyboardInputs = ["z", "x", "c"];
   meeleeSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
@@ -504,6 +560,7 @@ const initPlayer = () => {
       skillTriShot.opacity = 1;
       skillLongSlash.opacity = 1;
       skillMovingSHot.opacity = 1;
+      skillCircleSlash.opacity = 1;
     }
   });
 

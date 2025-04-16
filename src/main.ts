@@ -147,6 +147,17 @@ loadSprite("long-slash", "/sprites/long-slash.png", {
   },
 });
 loadSprite("moving-shot", "/sprites/moving-shot.png");
+loadSprite("circle-slash", "/sprites/circle-slash.png", {
+  sliceX: 3,
+  sliceY: 4,
+  anims: {
+    attack: {
+      from: 0,
+      to: 9,
+    },
+  },
+});
+loadSprite("skill-circle-slash", "/sprites/skill-circle-slash.png");
 
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
