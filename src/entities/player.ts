@@ -23,11 +23,12 @@ const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
 const CORRUPTION_INCREMENT = 1;
-const STAT_WIDTH = 300;
+const STAT_WIDTH = 308;
 const HEALTH_STATUS_WIDTH = STAT_WIDTH;
 const ENERGY_STATUS_WIDTH = STAT_WIDTH;
 const STAMINA_STATUS_WIDTH = STAT_WIDTH;
 const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
+const EXPERIENCE_STATUS_WIDTH = STAT_WIDTH;
 
 const SELECTED_SKILL_COLOR = [200, 255, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
@@ -101,8 +102,8 @@ const initPlayer = () => {
     {
       canTakeDamage: true,
       level: 1,
-      expPoints: 0,
-      nextLevelExpPoints: 2,
+      expPoints: 19,
+      nextLevelExpPoints: 20,
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
       cooldownReductionPercentage: 0.3,
@@ -437,38 +438,44 @@ const initPlayer = () => {
     staminaBar,
     staminaText,
     playerStats,
+    playerSkillsStats,
+    playerStatsUIAnim,
+    experienceBar,
+    experienceBarText,
   } = initPlayerStatsUI();
+
+  updateCorruptionColorInPlayerStats(playerStatsUIAnim);
 
   /// --- SKILLS
 
-  let skillSingleShot = playerStats.add([
+  let skillSingleShot = playerSkillsStats.add([
     sprite("skill-single-shot"),
     "skill-single-shot",
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(85, 100),
+    pos(0, 0),
     fixed(),
     z(10000),
   ]);
 
-  let skillTriShot = playerStats.add([
+  let skillTriShot = playerSkillsStats.add([
     sprite("skill-tri-shot"),
     "skill-tri-shot",
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(122, 100),
+    pos(32, 0),
     fixed(),
     z(10000),
   ]);
 
-  let skillMovingSHot = playerStats.add([
+  let skillMovingSHot = playerSkillsStats.add([
     sprite("skill-moving-shot"),
     "skill-moving-shot",
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(160, 100),
+    pos(64, 0),
     fixed(),
     z(10000),
   ]);
@@ -479,35 +486,35 @@ const initPlayer = () => {
     skillMovingSHot,
   ];
 
-  let skillSwordSlash = playerStats.add([
+  let skillSwordSlash = playerSkillsStats.add([
     sprite("skill-sword-slash"),
     "skill-sword-slash",
     outline(0.2),
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(85, 135),
+    pos(0, 32),
     fixed(),
     z(10000),
   ]);
 
-  let skillLongSlash = playerStats.add([
+  let skillLongSlash = playerSkillsStats.add([
     sprite("skill-long-slash"),
     "skill-long-slash",
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(122, 135),
+    pos(32, 32),
     fixed(),
     z(10000),
   ]);
 
-  let skillCircleSlash = playerStats.add([
+  let skillCircleSlash = playerSkillsStats.add([
     sprite("skill-circle-slash"),
     "skill-circle-slash",
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(160, 135),
+    pos(64, 32),
     fixed(),
     z(10000),
   ]);
@@ -613,7 +620,7 @@ const initPlayer = () => {
   });
 
   // Update player stats in UI
-  updatePlayerStatsInUI(
+  updatePlayerStatsInUI({
     corruptionBar,
     corruptionText,
     healthBar,
@@ -621,15 +628,31 @@ const initPlayer = () => {
     energyBar,
     energyText,
     staminaBar,
-    staminaText
-  );
+    staminaText,
+    experienceBar,
+    experienceBarText,
+  });
 
   checkCorrutionAmountInPlayer();
 
   return player;
 };
 
-function updatePlayerStatsInUI(
+function updateCorruptionColorInPlayerStats(
+  playerStatsUIAnim: GameObj<SpriteComp | PosComp | AnchorComp | ColorComp>
+) {
+  onUpdate(() => {
+    const t = player.corruption / player.maxCorruption;
+
+    const r = 255;
+    const g = 255 * (1 - t);
+    const b = 255;
+
+    playerStatsUIAnim.color = Color.fromArray([r, g, b]);
+  });
+}
+
+function updatePlayerStatsInUI({
   corruptionBar,
   corruptionText,
   healthBar,
@@ -637,8 +660,20 @@ function updatePlayerStatsInUI(
   energyBar,
   energyText,
   staminaBar,
-  staminaText
-) {
+  staminaText,
+  experienceBar,
+  experienceBarText,
+}) {
+  // EXP BAR
+  onUpdate(() => {
+    experienceBar.width =
+      (player.expPoints * EXPERIENCE_STATUS_WIDTH) / player.nextLevelExpPoints;
+
+    experienceBarText.text = `Exp \t ${Math.round(player.expPoints)}/${
+      player.nextLevelExpPoints
+    }`;
+  });
+
   // CORRUPTION BAR 🟣
   onUpdate(() => {
     // const percent = player.corruption / player.maxCorruption;
@@ -680,7 +715,7 @@ function handleMaxCorruption() {
   player.isDecaying = false;
   player.enterState("normal"); // if you’re using state system, clear the current one
 
-  takeDamage({ damage: Math.round(player.maxHP() / 1.25) });
+  takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
   add([
     text("CORRUPTION OVERLOAD!", { size: 16 }),
@@ -736,18 +771,34 @@ function initPlayerGun() {
 }
 
 function initPlayerStatsUI() {
+  let playerSkillsStats = add([
+    sprite("player-skills-ui"),
+    anchor("topleft"),
+    pos(GAME.CANVAS_WIDTH / 2 - 70, GAME.CANVAS_HEIGHT - 90),
+    fixed(),
+    z(10000),
+  ]);
+
   let playerStats = add([
-    sprite("player-stats", { anim: "idle" }),
+    sprite("player-stats"),
     pos(8, 8),
     anchor("topleft"),
     fixed(),
     z(10000),
   ]);
 
+  let playerStatsUIAnim = playerStats.add([
+    sprite("player-stats-ui-anim", { anim: "play" }),
+    pos(1, 2),
+    scale(1),
+    color(255, 255, 255),
+    anchor("topleft"),
+    "player-stats-ui-anim",
+  ]);
+
   let healthBar = playerStats.add([
-    rect(HEALTH_STATUS_WIDTH, 15),
-    pos(90, 20),
-    outline(2.5),
+    rect(HEALTH_STATUS_WIDTH, 11),
+    pos(80, 18),
     color(255, 0, 100),
     anchor("left"),
     "health-bar",
@@ -762,9 +813,9 @@ function initPlayerStatsUI() {
   ]);
 
   let staminaBar = playerStats.add([
-    rect(STAMINA_STATUS_WIDTH, 15),
-    pos(90, 40),
-    outline(2.5),
+    rect(STAMINA_STATUS_WIDTH, 11),
+    pos(80, 34),
+
     color(0, 200, 100),
     anchor("left"),
     "stamina-bar",
@@ -779,9 +830,8 @@ function initPlayerStatsUI() {
   ]);
 
   let energyBar = playerStats.add([
-    rect(ENERGY_STATUS_WIDTH, 15),
-    pos(90, 60),
-    outline(2.5),
+    rect(ENERGY_STATUS_WIDTH, 11),
+    pos(80, 50),
     color(0, 100, 200),
     anchor("left"),
     "energy-bar",
@@ -796,9 +846,8 @@ function initPlayerStatsUI() {
   ]);
 
   let corruptionBar = playerStats.add([
-    rect(CORRUPTION_STATUS_WIDTH, 15),
-    pos(90, 80),
-    outline(2.5),
+    rect(CORRUPTION_STATUS_WIDTH, 11),
+    pos(80, 66),
     color(231, 65, 237),
     anchor("left"),
     "energy-bar",
@@ -811,7 +860,26 @@ function initPlayerStatsUI() {
     anchor("left"),
     z(1000),
   ]);
+
+  let experienceBar = playerStats.add([
+    rect(EXPERIENCE_STATUS_WIDTH, 11),
+    pos(80, 82),
+    color(100, 65, 80),
+    anchor("left"),
+    "energy-bar",
+  ]);
+
+  let experienceBarText = experienceBar.add([
+    text("", { size: 10 }),
+    pos(10, 0),
+    color(255, 255, 255),
+    anchor("left"),
+    z(1000),
+  ]);
+
   return {
+    experienceBar,
+    experienceBarText,
     playerStats,
     corruptionBar,
     corruptionText,
@@ -821,6 +889,8 @@ function initPlayerStatsUI() {
     energyText,
     staminaBar,
     staminaText,
+    playerSkillsStats,
+    playerStatsUIAnim,
   };
 }
 
@@ -956,8 +1026,6 @@ function handlePlayerCollisions() {
     for (const obj of touching) {
       if (!player.canTakeDamage) return;
 
-      console.log("touching", obj.target);
-
       if (obj.target.is("enemy")) {
         console.log("touch", obj.target.touchDamage);
 
@@ -966,7 +1034,6 @@ function handlePlayerCollisions() {
       }
 
       if (obj.target.is("bullet")) {
-        console.log("dmng", obj.target.bulletDamage);
         takeDamage({ damage: obj.target.bulletDamage });
         return;
       }
@@ -1038,6 +1105,38 @@ function takeDamage({ damage }: { damage: number }) {
   wait(1, () => {
     player.use(color(255, 255, 255)); // Revert to white or original color
     player.canTakeDamage = true;
+  });
+}
+
+function takeCorruptionDamage({ damage }: { damage: number }) {
+  player.play("hurt");
+  shake(5);
+
+  player.hurt(damage);
+
+  let damageTakenText = add([
+    text(`${Math.round(damage)}`, { size: 16 }),
+    animate(),
+    pos(player.worldPos().x, player.worldPos().y - 30),
+    opacity(1),
+    color(230, 100, 100),
+    lifespan(0.2, { fade: 0.2 }),
+    z(3000),
+  ]);
+  damageTakenText.animate(
+    "pos",
+    [
+      vec2(damageTakenText.pos),
+      vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
+    ],
+    { duration: 0.2, loops: 1 }
+  );
+
+  player.use(color(255, 0, 255));
+
+  // Wait for 0.5 seconds, then revert to original color
+  wait(1, () => {
+    player.use(color(255, 255, 255)); // Revert to white or original color
   });
 }
 

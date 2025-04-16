@@ -118,13 +118,17 @@ loadSprite("energy-orb", "/sprites/energy-orb.png", {
   },
 });
 
-loadSprite("player-stats", "/sprites/player-stats.png", {
-  sliceY: 11,
-  sliceX: 2,
+loadSprite("player-stats", "/sprites/test-ui-stats.png");
+
+loadSprite("player-skills-ui", "/sprites/test-player-skills-ui.png");
+
+loadSprite("player-stats-ui-anim", "/sprites/cosito-stats-ui.png", {
+  sliceX: 5,
+  sliceY: 5,
   anims: {
-    idle: {
+    play: {
       from: 0,
-      to: 21,
+      to: 23,
       loop: true,
     },
   },
