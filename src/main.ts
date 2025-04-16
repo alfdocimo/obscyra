@@ -130,6 +130,10 @@ loadSprite("player-stats", "/sprites/player-stats.png", {
   },
 });
 
+loadSprite("skill-single-shot", "/sprites/skill-single-shot.png");
+loadSprite("skill-sword-slash", "/sprites/skill-sword-slash.png");
+loadSprite("skill-tri-shot", "/sprites/skill-tri-shot.png");
+
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
   onKeyPress("enter", () => {

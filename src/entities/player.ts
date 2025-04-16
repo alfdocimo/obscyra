@@ -7,7 +7,9 @@ import {
   HealthComp,
   GameObj,
   StateComp,
+  ColorComp,
 } from "kaplay";
+import { GAME } from "../config";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -33,8 +35,6 @@ type Skill = {
   energyCost?: number;
   staminaCost?: number;
   unlockLevel?: number;
-  isSlected?: boolean;
-  isUnlocked?: boolean;
   invoke: () => void;
   isCoolingDown?: boolean;
   cooldownTime?: number;
@@ -99,7 +99,7 @@ const initPlayer = () => {
       canTakeDamage: true,
       level: 1,
       expPoints: 0,
-      nextLevelExpPoints: 20,
+      nextLevelExpPoints: 2,
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
       cooldownReductionPercentage: 0.3,
@@ -114,8 +114,7 @@ const initPlayer = () => {
 
       meeleSkills: [
         {
-          name: "Slash",
-          isUnlocked: true,
+          name: "skill-sword-slash",
           energyCost: 0,
           staminaCost: 5,
           unlockLevel: 1,
@@ -158,9 +157,8 @@ const initPlayer = () => {
       ],
       rangedSKills: [
         {
-          name: "Fireball",
+          name: "skill-single-shot",
           damage: 1,
-          isUnlocked: true,
           energyCost: 1,
           staminaCost: 3,
           unlockLevel: 1,
@@ -193,6 +191,41 @@ const initPlayer = () => {
             });
           },
         },
+        {
+          name: "skill-tri-shot",
+          damage: 1,
+          energyCost: 1,
+          staminaCost: 3,
+          unlockLevel: 2,
+          type: "ranged",
+          cooldownTime: 0.5,
+          isCoolingDown: false,
+          invoke: () => {
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+
+            let bulletStartPos = player.worldPos().add(gunOffset);
+            // Create bullet
+            let playerBullet = add([
+              // rect(4, 4), // bullet shape (12x12)
+              sprite("player-bullet-basic", {
+                width: 10,
+                height: 10,
+              }),
+              pos(bulletStartPos), // spawn it at the player's position
+              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              area(),
+              anchor("center"),
+              offscreen({ destroy: true }),
+              color(Color.RED), // blue bullet color
+              "player-bullet", // tag for bullet (useful for collision detection)
+            ]);
+
+            playerBullet.onCollide("wall", () => {
+              playerBullet.destroy();
+            });
+          },
+        },
       ],
     },
   ]);
@@ -201,6 +234,57 @@ const initPlayer = () => {
   setDefaultPlayerSkills();
 
   let gun = initPlayerGun();
+
+  let skillSingleShot = add([
+    sprite("skill-single-shot"),
+    "skill-single-shot",
+    anchor("center"),
+    color(255, 255, 255),
+    pos(128, GAME.CANVAS_HEIGHT - 128),
+    fixed(),
+    z(10000),
+  ]);
+
+  let skillTriShot = add([
+    sprite("skill-tri-shot"),
+    "skill-tri-shot",
+    anchor("center"),
+    color(255, 255, 255),
+    pos(164, GAME.CANVAS_HEIGHT - 128),
+    fixed(),
+    z(10000),
+  ]);
+
+  const rangedSkillsSlotsGameObjects = [skillSingleShot, skillTriShot];
+
+  let skillSwordSlash = add([
+    sprite("skill-sword-slash"),
+    "skill-sword-slash",
+    outline(0.2),
+    anchor("center"),
+    color(255, 255, 255),
+    pos(128, GAME.CANVAS_HEIGHT - 60),
+    fixed(),
+    z(10000),
+  ]);
+
+  const rangedSkillKeyboardInputs = ["1", "2"];
+
+  rangedSkillKeyboardInputs.forEach((key) => {
+    onKeyDown(key, () => {
+      if (!player.exists()) return;
+      let skillKey = parseInt(key) - 1;
+
+      if (player.level >= player.rangedSKills[skillKey].unlockLevel) {
+        rangedSkillsSlotsGameObjects.forEach((skillSlot) => {
+          skillSlot.color = rgb(255, 200, 200);
+        });
+
+        rangedSkillsSlotsGameObjects[skillKey].color = rgb(200, 255, 240);
+        player.selectedRangedSkill = player.rangedSKills[skillKey];
+      }
+    });
+  });
 
   let {
     corruptionBar,
@@ -624,7 +708,7 @@ function registerInputHandlers() {
   onMouseDown("left", () => {
     if (!player.exists()) return;
 
-    if (player.selectedRangedSkill.isUnlocked) {
+    if (player.selectedRangedSkill.unlockLevel <= player.level) {
       if (player.energy < player.selectedRangedSkill.energyCost) {
         return;
       }
@@ -638,7 +722,7 @@ function registerInputHandlers() {
   onMouseDown("right", () => {
     if (!player.exists()) return;
 
-    if (player.selectedMeleeSkill.isUnlocked) {
+    if (player.selectedMeleeSkill.unlockLevel <= player.level) {
       if (player.energy < player.selectedMeleeSkill.energyCost) {
         return;
       }
