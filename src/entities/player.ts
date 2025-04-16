@@ -33,6 +33,12 @@ const EXPERIENCE_STATUS_WIDTH = STAT_WIDTH;
 const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 
+const HP_COLOR = [236, 134, 47];
+const ENERGY_COLOR = [47, 148, 236];
+const STAMINA_COLOR = [54, 236, 47];
+const CORRUPTION_COLOR = [229, 47, 236];
+const EXPERIENCE_COLOR = [240, 212, 120];
+
 type Skill = {
   name: string;
   damage: number;
@@ -799,7 +805,7 @@ function initPlayerStatsUI() {
   let healthBar = playerStats.add([
     rect(HEALTH_STATUS_WIDTH, 11),
     pos(80, 18),
-    color(255, 0, 100),
+    color(Color.fromArray(HP_COLOR)),
     anchor("left"),
     "health-bar",
   ]);
@@ -816,7 +822,7 @@ function initPlayerStatsUI() {
     rect(STAMINA_STATUS_WIDTH, 11),
     pos(80, 34),
 
-    color(0, 200, 100),
+    color(Color.fromArray(STAMINA_COLOR)),
     anchor("left"),
     "stamina-bar",
   ]);
@@ -832,7 +838,7 @@ function initPlayerStatsUI() {
   let energyBar = playerStats.add([
     rect(ENERGY_STATUS_WIDTH, 11),
     pos(80, 50),
-    color(0, 100, 200),
+    color(Color.fromArray(ENERGY_COLOR)),
     anchor("left"),
     "energy-bar",
   ]);
@@ -848,7 +854,7 @@ function initPlayerStatsUI() {
   let corruptionBar = playerStats.add([
     rect(CORRUPTION_STATUS_WIDTH, 11),
     pos(80, 66),
-    color(231, 65, 237),
+    color(Color.fromArray(CORRUPTION_COLOR)),
     anchor("left"),
     "energy-bar",
   ]);
@@ -864,7 +870,7 @@ function initPlayerStatsUI() {
   let experienceBar = playerStats.add([
     rect(EXPERIENCE_STATUS_WIDTH, 11),
     pos(80, 82),
-    color(100, 65, 80),
+    color(Color.fromArray(EXPERIENCE_COLOR)),
     anchor("left"),
     "energy-bar",
   ]);
