@@ -29,6 +29,9 @@ const ENERGY_STATUS_WIDTH = STAT_WIDTH;
 const STAMINA_STATUS_WIDTH = STAT_WIDTH;
 const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
 
+const SELECTED_SKILL_COLOR = [200, 255, 240];
+const UNSELECTED_SKILL_COLOR = [255, 255, 255];
+
 type Skill = {
   name: string;
   damage: number;
@@ -193,8 +196,8 @@ const initPlayer = () => {
         },
         {
           name: "skill-tri-shot",
-          damage: 1,
-          energyCost: 1,
+          damage: 5,
+          energyCost: 5,
           staminaCost: 3,
           unlockLevel: 2,
           type: "ranged",
@@ -248,6 +251,8 @@ const initPlayer = () => {
   ]);
   player.setMaxHP(INITIAL_HP);
 
+  // debug.inspect = true;
+
   setDefaultPlayerSkills();
 
   let gun = initPlayerGun();
@@ -256,7 +261,7 @@ const initPlayer = () => {
     sprite("skill-single-shot"),
     "skill-single-shot",
     anchor("center"),
-    color(255, 255, 255),
+    color(Color.fromArray(SELECTED_SKILL_COLOR)),
     pos(128, GAME.CANVAS_HEIGHT - 128),
     fixed(),
     z(10000),
@@ -267,6 +272,7 @@ const initPlayer = () => {
     "skill-tri-shot",
     anchor("center"),
     color(255, 255, 255),
+    opacity(0),
     pos(164, GAME.CANVAS_HEIGHT - 128),
     fixed(),
     z(10000),
@@ -279,14 +285,14 @@ const initPlayer = () => {
     "skill-sword-slash",
     outline(0.2),
     anchor("center"),
-    color(255, 255, 255),
+    color(Color.fromArray(SELECTED_SKILL_COLOR)),
     pos(128, GAME.CANVAS_HEIGHT - 60),
     fixed(),
     z(10000),
   ]);
 
+  // Assign skill based on level logic
   const rangedSkillKeyboardInputs = ["1", "2"];
-
   rangedSkillKeyboardInputs.forEach((key) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
@@ -294,13 +300,20 @@ const initPlayer = () => {
 
       if (player.level >= player.rangedSKills[skillKey].unlockLevel) {
         rangedSkillsSlotsGameObjects.forEach((skillSlot) => {
-          skillSlot.color = rgb(255, 200, 200);
+          skillSlot.color = Color.fromArray(UNSELECTED_SKILL_COLOR);
         });
 
-        rangedSkillsSlotsGameObjects[skillKey].color = rgb(200, 255, 240);
+        rangedSkillsSlotsGameObjects[skillKey].color =
+          Color.fromArray(SELECTED_SKILL_COLOR);
         player.selectedRangedSkill = player.rangedSKills[skillKey];
       }
     });
+  });
+
+  onUpdate(() => {
+    if (player.level >= 2) {
+      skillTriShot.opacity = 1;
+    }
   });
 
   let {
