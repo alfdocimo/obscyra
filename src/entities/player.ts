@@ -425,6 +425,52 @@ const initPlayer = () => {
             });
           },
         },
+        {
+          name: "skill-final-shot",
+          damage: 1,
+          energyCost: 1,
+          staminaCost: 3,
+          unlockLevel: 2,
+          type: "ranged",
+          cooldownTime: 0.5,
+          isCoolingDown: false,
+          invoke: () => {
+            let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
+            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+
+            let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
+
+            let bulletStartPos = player.worldPos().add(gunOffset);
+            // Create bullet
+            let playerBullet = add([
+              // pos(dir.scale(1)),
+              anchor(vec2(-1, 0)),
+              rotate(angle),
+              sprite("final-shot", {
+                anim: "play",
+                animSpeed: 1.5,
+              }),
+              pos(bulletStartPos), // spawn it at the player's position
+              // move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              area(),
+              // anchor("center"),
+              opacity(1),
+              lifespan(1, { fade: 0.25 }),
+              z(9000),
+              // offscreen({ destroy: true }),
+              // color(212, 30, 255), // blue bullet color
+              "player-final-shot-bullet", // tag for bullet (useful for collision detection)
+              {
+                update() {
+                  this.angle = toWorld(mousePos())
+                    .sub(player.worldPos())
+                    .angle();
+                  this.pos = player.worldPos().add(gunOffset);
+                },
+              },
+            ]);
+          },
+        },
       ],
     },
   ]);
@@ -488,10 +534,22 @@ const initPlayer = () => {
     z(10000),
   ]);
 
+  let skillFinalShot = playerSkillsStats.add([
+    sprite("skill-final-shot"),
+    "skill-final-shot",
+    anchor("topleft"),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
+    opacity(0),
+    pos(114, 6),
+    fixed(),
+    z(10000),
+  ]);
+
   const rangedSkillsSlotsGameObjects = [
     skillSingleShot,
     skillTriShot,
     skillMovingSHot,
+    skillFinalShot,
   ];
 
   let skillSwordSlash = playerSkillsStats.add([
@@ -534,7 +592,7 @@ const initPlayer = () => {
   ];
 
   // Assign skill based on level logic
-  const rangedSkillKeyboardInputs = ["1", "2", "3"];
+  const rangedSkillKeyboardInputs = ["1", "2", "3", "4"];
   rangedSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
@@ -576,6 +634,7 @@ const initPlayer = () => {
       skillLongSlash.opacity = 1;
       skillMovingSHot.opacity = 1;
       skillCircleSlash.opacity = 1;
+      skillFinalShot.opacity = 1;
     }
   });
 

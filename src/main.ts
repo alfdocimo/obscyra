@@ -134,6 +134,20 @@ loadSprite("player-stats-ui-anim", "/sprites/cosito-stats-ui.png", {
   },
 });
 
+loadSprite("skill-final-shot", "/sprites/skill-final-shot.png");
+
+loadSprite("final-shot", "/sprites/final-shot.png", {
+  sliceX: 2,
+  sliceY: 11,
+  anims: {
+    play: {
+      from: 0,
+      to: 21,
+      loop: false,
+    },
+  },
+});
+
 loadSprite("skill-single-shot", "/sprites/skill-single-shot.png");
 loadSprite("skill-sword-slash", "/sprites/skill-sword-slash.png");
 loadSprite("skill-tri-shot", "/sprites/skill-tri-shot.png");

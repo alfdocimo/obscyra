@@ -141,6 +141,10 @@ export function enemyAI(config: EnemyAIConfig = {}) {
         takeDamageFromSkill("ranged");
       });
 
+      self.onCollide("player-final-shot-bullet", (playerBullet) => {
+        takeDamageFromSkill("ranged");
+      });
+
       self.onCollide("player-slash", (playerBullet) => {
         takeDamageFromSkill("melee");
       });
@@ -252,7 +256,6 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       }
 
       function removeOutOfBounds() {
-        console.log("remove out of bounds");
         gameState.currentMobs--;
         destroy(self);
       }
