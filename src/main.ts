@@ -206,7 +206,7 @@ scene("game", () => {
 
   const player = initPlayer();
 
-  loop(1, () => {
+  loop(gameState.mobsSpawnTime, () => {
     if (!player.exists()) return;
 
     if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
@@ -215,6 +215,16 @@ scene("game", () => {
     initGhosty(x, y);
     gameState.currentMobs++;
     gameState.totalMobsSpawned++;
+  });
+
+  onUpdate(() => {
+    if (gameState.mobsToBeKilledUntilNextWave <= gameState.totalMobsKilled) {
+      gameState.currentWave += 1;
+      gameState.mobsToBeKilledUntilNextWave = Math.round(
+        gameState.mobsToBeKilledUntilNextWave * 1.5
+      );
+      gameState.mobsSpawnTime *= 0.95;
+    }
   });
 
   // loop(1, () => {

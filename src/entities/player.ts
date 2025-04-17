@@ -269,7 +269,7 @@ const initPlayer = () => {
         {
           name: "skill-protect",
           energyCost: 0,
-          staminaCost: 5,
+          staminaCost: 10,
           unlockLevel: 1,
           type: "melee",
           damage: 5,
