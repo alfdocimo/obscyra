@@ -11,7 +11,7 @@ const initPerinolaEnemy = (x: number, y: number) => {
     z(1500),
     state("move", ["idle", "attack", "move", "destroy"]),
     enemyAI({
-      bulletColor: [244, 0, 0],
+      bulletColor: [239, 194, 72],
       speed: 100,
       bulletSize: 6,
     }),

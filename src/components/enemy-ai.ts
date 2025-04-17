@@ -52,8 +52,8 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       const hpBar = self.add([
         rect(50, 5),
         pos(-25, -45),
-        outline(1),
-        color(255, 0, 100),
+        outline(0.5, Color.fromArray([221, 78, 37])),
+        color(221, 78, 37),
         anchor("left"),
         "enemy-health-bar",
       ]);
