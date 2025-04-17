@@ -118,6 +118,8 @@ loadSprite("energy-orb", "/sprites/energy-orb.png", {
   },
 });
 
+loadSprite("aim-circle", "/sprites/aim-circle.png");
+
 loadSprite("player-stats", "/sprites/test-ui-stats-2.png");
 
 loadSprite("player-skills-ui", "/sprites/test-player-skills-ui-2.png");
@@ -201,6 +203,7 @@ scene("game", () => {
   addBackground();
   addWorldBounds();
   spawnRandomWalls();
+  setCursor("none");
 
   // debug.inspect = true;
 

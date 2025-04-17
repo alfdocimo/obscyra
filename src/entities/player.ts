@@ -903,9 +903,9 @@ function checkCorrutionAmountInPlayer() {
 function initializeAimIndicator() {
   let aimCircle = add([
     pos(toWorld(mousePos())),
-    circle(4),
-    color(255, 0, 0),
-    z(1000),
+    anchor("center"),
+    sprite("aim-circle"),
+    z(10000),
     "cursor",
   ]);
 
