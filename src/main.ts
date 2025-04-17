@@ -1,7 +1,7 @@
 import kaplay from "kaplay";
 import "kaplay/global";
 import { initPlayer, player } from "./entities/player";
-import { initGhosty } from "./entities/ghosty";
+import { initPerinolaEnemy } from "./entities/perinola";
 import { initTinyGhosty } from "./entities/tiny-ghosty";
 import { initGigagantrum } from "./entities/gigagantrum";
 import { GAME } from "./config";
@@ -205,14 +205,52 @@ scene("game", () => {
   // debug.inspect = true;
 
   const player = initPlayer();
+  gameState.gameStarted = true;
+  // TODO: Enable intro
+  // wait(5, () => {
+  //   player.add([
+  //     text(
+  //       "[green]oh hi[/green] here's some [wavy][rainbow]styled[/rainbow][/wavy] text",
+  //       {
+  //         width: width(),
+  //         styles: {
+  //           green: {
+  //             color: rgb(128, 128, 255),
+  //           },
+  //           wavy: (idx, ch) => ({
+  //             pos: vec2(0, wave(-4, 4, time() * 6 + idx * 0.5)),
+  //           }),
+  //           rainbow: (idx, ch) => ({
+  //             color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
+  //           }),
+  //         },
+  //       }
+  //     ),
+  //     anchor("center"),
+  //     opacity(1),
+  //     pos(20, -20),
+  //     lifespan(7, {
+  //       fade: 0.5,
+  //     }),
+  //     fadeIn(0.5),
+  //     // scale(0.5),
+  //   ]);
+  // });
+
+  // wait(15, () => {
+  //   // Todo intro here lalala...
+
+  //   gameState.gameStarted = true;
+  // });
 
   loop(gameState.mobsSpawnTime, () => {
+    if (!gameState.gameStarted) return;
     if (!player.exists()) return;
 
     if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
     let { x, y } = getMobRandomPos(player.pos);
-    initGhosty(x, y);
+    initPerinolaEnemy(x, y);
     gameState.currentMobs++;
     gameState.totalMobsSpawned++;
   });

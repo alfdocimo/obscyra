@@ -1,4 +1,5 @@
 export const gameState = {
+  gameStarted: false,
   currentWave: 1,
   maxCurrentMobs: 10,
   currentMobs: 0,

@@ -1,6 +1,6 @@
 import { enemyAI } from "../components/enemy-ai";
 
-const initGhosty = (x: number, y: number) => {
+const initPerinolaEnemy = (x: number, y: number) => {
   return add([
     sprite("tri-mob", { width: 32, height: 64, anim: "float" }),
     pos(x, y),
@@ -20,4 +20,4 @@ const initGhosty = (x: number, y: number) => {
   ]);
 };
 
-export { initGhosty };
+export { initPerinolaEnemy };

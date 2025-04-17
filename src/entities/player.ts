@@ -84,7 +84,7 @@ let player: GameObj<
       maxCorruption: number;
       corruptionTimer: number;
       isDecaying: boolean;
-
+      canRegenStamina: boolean;
       rangedSKills: RangedSkill[];
       meeleSkills: MeleeSkill[];
       selectedRangedSkill?: RangedSkill; // This ensures only "ranged" skills can be assigned here
@@ -109,6 +109,7 @@ const initPlayer = () => {
     "player",
     {
       canTakeDamage: true,
+      canRegenStamina: true,
       level: 1,
       expPoints: 19,
       nextLevelExpPoints: 20,
@@ -269,7 +270,7 @@ const initPlayer = () => {
         {
           name: "skill-protect",
           energyCost: 0,
-          staminaCost: 10,
+          staminaCost: 0,
           unlockLevel: 1,
           type: "melee",
           damage: 5,
@@ -296,7 +297,8 @@ const initPlayer = () => {
               );
             }
 
-            let duration = 5;
+            // let duration = player.stamina;
+            player.canRegenStamina = false;
 
             let protect = player.add([
               pos(0, 0),
@@ -307,16 +309,20 @@ const initPlayer = () => {
               area(),
               opacity(0.5),
               animate(),
-              lifespan(duration, { fade: 0.2 }),
               z(9000),
               "player-protect",
               {
                 canHeal: true,
                 update() {
                   player.canTakeDamage = false;
+                  player.stamina -= dt() * 3;
+                  if (player.stamina <= 0) {
+                    destroy(this);
+                  }
                 },
                 destroy() {
                   player.canTakeDamage = true;
+                  player.canRegenStamina = true;
                 },
               },
             ]);
@@ -858,7 +864,9 @@ function updatePlayerStatsInUI({
   onUpdate(() => {
     staminaBar.width =
       (player.stamina * STAMINA_STATUS_WIDTH) / player.maxStamina;
-    staminaText.text = `Stamina \t ${player.stamina}/${player.maxStamina}`;
+    staminaText.text = `Stamina \t ${Math.round(player.stamina)}/${
+      player.maxStamina
+    }`;
   });
 }
 
@@ -1053,43 +1061,6 @@ function setDefaultPlayerSkills() {
   player.selectedMeleeSkill = player.meeleSkills[0];
 }
 
-function displayPlayerStats() {
-  // display all player stats
-  let textStats = `
-  HP: ${player.hp()}/${player.maxHP()} \n
-  Mana: ${player.energy}/${player.maxEnergy} \n
-  Stamina: ${player.stamina}/${player.maxStamina} \n
-  Level: ${player.level} \n
-  Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
-  Attack: ${player.baseMeeleDamage} \n
-  Ranged Attack: ${player.baseRangedDamage} \n
-  Cooldown Reduction: ${player.cooldownReductionPercentage * 100}% \n
-  Melee Skill: ${player.selectedMeleeSkill?.name} \n
-  Ranged Skill: ${player.selectedRangedSkill?.name} \n
-  `;
-  let statsDebug = add([
-    text(textStats),
-    scale(0.4),
-    pos(10, 10),
-    fixed(),
-    z(1000),
-  ]);
-  player.onUpdate(() => {
-    statsDebug.text = `
-  HP: ${player.hp()}/${player.maxHP()} \n
-  Mana: ${player.energy}/${player.maxEnergy} \n
-  Stamina: ${player.stamina}/${player.maxStamina} \n
-  Level: ${player.level} \n
-  Exp: ${player.expPoints}/${player.nextLevelExpPoints} \n
-  Attack: ${player.baseMeeleDamage} \n
-  Ranged Attack: ${player.baseRangedDamage} \n
-  Cooldown Reduction: ${player.cooldownReductionPercentage * 100}% \n
-  Melee Skill: ${player.selectedMeleeSkill?.name} \n
-  Ranged Skill: ${player.selectedRangedSkill?.name} \n
-  `;
-  });
-}
-
 // Helper function to increase corruption and reset decay timer
 function handleCorruptionGain() {
   player.corruption += randi(1, CORRUPTION_INCREMENT);
@@ -1131,7 +1102,7 @@ function registerMovementControls() {
 
 function staminaRegenLoop() {
   loop(0.5, () => {
-    if (player.exists()) {
+    if (player.exists() && player.canRegenStamina) {
       if (player.stamina < player.maxStamina) {
         if (player.stamina + 2 >= player.maxStamina) {
           player.stamina = player.maxStamina;
