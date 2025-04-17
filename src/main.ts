@@ -95,7 +95,7 @@ loadSprite("level", "/bg/level.png");
 loadSprite("test-map", "/bg/test-map.png", {
   singular: true,
 });
-loadSprite("life-orb", "/sprites/life-orb.png", {
+loadSprite("life-orb", "/sprites/life-orb-red.png", {
   sliceX: 3,
   sliceY: 3,
   anims: {
@@ -118,9 +118,9 @@ loadSprite("energy-orb", "/sprites/energy-orb.png", {
   },
 });
 
-loadSprite("player-stats", "/sprites/test-ui-stats.png");
+loadSprite("player-stats", "/sprites/test-ui-stats-2.png");
 
-loadSprite("player-skills-ui", "/sprites/test-player-skills-ui.png");
+loadSprite("player-skills-ui", "/sprites/test-player-skills-ui-2.png");
 
 loadSprite("player-stats-ui-anim", "/sprites/cosito-stats-ui.png", {
   sliceX: 5,

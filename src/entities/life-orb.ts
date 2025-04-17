@@ -14,7 +14,7 @@ export function initLifeOrb({
     pos(x, y),
     anchor("center"),
     area(),
-    opacity(3),
+    opacity(1),
     lifespan(10, { fade: 0.5 }),
     body({ isStatic: true }),
   ]);

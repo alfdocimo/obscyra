@@ -24,19 +24,21 @@ const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 3; // in seconds
 const CORRUPTION_INCREMENT = 1;
 const STAT_WIDTH = 308;
+const SKILL_STAT_WIDTH = 142;
+
 const HEALTH_STATUS_WIDTH = STAT_WIDTH;
-const ENERGY_STATUS_WIDTH = STAT_WIDTH;
-const STAMINA_STATUS_WIDTH = STAT_WIDTH;
+const ENERGY_STATUS_WIDTH = SKILL_STAT_WIDTH;
+const STAMINA_STATUS_WIDTH = SKILL_STAT_WIDTH;
 const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
 const EXPERIENCE_STATUS_WIDTH = STAT_WIDTH;
 
 const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 
-const HP_COLOR = [26, 246, 122];
+const HP_COLOR = [221, 78, 37];
 const ENERGY_COLOR = [129, 222, 240];
 const STAMINA_COLOR = [54, 236, 47];
-const CORRUPTION_COLOR = [229, 47, 236];
+const CORRUPTION_COLOR = [255, 38, 162];
 const EXPERIENCE_COLOR = [240, 212, 120];
 
 type Skill = {
@@ -446,8 +448,8 @@ const initPlayer = () => {
     playerStats,
     playerSkillsStats,
     playerStatsUIAnim,
-    experienceBar,
-    experienceBarText,
+    // experienceBar,
+    // experienceBarText,
   } = initPlayerStatsUI();
 
   updateCorruptionColorInPlayerStats(playerStatsUIAnim);
@@ -459,7 +461,7 @@ const initPlayer = () => {
     "skill-single-shot",
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(4, 4),
+    pos(6, 6),
     fixed(),
     z(10000),
   ]);
@@ -470,7 +472,7 @@ const initPlayer = () => {
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(32, 4),
+    pos(42, 6),
     fixed(),
     z(10000),
   ]);
@@ -481,7 +483,7 @@ const initPlayer = () => {
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
     opacity(0),
-    pos(64, 4),
+    pos(78, 6),
     fixed(),
     z(10000),
   ]);
@@ -498,7 +500,7 @@ const initPlayer = () => {
     outline(0.2),
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
-    pos(4, 34),
+    pos(6, 42),
     fixed(),
     z(10000),
   ]);
@@ -509,7 +511,7 @@ const initPlayer = () => {
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(32, 34),
+    pos(42, 42),
     fixed(),
     z(10000),
   ]);
@@ -520,7 +522,7 @@ const initPlayer = () => {
     opacity(0),
     anchor("topleft"),
     color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
-    pos(64, 34),
+    pos(78, 42),
     fixed(),
     z(10000),
   ]);
@@ -635,8 +637,6 @@ const initPlayer = () => {
     energyText,
     staminaBar,
     staminaText,
-    experienceBar,
-    experienceBarText,
   });
 
   checkCorrutionAmountInPlayer();
@@ -649,10 +649,10 @@ function updateCorruptionColorInPlayerStats(
 ) {
   onUpdate(() => {
     const t = player.corruption / player.maxCorruption;
-
-    const r = 255;
-    const g = 255 * (1 - t);
-    const b = 255;
+    // 255, 38, 162 <- Should be this color instead! Now is purple all the way
+    const r = 255; // stays constant
+    const g = 255 - (255 - 38) * t;
+    const b = 255 - (255 - 162) * t;
 
     playerStatsUIAnim.color = Color.fromArray([r, g, b]);
   });
@@ -667,18 +667,16 @@ function updatePlayerStatsInUI({
   energyText,
   staminaBar,
   staminaText,
-  experienceBar,
-  experienceBarText,
 }) {
   // EXP BAR
-  onUpdate(() => {
-    experienceBar.width =
-      (player.expPoints * EXPERIENCE_STATUS_WIDTH) / player.nextLevelExpPoints;
+  // onUpdate(() => {
+  //   experienceBar.width =
+  //     (player.expPoints * EXPERIENCE_STATUS_WIDTH) / player.nextLevelExpPoints;
 
-    experienceBarText.text = `Exp \t ${Math.round(player.expPoints)}/${
-      player.nextLevelExpPoints
-    }`;
-  });
+  //   experienceBarText.text = `Exp \t ${Math.round(player.expPoints)}/${
+  //     player.nextLevelExpPoints
+  //   }`;
+  // });
 
   // CORRUPTION BAR 🟣
   onUpdate(() => {
@@ -687,7 +685,7 @@ function updatePlayerStatsInUI({
     corruptionBar.width =
       (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
 
-    corruptionText.text = `Corruption \t ${Math.round(player.corruption)}/${
+    corruptionText.text = `Corrup \t\t ${Math.round(player.corruption)}/${
       player.maxCorruption
     }`;
   });
@@ -695,7 +693,7 @@ function updatePlayerStatsInUI({
   // HP BAR 🟥
   onUpdate(() => {
     healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
-    heathBarText.text = `Health \t ${
+    heathBarText.text = `Health \t\t ${
       player.hp() >= 0 ? player.hp() : 0
     }/${player.maxHP()}`;
   });
@@ -780,7 +778,7 @@ function initPlayerStatsUI() {
   let playerSkillsStats = add([
     sprite("player-skills-ui"),
     anchor("topleft"),
-    pos(GAME.CANVAS_WIDTH / 2 - 70, GAME.CANVAS_HEIGHT - 90),
+    pos(GAME.CANVAS_WIDTH / 2 + 90, GAME.CANVAS_HEIGHT - 90),
     fixed(),
     z(10000),
   ]);
@@ -818,9 +816,9 @@ function initPlayerStatsUI() {
     z(1000),
   ]);
 
-  let staminaBar = playerStats.add([
-    rect(STAMINA_STATUS_WIDTH, 11),
-    pos(80, 34),
+  let staminaBar = playerSkillsStats.add([
+    rect(STAMINA_STATUS_WIDTH, 32),
+    pos(150, 22),
 
     color(Color.fromArray(STAMINA_COLOR)),
     anchor("left"),
@@ -835,9 +833,9 @@ function initPlayerStatsUI() {
     z(1000),
   ]);
 
-  let energyBar = playerStats.add([
-    rect(ENERGY_STATUS_WIDTH, 11),
-    pos(80, 50),
+  let energyBar = playerSkillsStats.add([
+    rect(ENERGY_STATUS_WIDTH, 32),
+    pos(150, 58),
     color(Color.fromArray(ENERGY_COLOR)),
     anchor("left"),
     "energy-bar",
@@ -853,7 +851,7 @@ function initPlayerStatsUI() {
 
   let corruptionBar = playerStats.add([
     rect(CORRUPTION_STATUS_WIDTH, 11),
-    pos(80, 66),
+    pos(80, 34),
     color(Color.fromArray(CORRUPTION_COLOR)),
     anchor("left"),
     "energy-bar",
@@ -867,25 +865,25 @@ function initPlayerStatsUI() {
     z(1000),
   ]);
 
-  let experienceBar = playerStats.add([
-    rect(EXPERIENCE_STATUS_WIDTH, 11),
-    pos(80, 82),
-    color(Color.fromArray(EXPERIENCE_COLOR)),
-    anchor("left"),
-    "energy-bar",
-  ]);
+  // let experienceBar = playerStats.add([
+  //   rect(EXPERIENCE_STATUS_WIDTH, 11),
+  //   pos(80, 82),
+  //   color(Color.fromArray(EXPERIENCE_COLOR)),
+  //   anchor("left"),
+  //   "energy-bar",
+  // ]);
 
-  let experienceBarText = experienceBar.add([
-    text("", { size: 10 }),
-    pos(10, 0),
-    color(255, 255, 255),
-    anchor("left"),
-    z(1000),
-  ]);
+  // let experienceBarText = experienceBar.add([
+  //   text("", { size: 10 }),
+  //   pos(10, 0),
+  //   color(255, 255, 255),
+  //   anchor("left"),
+  //   z(1000),
+  // ]);
 
   return {
-    experienceBar,
-    experienceBarText,
+    // experienceBar,
+    // experienceBarText,
     playerStats,
     corruptionBar,
     corruptionText,
