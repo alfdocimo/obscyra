@@ -148,11 +148,24 @@ loadSprite("final-shot", "/sprites/final-shot.png", {
   },
 });
 
+loadSprite("protect", "/sprites/protect.png", {
+  sliceX: 4,
+  sliceY: 4,
+  anims: {
+    play: {
+      from: 0,
+      to: 14,
+      loop: true,
+    },
+  },
+});
+
 loadSprite("skill-single-shot", "/sprites/skill-single-shot.png");
 loadSprite("skill-sword-slash", "/sprites/skill-sword-slash.png");
 loadSprite("skill-tri-shot", "/sprites/skill-tri-shot.png");
 loadSprite("skill-long-slash", "/sprites/skill-long-slash.png");
 loadSprite("skill-moving-shot", "/sprites/skill-moving-shot.png");
+loadSprite("skill-protect", "/sprites/skill-protect.png");
 loadSprite("long-slash", "/sprites/long-slash.png", {
   sliceX: 3,
   sliceY: 3,

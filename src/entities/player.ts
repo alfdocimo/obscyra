@@ -266,6 +266,84 @@ const initPlayer = () => {
             // ]);
           },
         },
+        {
+          name: "skill-protect",
+          energyCost: 0,
+          staminaCost: 5,
+          unlockLevel: 1,
+          type: "melee",
+          damage: 5,
+          cooldownTime: 5,
+          isCoolingDown: false,
+          invoke: () => {
+            // const SLASH_LENGTH = 60;
+            // const SLASH_WIDTH = 10;
+
+            function displayAddOneHpText() {
+              let hpAdded = add([
+                text(`1`, { size: 16 }),
+                animate(),
+                pos(player.worldPos().x, player.worldPos().y - 30),
+                opacity(1),
+                color(Color.WHITE),
+                lifespan(0.2, { fade: 0.2 }),
+                z(3000),
+              ]);
+              hpAdded.animate(
+                "pos",
+                [vec2(hpAdded.pos), vec2(hpAdded.pos.x, hpAdded.pos.y - 30)],
+                { duration: 0.2, loops: 1 }
+              );
+            }
+
+            let duration = 5;
+
+            let protect = player.add([
+              pos(0, 0),
+              sprite("protect", { anim: "play" }),
+              // anchor(vec2(-1, 0)),
+              anchor("center"),
+              // rotate(angle),
+              area(),
+              opacity(0.5),
+              animate(),
+              lifespan(duration, { fade: 0.2 }),
+              z(9000),
+              "player-protect",
+              {
+                canHeal: true,
+                update() {
+                  player.canTakeDamage = false;
+                },
+                destroy() {
+                  player.canTakeDamage = true;
+                },
+              },
+            ]);
+
+            protect.onCollide("enemy", () => {
+              if (protect.canHeal) {
+                player.heal(1);
+                displayAddOneHpText();
+                protect.canHeal = false;
+                wait(1, () => {
+                  protect.canHeal = true;
+                });
+              }
+            });
+            protect.onCollide("bullet", (bullet) => {
+              destroy(bullet);
+              if (protect.canHeal) {
+                player.heal(1);
+                displayAddOneHpText();
+                protect.canHeal = false;
+                wait(1, () => {
+                  protect.canHeal = true;
+                });
+              }
+            });
+          },
+        },
       ],
       rangedSKills: [
         {
@@ -585,10 +663,22 @@ const initPlayer = () => {
     z(10000),
   ]);
 
+  let skillProtect = playerSkillsStats.add([
+    sprite("skill-protect"),
+    "skill-protect",
+    opacity(0),
+    anchor("topleft"),
+    color(Color.fromArray(UNSELECTED_SKILL_COLOR)),
+    pos(114, 42),
+    fixed(),
+    z(10000),
+  ]);
+
   const meeleSkillsSlotsGameObjects = [
     skillSwordSlash,
     skillLongSlash,
     skillCircleSlash,
+    skillProtect,
   ];
 
   // Assign skill based on level logic
@@ -610,7 +700,7 @@ const initPlayer = () => {
     });
   });
 
-  const meeleeSkillKeyboardInputs = ["z", "x", "c"];
+  const meeleeSkillKeyboardInputs = ["z", "x", "c", "v"];
   meeleeSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
       if (!player.exists()) return;
@@ -635,6 +725,7 @@ const initPlayer = () => {
       skillMovingSHot.opacity = 1;
       skillCircleSlash.opacity = 1;
       skillFinalShot.opacity = 1;
+      skillProtect.opacity = 1;
     }
   });
 
@@ -1090,8 +1181,6 @@ function handlePlayerCollisions() {
       if (!player.canTakeDamage) return;
 
       if (obj.target.is("enemy")) {
-        console.log("touch", obj.target.touchDamage);
-
         takeDamage({ damage: obj.target.touchDamage });
         return; // stop after first valid collision
       }
