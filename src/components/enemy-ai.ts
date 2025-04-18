@@ -74,26 +74,35 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       self.onStateEnter("attack", async () => {
         const p = player;
         if (p.exists() && self.exists()) {
-          const dir = p.pos.sub(self.pos).unit();
+          flashAndPerformAction({
+            maxFlashes: 8,
+            flashInterval: 0.2,
+            self,
+            action: () => {
+              const dir = p.pos.sub(self.pos).unit();
 
-          let enemyBullet = add([
-            pos(self.pos),
-            move(dir, bulletSpeed),
-            rect(bulletSize, bulletSize),
-            area(),
-            offscreen({ destroy: true }),
-            anchor("center"),
-            color(bulletColor),
-            "bullet",
-            { bulletDamage: self.bulletDamage },
-          ]);
+              let enemyBullet = add([
+                pos(self.pos),
+                move(dir, bulletSpeed),
+                rect(bulletSize, bulletSize),
+                area(),
+                offscreen({ destroy: true }),
+                anchor("center"),
+                color(bulletColor),
+                "bullet",
+                { bulletDamage: self.bulletDamage },
+              ]);
 
-          enemyBullet.onCollide("player", () => {
-            destroy(enemyBullet);
-          });
+              enemyBullet.onCollide("player", () => {
+                destroy(enemyBullet);
+              });
 
-          enemyBullet.onCollide("wall", () => {
-            destroy(enemyBullet);
+              enemyBullet.onCollide("wall", () => {
+                destroy(enemyBullet);
+              });
+            },
+            fromColor: [255, 255, 255],
+            toColor: [245, 221, 24],
           });
         }
 
@@ -114,21 +123,12 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       });
 
       self.onStateEnter("destroy", () => {
-        let flashCount = 0;
-        const maxFlashes = 4;
-        const flashInterval = 0.1;
-
-        const flashTimer = loop(flashInterval, () => {
-          self.use(
-            color(flashCount % 2 === 0 ? rgb(255, 0, 0) : rgb(255, 255, 255))
-          );
-
-          flashCount++;
-
-          if (flashCount >= maxFlashes) {
-            flashTimer.cancel();
-            die();
-          }
+        flashAndPerformAction({
+          maxFlashes: 4,
+          self,
+          action: () => die(),
+          fromColor: [255, 255, 255],
+          toColor: [255, 0, 0],
         });
       });
 
@@ -277,4 +277,40 @@ export function enemyAI(config: EnemyAIConfig = {}) {
     //   gameState.totalMobsKilled++;
     // },
   };
+
+  function flashAndPerformAction({
+    self,
+    flashInterval = 0.1,
+    maxFlashes = 4,
+    fromColor,
+    toColor,
+    action,
+  }: {
+    self: EnemyAIContext;
+    flashInterval?: number;
+    maxFlashes?: number;
+    fromColor: [number, number, number];
+    toColor: [number, number, number];
+    action: () => void;
+  }) {
+    let flashCount = 0;
+
+    const flashTimer = loop(flashInterval, () => {
+      self.use(
+        color(
+          flashCount % 2 === 0
+            ? Color.fromArray(fromColor)
+            : Color.fromArray(toColor)
+        )
+      );
+
+      flashCount++;
+
+      if (flashCount >= maxFlashes) {
+        flashTimer.cancel();
+        self.use(color(rgb(255, 255, 255)));
+        action();
+      }
+    });
+  }
 }
