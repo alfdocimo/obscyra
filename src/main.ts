@@ -2,12 +2,13 @@ import kaplay from "kaplay";
 import "kaplay/global";
 import { initPlayer, player } from "./entities/player";
 import { initPerinolaEnemy } from "./entities/perinola";
-import { initTinyGhosty } from "./entities/tiny-ghosty";
-import { initGigagantrum } from "./entities/gigagantrum";
+
+import { initMidEnemy } from "./entities/mid-enemy";
 import { GAME } from "./config";
 import getMobRandomPos from "./utils/get-mob-random-pos";
 import { addBackground, addWorldBounds, spawnRandomWalls } from "./level";
 import { gameState } from "./game-state";
+import { initFastEnemy } from "./entities/fast-enemy";
 
 // @ts-check
 
@@ -70,6 +71,17 @@ loadSprite("crystal", "/sprites/crystal.png", {
   sliceY: 3,
   anims: {
     idle: {
+      from: 0,
+      to: 6,
+      loop: true,
+    },
+  },
+});
+loadSprite("mid-enemy", "/sprites/mid-enemy.png", {
+  sliceX: 3,
+  sliceY: 3,
+  anims: {
+    float: {
       from: 0,
       to: 6,
       loop: true,
@@ -157,6 +169,18 @@ loadSprite("protect", "/sprites/protect.png", {
     play: {
       from: 0,
       to: 14,
+      loop: true,
+    },
+  },
+});
+
+loadSprite("fast-enemy", "/sprites/fast-enemy.png", {
+  sliceX: 4,
+  sliceY: 2,
+  anims: {
+    float: {
+      from: 0,
+      to: 7,
       loop: true,
     },
   },
@@ -254,6 +278,30 @@ scene("game", () => {
 
     let { x, y } = getMobRandomPos(player.pos);
     initPerinolaEnemy(x, y);
+    gameState.currentMobs++;
+    gameState.totalMobsSpawned++;
+  });
+
+  loop(gameState.mobsSpawnTime * 2, () => {
+    if (!gameState.gameStarted) return;
+    if (!player.exists()) return;
+
+    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+    let { x, y } = getMobRandomPos(player.pos);
+    initMidEnemy(x, y);
+    gameState.currentMobs++;
+    gameState.totalMobsSpawned++;
+  });
+
+  loop(gameState.mobsSpawnTime * 3, () => {
+    if (!gameState.gameStarted) return;
+    if (!player.exists()) return;
+
+    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+    let { x, y } = getMobRandomPos(player.pos);
+    initFastEnemy(x, y);
     gameState.currentMobs++;
     gameState.totalMobsSpawned++;
   });
