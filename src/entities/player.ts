@@ -280,9 +280,9 @@ const initPlayer = () => {
             // const SLASH_LENGTH = 60;
             // const SLASH_WIDTH = 10;
 
-            function displayAddOneHpText() {
+            function displayAddHpFromProtectText(hpToAdd: number) {
               let hpAdded = add([
-                text(`1`, { size: 16 }),
+                text(String(Math.round(hpToAdd)), { size: 16 }),
                 animate(),
                 pos(player.worldPos().x, player.worldPos().y - 30),
                 opacity(1),
@@ -327,10 +327,11 @@ const initPlayer = () => {
               },
             ]);
 
-            protect.onCollide("enemy", () => {
+            protect.onCollide("enemy", (enemy) => {
               if (protect.canHeal) {
-                player.heal(1);
-                displayAddOneHpText();
+                let healAmount = enemy.touchDamage / 2;
+                player.heal(healAmount);
+                displayAddHpFromProtectText(healAmount);
                 protect.canHeal = false;
                 wait(1, () => {
                   protect.canHeal = true;
@@ -340,8 +341,34 @@ const initPlayer = () => {
             protect.onCollide("bullet", (bullet) => {
               destroy(bullet);
               if (protect.canHeal) {
-                player.heal(1);
-                displayAddOneHpText();
+                let healAmount = bullet.bulletDamage / 2;
+                player.heal(healAmount);
+                displayAddHpFromProtectText(healAmount);
+                protect.canHeal = false;
+                wait(1, () => {
+                  protect.canHeal = true;
+                });
+              }
+            });
+
+            protect.onCollide("hard-enemy-osc", (osc) => {
+              destroy(osc);
+              if (protect.canHeal) {
+                let healAmount = osc.bulletDamage / 2;
+                player.heal(healAmount);
+                displayAddHpFromProtectText(healAmount);
+                protect.canHeal = false;
+                wait(1, () => {
+                  protect.canHeal = true;
+                });
+              }
+            });
+
+            protect.onCollide("hard-enemy-laser-beam", (laserBeam) => {
+              if (protect.canHeal) {
+                let healAmount = laserBeam.bulletDamage / 2;
+                player.heal(healAmount);
+                displayAddHpFromProtectText(healAmount);
                 protect.canHeal = false;
                 wait(1, () => {
                   protect.canHeal = true;
@@ -590,11 +617,13 @@ const initPlayer = () => {
     sprite("skill-single-shot"),
     "skill-single-shot",
     anchor("topleft"),
+    opacity(1),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
     pos(6, 6),
     fixed(),
     z(10000),
   ]);
+  addSkillKeyboardKey(skillSingleShot, "1");
 
   let skillTriShot = playerSkillsStats.add([
     sprite("skill-tri-shot"),
@@ -606,8 +635,9 @@ const initPlayer = () => {
     fixed(),
     z(10000),
   ]);
+  addSkillKeyboardKey(skillTriShot, "2");
 
-  let skillMovingSHot = playerSkillsStats.add([
+  let skillMovingShot = playerSkillsStats.add([
     sprite("skill-moving-shot"),
     "skill-moving-shot",
     anchor("topleft"),
@@ -617,6 +647,7 @@ const initPlayer = () => {
     fixed(),
     z(10000),
   ]);
+  addSkillKeyboardKey(skillMovingShot, "3");
 
   let skillFinalShot = playerSkillsStats.add([
     sprite("skill-final-shot"),
@@ -628,24 +659,26 @@ const initPlayer = () => {
     fixed(),
     z(10000),
   ]);
+  addSkillKeyboardKey(skillFinalShot, "4");
 
   const rangedSkillsSlotsGameObjects = [
     skillSingleShot,
     skillTriShot,
-    skillMovingSHot,
+    skillMovingShot,
     skillFinalShot,
   ];
 
   let skillSwordSlash = playerSkillsStats.add([
     sprite("skill-sword-slash"),
     "skill-sword-slash",
-    outline(0.2),
+    opacity(1),
     anchor("topleft"),
     color(Color.fromArray(SELECTED_SKILL_COLOR)),
     pos(6, 42),
     fixed(),
     z(10000),
   ]);
+  addSkillKeyboardKey(skillSwordSlash, "Z");
 
   let skillLongSlash = playerSkillsStats.add([
     sprite("skill-long-slash"),
@@ -658,6 +691,8 @@ const initPlayer = () => {
     z(10000),
   ]);
 
+  addSkillKeyboardKey(skillLongSlash, "X");
+
   let skillCircleSlash = playerSkillsStats.add([
     sprite("skill-circle-slash"),
     "skill-circle-slash",
@@ -669,6 +704,8 @@ const initPlayer = () => {
     z(10000),
   ]);
 
+  addSkillKeyboardKey(skillCircleSlash, "C");
+
   let skillProtect = playerSkillsStats.add([
     sprite("skill-protect"),
     "skill-protect",
@@ -679,6 +716,8 @@ const initPlayer = () => {
     fixed(),
     z(10000),
   ]);
+
+  addSkillKeyboardKey(skillProtect, "V");
 
   const meeleSkillsSlotsGameObjects = [
     skillSwordSlash,
@@ -728,7 +767,7 @@ const initPlayer = () => {
     if (player.level >= 2) {
       skillTriShot.opacity = 1;
       skillLongSlash.opacity = 1;
-      skillMovingSHot.opacity = 1;
+      skillMovingShot.opacity = 1;
       skillCircleSlash.opacity = 1;
       skillFinalShot.opacity = 1;
       skillProtect.opacity = 1;
@@ -1332,6 +1371,12 @@ function registerPlayerFlipOnXAxis() {
   player.onUpdate(() => {
     player.flipX = toWorld(mousePos()).x < player.pos.x;
   });
+}
+
+function addSkillKeyboardKey(gameObj: GameObj, key: string) {
+  gameObj
+    .add([rect(12, 12), color(Color.WHITE)])
+    .add([text(key, { size: 10 }), pos(2, 2), color(Color.BLACK)]);
 }
 
 export { initPlayer, player };

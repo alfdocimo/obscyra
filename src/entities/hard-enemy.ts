@@ -56,9 +56,7 @@ function spawnOrbiter(i: number, hardEnemy) {
 
     anchor("center"),
     color(239, 194, 72),
-    area({
-      collisionIgnore: ["hard-enemy-osc"],
-    }),
+    area({ collisionIgnore: ["hard-enemy-osc", "enemy", "bullet"] }),
     z(1000), // render just above the enemy
     "hard-enemy-osc",
     {
