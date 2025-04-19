@@ -14,15 +14,15 @@ export const initHardEnemy = (x: number, y: number) => {
     state("move", ["idle", "attack", "laser-beam-attack", "move", "destroy"]),
     enemyAI({
       bulletColor: [239, 194, 72],
-      speed: 80,
+      speed: 120,
       bulletSize: 20,
       isBoss: true,
     }),
     "enemy",
     {
-      bulletDamage: 10,
+      bulletDamage: 20,
       touchDamage: 15,
-      expPoints: 50,
+      expPoints: 20,
       totalOrbiters: MAX_TOTAL_ORBITERS,
     },
   ]);

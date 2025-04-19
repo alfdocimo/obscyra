@@ -262,12 +262,12 @@ export function enemyAI(
 
         if (skillType === "ranged") {
           damageToTakeAmount =
-            getSelectedRangedSkillDamage() + playerCorruption * 1.5;
+            getSelectedRangedSkillDamage() + playerCorruption * 1.1; //TODO: revise this!!
           self.hurt(damageToTakeAmount);
         }
         if (skillType === "melee") {
           damageToTakeAmount =
-            getSelectedMeleeSkillDamage() + playerCorruption * 1.5;
+            getSelectedMeleeSkillDamage() + playerCorruption * 1.1;
           self.hurt(damageToTakeAmount);
         }
         let damageTakenText = add([

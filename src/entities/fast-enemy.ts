@@ -16,7 +16,7 @@ const initFastEnemy = (x: number, y: number) => {
       bulletSize: 6,
     }),
     "enemy",
-    { bulletDamage: 1, touchDamage: 1, expPoints: 0.5 },
+    { bulletDamage: 1, touchDamage: 1, expPoints: 1 },
   ]);
 };
 

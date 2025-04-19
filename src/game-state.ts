@@ -4,7 +4,7 @@ export const gameState = {
   maxCurrentMobs: 10,
   currentMobs: 0,
   totalMobsKilled: 0,
-  mobsToBeKilledUntilNextWave: 20,
+  mobsToBeKilledUntilNextWave: 5,
   mobsSpawnTime: 1,
   totalMobsSpawned: 0,
 };

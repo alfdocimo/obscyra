@@ -16,7 +16,7 @@ const initMidEnemy = (x: number, y: number) => {
       bulletSize: 10,
     }),
     "enemy",
-    { bulletDamage: 10, touchDamage: 7, expPoints: 2 },
+    { bulletDamage: 10, touchDamage: 6, expPoints: 8 },
   ]);
 };
 
