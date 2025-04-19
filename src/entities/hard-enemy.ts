@@ -32,16 +32,6 @@ export const initHardEnemy = (x: number, y: number) => {
     spawnOrbiter(i, hardEnemy);
   }
 
-  loop(5, () => {
-    if (hardEnemy.totalOrbiters < MAX_TOTAL_ORBITERS) {
-      let orbitersToSpawn = MAX_TOTAL_ORBITERS - hardEnemy.totalOrbiters;
-
-      for (let i = 0; i < orbitersToSpawn; i++) {
-        spawnOrbiter(i, hardEnemy);
-      }
-    }
-  });
-
   return hardEnemy;
 };
 function spawnOrbiter(i: number, hardEnemy) {
@@ -90,30 +80,54 @@ function spawnOrbiter(i: number, hardEnemy) {
   orbiter.onCollide("player-bullet", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 
   orbiter.onCollide("player-moving-bullet", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 
   orbiter.onCollide("player-final-shot-bullet", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 
   orbiter.onCollide("player-slash", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 
   orbiter.onCollide("player-long-slash", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 
   orbiter.onCollide("player-circle-slash", (playerBullet) => {
     orbiter.destroy();
     hardEnemy.totalOrbiters -= 1;
+    let interval = randi(3, 10);
+    wait(interval, () => {
+      spawnOrbiter(interval, hardEnemy);
+    });
   });
 }

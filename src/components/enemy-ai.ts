@@ -177,7 +177,7 @@ export function enemyAI(
               const bulletStartPos = self.worldPos().add(gunOffset);
 
               const beam = add([
-                rect(800, 10),
+                rect(600, 8),
                 pos(bulletStartPos),
                 anchor(vec2(-1, 0)), // pivot from the left side, just like in your example
                 rotate(angle),

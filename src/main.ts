@@ -311,41 +311,41 @@ scene("game", () => {
   //   gameState.gameStarted = true;
   // });
 
-  loop(gameState.mobsSpawnTime, () => {
-    if (!gameState.gameStarted) return;
-    if (!player.exists()) return;
+  // loop(gameState.mobsSpawnTime, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
 
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-    let { x, y } = getMobRandomPos(player.pos);
-    initPerinolaEnemy(x, y);
-    gameState.currentMobs++;
-    gameState.totalMobsSpawned++;
-  });
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initPerinolaEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
 
-  loop(gameState.mobsSpawnTime * 2, () => {
-    if (!gameState.gameStarted) return;
-    if (!player.exists()) return;
+  // loop(gameState.mobsSpawnTime * 2, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
 
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-    let { x, y } = getMobRandomPos(player.pos);
-    initMidEnemy(x, y);
-    gameState.currentMobs++;
-    gameState.totalMobsSpawned++;
-  });
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initMidEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
 
-  loop(gameState.mobsSpawnTime * 3, () => {
-    if (!gameState.gameStarted) return;
-    if (!player.exists()) return;
+  // loop(gameState.mobsSpawnTime * 3, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
 
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-    let { x, y } = getMobRandomPos(player.pos);
-    initFastEnemy(x, y);
-    gameState.currentMobs++;
-    gameState.totalMobsSpawned++;
-  });
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initFastEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
 
   loop(gameState.mobsSpawnTime * 10, () => {
     if (!gameState.gameStarted) return;
@@ -370,7 +370,9 @@ scene("game", () => {
 
     currentWaveText.text = `Wave: ${gameState.currentWave}`;
     currentMobsKilledText.text = `Slayed: ${gameState.totalMobsKilled}`;
-    mobsUntileNextWaveText.text = `Next wave in: ${gameState.mobsToBeKilledUntilNextWave}`;
+    mobsUntileNextWaveText.text = `Next wave in: ${
+      gameState.mobsToBeKilledUntilNextWave - gameState.totalMobsKilled
+    }`;
   });
 
   // loop(1, () => {
