@@ -244,6 +244,32 @@ scene("game", () => {
   spawnRandomWalls();
   setCursor("none");
 
+  let currentWaveText = add([
+    text(`Wave: ${gameState.currentWave}`, { size: 16 }),
+    pos(GAME.CANVAS_WIDTH - 30, 12),
+    anchor("topright"),
+    fixed(),
+    z(10000),
+  ]);
+
+  let currentMobsKilledText = add([
+    text(`Slayed: ${gameState.totalMobsKilled}`, { size: 16 }),
+    pos(GAME.CANVAS_WIDTH - 30, 32),
+    anchor("topright"),
+    fixed(),
+    z(10000),
+  ]);
+
+  let mobsUntileNextWaveText = add([
+    text(`Next wave in: ${gameState.mobsToBeKilledUntilNextWave}`, {
+      size: 16,
+    }),
+    pos(GAME.CANVAS_WIDTH - 30, 52),
+    anchor("topright"),
+    fixed(),
+    z(10000),
+  ]);
+
   // debug.inspect = true;
 
   const player = initPlayer();
@@ -341,6 +367,10 @@ scene("game", () => {
       );
       gameState.mobsSpawnTime *= 0.95;
     }
+
+    currentWaveText.text = `Wave: ${gameState.currentWave}`;
+    currentMobsKilledText.text = `Slayed: ${gameState.totalMobsKilled}`;
+    mobsUntileNextWaveText.text = `Next wave in: ${gameState.mobsToBeKilledUntilNextWave}`;
   });
 
   // loop(1, () => {

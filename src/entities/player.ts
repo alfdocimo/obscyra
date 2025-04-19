@@ -1116,6 +1116,7 @@ function staminaRegenLoop() {
 
 function handleLevelUp() {
   onUpdate(() => {
+    if (!player.exists()) return;
     if (player.expPoints >= player.nextLevelExpPoints) {
       player.level += 1;
       player.baseMeeleDamage += 2;
