@@ -1165,6 +1165,11 @@ function handlePlayerCollisions() {
         takeDamage({ damage: obj.target.bulletDamage });
         return;
       }
+
+      if (obj.target.is("hard-enemy-laser-beam")) {
+        takeDamage({ damage: obj.target.bulletDamage });
+        return;
+      }
     }
   });
 }

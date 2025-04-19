@@ -75,7 +75,8 @@ export function enemyAI(
       const bulletSize = config.bulletSize ?? 12;
 
       self.onStateEnter("idle", async () => {
-        await wait(idleDuration);
+        let randomIdleDuration = rand(3);
+        await wait(randomIdleDuration);
         if (config.isBoss) {
           let shoudFireLaserBeam = randi(100);
           if (shoudFireLaserBeam < 20) {
@@ -102,7 +103,7 @@ export function enemyAI(
                 let enemyBullet = add([
                   pos(self.pos),
                   move(dir, bulletSpeed),
-                  rect(bulletSize, bulletSize),
+                  sprite("hard-enemy-osc", { width: 20, height: 20 }),
                   area(),
                   offscreen({ destroy: true }),
                   anchor("center"),
@@ -121,7 +122,7 @@ export function enemyAI(
               },
 
               fromColor: [255, 255, 255],
-              toColor: [245, 221, 24],
+              toColor: [255, 38, 162],
             });
           } else {
             flashAndPerformAction({
@@ -157,7 +158,8 @@ export function enemyAI(
           }
         }
 
-        await wait(attackDuration);
+        let randomAttackDuration = rand(3);
+        await wait(randomAttackDuration);
         self.enterState("move");
       });
 
@@ -180,10 +182,12 @@ export function enemyAI(
                 anchor(vec2(-1, 0)), // pivot from the left side, just like in your example
                 rotate(angle),
                 area(),
+                color(255, 38, 162),
                 opacity(1),
                 lifespan(0.3, { fade: 0.1 }),
                 z(9000),
-                "enemy-final-shot",
+                "hard-enemy-laser-beam",
+                { bulletDamage: this.bulletDamage * 2 },
               ]);
             },
 
@@ -192,12 +196,14 @@ export function enemyAI(
           });
         }
 
-        await wait(attackDuration);
+        let randomAttackDuration = rand(3);
+        await wait(randomAttackDuration);
         self.enterState("move");
       });
 
       self.onStateEnter("move", async () => {
-        await wait(moveDuration);
+        let randomMoveDuration = rand(3);
+        await wait(randomMoveDuration);
         self.enterState("idle");
       });
 
