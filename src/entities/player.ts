@@ -30,7 +30,7 @@ const HEALTH_STATUS_WIDTH = STAT_WIDTH;
 const ENERGY_STATUS_WIDTH = SKILL_STAT_WIDTH;
 const STAMINA_STATUS_WIDTH = SKILL_STAT_WIDTH;
 const CORRUPTION_STATUS_WIDTH = STAT_WIDTH;
-const EXPERIENCE_STATUS_WIDTH = STAT_WIDTH;
+const EXPERIENCE_STATUS_WIDTH = 138;
 
 const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
@@ -607,6 +607,9 @@ const initPlayer = () => {
     playerStatsUIAnim,
     // experienceBar,
     // experienceBarText,
+    experienceBar,
+    totalExperienceStatsText,
+    levelStatsText,
   } = initPlayerStatsUI();
 
   updateCorruptionColorInPlayerStats(playerStatsUIAnim);
@@ -832,6 +835,9 @@ const initPlayer = () => {
     energyText,
     staminaBar,
     staminaText,
+    experienceBar,
+    levelStatsText,
+    totalExperienceStatsText,
   });
 
   checkCorrutionAmountInPlayer();
@@ -862,16 +868,20 @@ function updatePlayerStatsInUI({
   energyText,
   staminaBar,
   staminaText,
+  levelStatsText,
+  experienceBar,
+  totalExperienceStatsText,
 }) {
   // EXP BAR
-  // onUpdate(() => {
-  //   experienceBar.width =
-  //     (player.expPoints * EXPERIENCE_STATUS_WIDTH) / player.nextLevelExpPoints;
+  onUpdate(() => {
+    levelStatsText.text = `Level:  ${player.level}`;
+    experienceBar.width =
+      (player.expPoints * EXPERIENCE_STATUS_WIDTH) / player.nextLevelExpPoints;
 
-  //   experienceBarText.text = `Exp \t ${Math.round(player.expPoints)}/${
-  //     player.nextLevelExpPoints
-  //   }`;
-  // });
+    totalExperienceStatsText.text = `Exp \t ${Math.round(
+      player.expPoints
+    )}/${Math.round(player.nextLevelExpPoints)}`;
+  });
 
   // CORRUPTION BAR 🟣
   onUpdate(() => {
@@ -980,6 +990,38 @@ function initPlayerStatsUI() {
     z(10000),
   ]);
 
+  let levelStats = add([
+    sprite("level-stats-ui"),
+    anchor("topleft"),
+    pos(10, GAME.CANVAS_HEIGHT - 50),
+    fixed(),
+    z(10000),
+  ]);
+
+  let experienceBar = levelStats.add([
+    rect(EXPERIENCE_STATUS_WIDTH, 16),
+    pos(6, 24),
+    color(Color.fromArray(EXPERIENCE_COLOR)),
+    anchor("left"),
+    "experience-bar",
+  ]);
+
+  let levelStatsText = levelStats.add([
+    text("", { size: 12 }),
+    pos(6, 10),
+    color(Color.BLACK),
+    anchor("left"),
+    z(1000),
+  ]);
+
+  let totalExperienceStatsText = levelStats.add([
+    text("", { size: 12 }),
+    pos(12, 25),
+    color(Color.BLACK),
+    anchor("left"),
+    z(1000),
+  ]);
+
   let playerStats = add([
     sprite("player-stats"),
     pos(8, 8),
@@ -1081,6 +1123,9 @@ function initPlayerStatsUI() {
   return {
     // experienceBar,
     // experienceBarText,
+    totalExperienceStatsText,
+    levelStatsText,
+    experienceBar,
     playerStats,
     corruptionBar,
     corruptionText,

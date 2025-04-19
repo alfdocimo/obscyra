@@ -136,6 +136,7 @@ loadSprite("aim-circle", "/sprites/aim-circle.png");
 loadSprite("player-stats", "/sprites/test-ui-stats-2.png");
 
 loadSprite("player-skills-ui", "/sprites/test-player-skills-ui-2.png");
+loadSprite("level-stats-ui", "/sprites/level-stats-ui.png");
 
 loadSprite("player-stats-ui-anim", "/sprites/cosito-stats-ui.png", {
   sliceX: 5,
