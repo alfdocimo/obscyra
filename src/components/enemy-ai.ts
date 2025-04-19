@@ -24,6 +24,7 @@ type EnemyAIConfig = {
   bulletSpeed?: number;
   bulletSize?: number;
   isBoss?: boolean;
+  isRunningEnemy?: boolean;
   speed?: number;
 };
 
@@ -39,6 +40,7 @@ type EnemyAIContext = GameObj<
 export function enemyAI(
   config: EnemyAIConfig = {
     isBoss: false,
+    isRunningEnemy: false,
   }
 ) {
   let initialHealth = undefined;
@@ -74,7 +76,16 @@ export function enemyAI(
 
       self.onStateEnter("idle", async () => {
         await wait(idleDuration);
-        self.enterState("attack");
+        if (config.isBoss) {
+          let shoudFireLaserBeam = randi(100);
+          if (shoudFireLaserBeam < 20) {
+            self.enterState("laser-beam-attack");
+          } else {
+            self.enterState("attack");
+          }
+        } else {
+          self.enterState("attack");
+        }
       });
 
       self.onStateEnter("attack", async () => {
@@ -82,8 +93,8 @@ export function enemyAI(
         if (p.exists() && self.exists()) {
           if (config.isBoss) {
             flashAndPerformAction({
-              maxFlashes: 16,
-              flashInterval: 0.125,
+              maxFlashes: 8,
+              flashInterval: 0.2,
               self,
               action: () => {
                 const dir = p.pos.sub(self.pos).unit();
@@ -91,16 +102,11 @@ export function enemyAI(
                 let enemyBullet = add([
                   pos(self.pos),
                   move(dir, bulletSpeed),
-                  color(255, 255, 255),
-                  sprite("hard-enemy-osc", {
-                    width: bulletSize,
-                    height: bulletSize,
-                  }),
+                  rect(bulletSize, bulletSize),
                   area(),
                   offscreen({ destroy: true }),
                   anchor("center"),
                   color(bulletColor),
-                  animate(),
                   "bullet",
                   { bulletDamage: self.bulletDamage },
                 ]);
@@ -113,8 +119,9 @@ export function enemyAI(
                   destroy(enemyBullet);
                 });
               },
+
               fromColor: [255, 255, 255],
-              toColor: [255, 38, 162],
+              toColor: [245, 221, 24],
             });
           } else {
             flashAndPerformAction({
@@ -148,6 +155,41 @@ export function enemyAI(
               toColor: [245, 221, 24],
             });
           }
+        }
+
+        await wait(attackDuration);
+        self.enterState("move");
+      });
+
+      self.onStateEnter("laser-beam-attack", async () => {
+        const p = player;
+        if (p.exists() && self.exists()) {
+          flashAndPerformAction({
+            maxFlashes: 16,
+            flashInterval: 0.125,
+            self,
+            action: () => {
+              const dir = player.worldPos().sub(self.worldPos()).unit();
+              const gunOffset = dir.scale(80); // move it forward from the enemy
+              const angle = player.worldPos().sub(self.worldPos()).angle();
+              const bulletStartPos = self.worldPos().add(gunOffset);
+
+              const beam = add([
+                rect(800, 10),
+                pos(bulletStartPos),
+                anchor(vec2(-1, 0)), // pivot from the left side, just like in your example
+                rotate(angle),
+                area(),
+                opacity(1),
+                lifespan(0.3, { fade: 0.1 }),
+                z(9000),
+                "enemy-final-shot",
+              ]);
+            },
+
+            fromColor: [255, 255, 255],
+            toColor: [255, 38, 162],
+          });
         }
 
         await wait(attackDuration);

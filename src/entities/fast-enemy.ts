@@ -9,12 +9,14 @@ const initFastEnemy = (x: number, y: number) => {
     anchor("center"),
     health(10),
     z(1500),
-    state("move", ["move", "destroy"]),
+    state("move", ["move", "idle", "attack", "destroy"]),
     enemyAI({
-      speed: 220,
+      bulletColor: [239, 194, 72],
+      speed: 100,
+      bulletSize: 6,
     }),
     "enemy",
-    { touchDamage: 3, expPoints: 2 },
+    { bulletDamage: 1, touchDamage: 1, expPoints: 0.5 },
   ]);
 };
 

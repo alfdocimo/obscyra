@@ -11,7 +11,7 @@ import {
 } from "kaplay";
 import { GAME } from "../config";
 
-const INITIAL_HP = 30;
+const INITIAL_HP = 1030;
 const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_ENERGY = 20;

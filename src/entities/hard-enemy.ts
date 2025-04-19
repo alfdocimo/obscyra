@@ -11,7 +11,7 @@ export const initHardEnemy = (x: number, y: number) => {
     anchor("center"),
     health(100),
     z(1500),
-    state("move", ["idle", "attack", "move", "destroy"]),
+    state("move", ["idle", "attack", "laser-beam-attack", "move", "destroy"]),
     enemyAI({
       bulletColor: [239, 194, 72],
       speed: 80,
