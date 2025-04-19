@@ -23,6 +23,7 @@ type EnemyAIConfig = {
   idleDuration?: number;
   bulletSpeed?: number;
   bulletSize?: number;
+  isBoss?: boolean;
   speed?: number;
 };
 
@@ -35,7 +36,11 @@ type EnemyAIContext = GameObj<
   | { expPoints: number; bulletDamage: number }
 >;
 
-export function enemyAI(config: EnemyAIConfig = {}) {
+export function enemyAI(
+  config: EnemyAIConfig = {
+    isBoss: false,
+  }
+) {
   let initialHealth = undefined;
 
   return {
@@ -48,10 +53,11 @@ export function enemyAI(config: EnemyAIConfig = {}) {
 
       initialHealth = self.hp();
 
+      let hpYPosition = config.isBoss ? -70 : -45;
       // Create health bar
       const hpBar = self.add([
         rect(50, 5),
-        pos(-25, -45),
+        pos(-25, hpYPosition),
         outline(0.5, Color.fromArray([221, 78, 37])),
         color(221, 78, 37),
         anchor("left"),
@@ -74,36 +80,74 @@ export function enemyAI(config: EnemyAIConfig = {}) {
       self.onStateEnter("attack", async () => {
         const p = player;
         if (p.exists() && self.exists()) {
-          flashAndPerformAction({
-            maxFlashes: 8,
-            flashInterval: 0.2,
-            self,
-            action: () => {
-              const dir = p.pos.sub(self.pos).unit();
+          if (config.isBoss) {
+            flashAndPerformAction({
+              maxFlashes: 16,
+              flashInterval: 0.125,
+              self,
+              action: () => {
+                const dir = p.pos.sub(self.pos).unit();
 
-              let enemyBullet = add([
-                pos(self.pos),
-                move(dir, bulletSpeed),
-                rect(bulletSize, bulletSize),
-                area(),
-                offscreen({ destroy: true }),
-                anchor("center"),
-                color(bulletColor),
-                "bullet",
-                { bulletDamage: self.bulletDamage },
-              ]);
+                let enemyBullet = add([
+                  pos(self.pos),
+                  move(dir, bulletSpeed),
+                  color(255, 255, 255),
+                  sprite("hard-enemy-osc", {
+                    width: bulletSize,
+                    height: bulletSize,
+                  }),
+                  area(),
+                  offscreen({ destroy: true }),
+                  anchor("center"),
+                  color(bulletColor),
+                  animate(),
+                  "bullet",
+                  { bulletDamage: self.bulletDamage },
+                ]);
 
-              enemyBullet.onCollide("player", () => {
-                destroy(enemyBullet);
-              });
+                enemyBullet.onCollide("player", () => {
+                  destroy(enemyBullet);
+                });
 
-              enemyBullet.onCollide("wall", () => {
-                destroy(enemyBullet);
-              });
-            },
-            fromColor: [255, 255, 255],
-            toColor: [245, 221, 24],
-          });
+                enemyBullet.onCollide("wall", () => {
+                  destroy(enemyBullet);
+                });
+              },
+              fromColor: [255, 255, 255],
+              toColor: [255, 38, 162],
+            });
+          } else {
+            flashAndPerformAction({
+              maxFlashes: 8,
+              flashInterval: 0.2,
+              self,
+              action: () => {
+                const dir = p.pos.sub(self.pos).unit();
+
+                let enemyBullet = add([
+                  pos(self.pos),
+                  move(dir, bulletSpeed),
+                  rect(bulletSize, bulletSize),
+                  area(),
+                  offscreen({ destroy: true }),
+                  anchor("center"),
+                  color(bulletColor),
+                  "bullet",
+                  { bulletDamage: self.bulletDamage },
+                ]);
+
+                enemyBullet.onCollide("player", () => {
+                  destroy(enemyBullet);
+                });
+
+                enemyBullet.onCollide("wall", () => {
+                  destroy(enemyBullet);
+                });
+              },
+              fromColor: [255, 255, 255],
+              toColor: [245, 221, 24],
+            });
+          }
         }
 
         await wait(attackDuration);

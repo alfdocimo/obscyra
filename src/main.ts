@@ -9,6 +9,7 @@ import getMobRandomPos from "./utils/get-mob-random-pos";
 import { addBackground, addWorldBounds, spawnRandomWalls } from "./level";
 import { gameState } from "./game-state";
 import { initFastEnemy } from "./entities/fast-enemy";
+import { initHardEnemy } from "./entities/hard-enemy";
 
 // @ts-check
 
@@ -186,6 +187,20 @@ loadSprite("fast-enemy", "/sprites/fast-enemy.png", {
   },
 });
 
+loadSprite("hard-enemy", "/sprites/hard-enemy.png", {
+  sliceX: 5,
+  sliceY: 4,
+  anims: {
+    float: {
+      from: 0,
+      to: 18,
+      loop: true,
+    },
+  },
+});
+
+loadSprite("hard-enemy-osc", "/sprites/hard-enemy-osc.png");
+
 loadSprite("skill-single-shot", "/sprites/skill-single-shot.png");
 loadSprite("skill-sword-slash", "/sprites/skill-sword-slash.png");
 loadSprite("skill-tri-shot", "/sprites/skill-tri-shot.png");
@@ -270,38 +285,50 @@ scene("game", () => {
   //   gameState.gameStarted = true;
   // });
 
-  loop(gameState.mobsSpawnTime, () => {
+  // loop(gameState.mobsSpawnTime, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
+
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initPerinolaEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
+
+  // loop(gameState.mobsSpawnTime * 2, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
+
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initMidEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
+
+  // loop(gameState.mobsSpawnTime * 3, () => {
+  //   if (!gameState.gameStarted) return;
+  //   if (!player.exists()) return;
+
+  //   if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+  //   let { x, y } = getMobRandomPos(player.pos);
+  //   initFastEnemy(x, y);
+  //   gameState.currentMobs++;
+  //   gameState.totalMobsSpawned++;
+  // });
+
+  loop(gameState.mobsSpawnTime * 4, () => {
     if (!gameState.gameStarted) return;
     if (!player.exists()) return;
 
     if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
     let { x, y } = getMobRandomPos(player.pos);
-    initPerinolaEnemy(x, y);
-    gameState.currentMobs++;
-    gameState.totalMobsSpawned++;
-  });
-
-  loop(gameState.mobsSpawnTime * 2, () => {
-    if (!gameState.gameStarted) return;
-    if (!player.exists()) return;
-
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-    let { x, y } = getMobRandomPos(player.pos);
-    initMidEnemy(x, y);
-    gameState.currentMobs++;
-    gameState.totalMobsSpawned++;
-  });
-
-  loop(gameState.mobsSpawnTime * 3, () => {
-    if (!gameState.gameStarted) return;
-    if (!player.exists()) return;
-
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-    let { x, y } = getMobRandomPos(player.pos);
-    initFastEnemy(x, y);
+    initHardEnemy(x, y);
     gameState.currentMobs++;
     gameState.totalMobsSpawned++;
   });
