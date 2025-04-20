@@ -11,7 +11,7 @@ import {
 } from "kaplay";
 import { GAME } from "../config";
 import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
-import { spawnParticles } from "../utils/spawn-particles";
+import { spawnParticlesAtGameObj } from "../utils/spawn-particles";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -1312,7 +1312,7 @@ function takeDamage({ damage }: { damage: number }) {
     txtColor: [255, 255, 255],
   });
 
-  const parts = spawnParticles({
+  const parts = spawnParticlesAtGameObj({
     gameObj: player,
     colors: [Color.fromArray(LIGHT_RED)],
   });

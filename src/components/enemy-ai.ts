@@ -18,7 +18,10 @@ import { gameState } from "../game-state";
 import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
 import { addFadingNumber } from "../utils/add-fading-text";
-import { spawnParticles } from "../utils/spawn-particles";
+import {
+  spawnParticlesAtGameObj,
+  spawnParticlesAtPosition,
+} from "../utils/spawn-particles";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -97,11 +100,13 @@ export function enemyAI(
         const p = player;
         if (p.exists() && self.exists()) {
           if (config.isBoss) {
-            flashAndPerformAction({
+            await flashAndPerformAction({
               maxFlashes: 8,
               flashInterval: 0.2,
               self,
               action: () => {
+                if (!self.exists()) return;
+
                 const dir = p.pos.sub(self.pos).unit();
 
                 let enemyBullet = add([
@@ -129,11 +134,12 @@ export function enemyAI(
               toColor: [255, 38, 162],
             });
           } else {
-            flashAndPerformAction({
+            await flashAndPerformAction({
               maxFlashes: 8,
               flashInterval: 0.2,
               self,
               action: () => {
+                if (!self.exists()) return;
                 const dir = p.pos.sub(self.pos).unit();
 
                 let enemyBullet = add([
@@ -170,7 +176,7 @@ export function enemyAI(
       self.onStateEnter("laser-beam-attack", async () => {
         const p = player;
         if (p.exists() && self.exists()) {
-          flashAndPerformAction({
+          await flashAndPerformAction({
             maxFlashes: 16,
             flashInterval: 0.125,
             self,
@@ -218,16 +224,20 @@ export function enemyAI(
         self.move(dir.scale(speed));
       });
 
-      self.onStateEnter("destroy", () => {
+      self.onStateEnter("destroy", async () => {
         // Flash is causing an issue with mobs spawning
-        // flashAndPerformAction({
-        //   maxFlashes: 4,
-        //   self,
-        //   action: () => die(),
-        //   fromColor: [255, 255, 255],
-        //   toColor: [255, 0, 0],
-        // });
+        let currentPos = {
+          x: self.pos.x,
+          y: self.pos.y,
+        };
         die();
+
+        let parts = spawnParticlesAtPosition({
+          x: currentPos.x,
+          y: currentPos.y,
+          colors: [Color.fromArray([95, 10, 87])],
+        });
+        parts.emit(10);
       });
 
       self.onCollide("player-bullet", (playerBullet) => {
@@ -309,11 +319,11 @@ export function enemyAI(
         //     }
         //   ),
         // ]);
-        const parts = spawnParticles({
+        const parts = spawnParticlesAtGameObj({
           gameObj: self,
           colors: [Color.fromArray(CORRUPTION_COLOR), Color.WHITE],
         });
-        parts.emit(6);
+        parts.emit(3);
         // let damageTakenText = add([
         //   text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
         //   animate(),
@@ -351,30 +361,23 @@ export function enemyAI(
         player.corruption += 1;
         player.enterState("corrupted");
 
-        const willDropItem = rand(100);
-        let index = randi(0, 3);
+        const baseDropChance = 40;
+        const wave = gameState.currentWave || 1;
+        const dropChance = baseDropChance - wave * 0.5;
 
-        const itemToDrop = ["crystal", "life-orb", "energy-orb"][index];
+        if (rand(100) > Math.max(dropChance, 10)) {
+          const chances = getDropChancesByWave(wave);
+          const itemToDrop = pickWeightedItem(chances);
 
-        // Maybe start with larger drop % and then reduce it as game gets more
-        // Difficult
-        if (willDropItem > 40) {
           if (itemToDrop === "crystal") {
-            initCrystal({
-              x: self.pos.x,
-              y: self.pos.y,
-            });
-          }
-
-          if (itemToDrop === "life-orb") {
+            initCrystal({ x: self.pos.x, y: self.pos.y });
+          } else if (itemToDrop === "life-orb") {
             initLifeOrb({
               x: self.pos.x,
               y: self.pos.y,
               amount: getOrbRecoveryAmount(3),
             });
-          }
-
-          if (itemToDrop === "energy-orb") {
+          } else if (itemToDrop === "energy-orb") {
             initEnergyOrb({
               x: self.pos.x + 20,
               y: self.pos.y,
@@ -415,7 +418,7 @@ export function enemyAI(
     // },
   };
 
-  function flashAndPerformAction({
+  async function flashAndPerformAction({
     self,
     flashInterval = 0.1,
     maxFlashes = 4,
@@ -430,25 +433,17 @@ export function enemyAI(
     toColor: [number, number, number];
     action: () => void;
   }) {
-    let flashCount = 0;
-
-    const flashTimer = loop(flashInterval, () => {
+    for (let i = 0; i < maxFlashes; i++) {
       self.use(
         color(
-          flashCount % 2 === 0
-            ? Color.fromArray(fromColor)
-            : Color.fromArray(toColor)
+          i % 2 === 0 ? Color.fromArray(fromColor) : Color.fromArray(toColor)
         )
       );
+      await wait(flashInterval);
+    }
 
-      flashCount++;
-
-      if (flashCount >= maxFlashes) {
-        flashTimer.cancel();
-        self.use(color(rgb(255, 255, 255)));
-        action();
-      }
-    });
+    self.use(color(rgb(255, 255, 255))); // Reset color
+    action(); // Only perform action once flash is done
   }
 }
 
@@ -475,4 +470,23 @@ function getCorruptionDamageColor(): number[] {
   const b = Math.floor(white[2] + (vibrantPurple[2] - white[2]) * t);
 
   return [r, g, b];
+}
+
+function getDropChancesByWave(wave) {
+  const progress = Math.min(wave / 30, 1);
+
+  return {
+    crystal: lerp(0.2, 0.6, progress),
+    lifeOrb: lerp(0.2, 0.5, progress),
+    energyOrb: lerp(0.5, 0.2, progress),
+  };
+}
+
+function pickWeightedItem(weights) {
+  const total = weights.crystal + weights.lifeOrb + weights.energyOrb;
+  const roll = rand(total);
+
+  if (roll < weights.crystal) return "crystal";
+  if (roll < weights.crystal + weights.lifeOrb) return "life-orb";
+  return "energy-orb";
 }
