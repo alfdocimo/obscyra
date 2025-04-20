@@ -1201,28 +1201,35 @@ function staminaRegenLoop() {
 function handleLevelUp() {
   onUpdate(() => {
     if (!player.exists()) return;
+
     if (player.expPoints >= player.nextLevelExpPoints) {
       player.level += 1;
-      player.baseMeeleDamage += 2;
-      player.baseRangedDamage += 1;
-      player.cooldownReductionPercentage += 0.1;
-      player.maxEnergy += 5;
-      player.maxStamina += 5;
+
+      // Apply dynamic level-up effects
+      player.baseMeeleDamage += getMeeleDamageIncrease(player.level);
+      player.baseRangedDamage += getRangedDamageIncrease(player.level);
+      player.cooldownReductionPercentage = getCooldownReduction(player.level);
+
+      const maxEnergyGain = getResourceIncrease(player.level);
+      const maxStaminaGain = getResourceIncrease(player.level);
+      player.maxEnergy += maxEnergyGain;
+      player.maxStamina += maxStaminaGain;
       player.energy = player.maxEnergy;
       player.stamina = player.maxStamina;
 
-      player.setMaxHP(player.maxHP() + 10);
+      const hpBoost = getMaxHPIncrease(player.level);
+      player.setMaxHP(player.maxHP() + hpBoost);
       player.setHP(player.maxHP());
 
       player.expPoints = 0;
-      player.nextLevelExpPoints *= 1.5;
+      player.nextLevelExpPoints = getNextLevelExp(player.level);
 
       add([
-        text("LEVEL UP OVERLOAD!", { size: 16 }),
+        text(`LEVEL ${player.level} OVERLOAD!`, { size: 16 }),
         pos(player.worldPos().x, player.worldPos().y - 40),
         opacity(1),
-        color(0, 100, 100),
-        lifespan(1, { fade: 0.5 }),
+        color(0, 255, 100),
+        lifespan(1.2, { fade: 0.5 }),
         z(999),
       ]);
     }
@@ -1422,6 +1429,32 @@ function addSkillKeyboardKey(gameObj: GameObj, key: string) {
   gameObj
     .add([rect(12, 12), color(Color.WHITE)])
     .add([text(key, { size: 10 }), pos(2, 2), color(Color.BLACK)]);
+}
+
+function getNextLevelExp(currentLevel: number): number {
+  const baseExp = 20;
+  const growthRate = 1.3;
+  return Math.floor(baseExp * Math.pow(growthRate, currentLevel - 1));
+}
+
+function getMeeleDamageIncrease(currentLevel: number): number {
+  return Math.min(2 + Math.floor(currentLevel / 3), 10); // capped at +10
+}
+
+function getRangedDamageIncrease(currentLevel: number): number {
+  return Math.min(1 + Math.floor(currentLevel / 5), 6); // capped at +6
+}
+
+function getCooldownReduction(currentLevel: number): number {
+  return Math.min(0.1 + currentLevel * 0.01, 0.3); // capped at 30%
+}
+
+function getMaxHPIncrease(currentLevel: number): number {
+  return 10 + Math.floor(currentLevel * 1.5);
+}
+
+function getResourceIncrease(currentLevel: number): number {
+  return 5 + Math.floor(currentLevel * 0.5);
 }
 
 export { initPlayer, player };
