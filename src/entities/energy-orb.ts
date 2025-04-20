@@ -27,7 +27,6 @@ export function initEnergyOrb({
     } else {
       player.energy += AMOUNT;
     }
-    // TODO: when mana UI bar is implemented
 
     destroy(energyOrb);
   });

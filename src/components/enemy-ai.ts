@@ -257,19 +257,19 @@ export function enemyAI(
       });
 
       function takeDamageFromSkill(skillType: "ranged" | "melee") {
-        let playerCorruption = player.corruption;
+        const corruptionBonus = getCorruptionBonusDamage(player.corruption);
         let damageToTakeAmount = 1;
 
         if (skillType === "ranged") {
-          damageToTakeAmount =
-            getSelectedRangedSkillDamage() + playerCorruption * 1.1; //TODO: revise this!!
-          self.hurt(damageToTakeAmount);
+          damageToTakeAmount = getSelectedRangedSkillDamage() + corruptionBonus;
         }
+
         if (skillType === "melee") {
-          damageToTakeAmount =
-            getSelectedMeleeSkillDamage() + playerCorruption * 1.1;
-          self.hurt(damageToTakeAmount);
+          damageToTakeAmount = getSelectedMeleeSkillDamage() + corruptionBonus;
         }
+
+        self.hurt(damageToTakeAmount);
+
         let damageTakenText = add([
           text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
           animate(),
@@ -279,6 +279,7 @@ export function enemyAI(
           lifespan(0.2, { fade: 0.2 }),
           z(3000),
         ]);
+
         damageTakenText.animate(
           "pos",
           [
@@ -289,7 +290,6 @@ export function enemyAI(
         );
 
         shake(2);
-
         hpBar.width = (self.hp() * 50) / initialHealth;
 
         if (self.hp() <= 0) {
@@ -319,7 +319,6 @@ export function enemyAI(
             initCrystal({
               x: self.pos.x,
               y: self.pos.y,
-              healAmount: 3,
             });
           }
 
@@ -327,7 +326,7 @@ export function enemyAI(
             initLifeOrb({
               x: self.pos.x,
               y: self.pos.y,
-              amount: 3,
+              amount: getOrbRecoveryAmount(3),
             });
           }
 
@@ -335,7 +334,7 @@ export function enemyAI(
             initEnergyOrb({
               x: self.pos.x + 20,
               y: self.pos.y,
-              amount: 5,
+              amount: getOrbRecoveryAmount(5),
             });
           }
         }
@@ -405,4 +404,16 @@ export function enemyAI(
       }
     });
   }
+}
+
+function getCorruptionBonusDamage(corruption: number): number {
+  const scalingFactor = 1.5; // tweak this to make corruption more/less impactful
+  return Math.log2(corruption + 1) * scalingFactor;
+}
+
+function getOrbRecoveryAmount(baseValue: number): number {
+  const scalingFactor = 1.2; // tune this to make it feel right
+  return Math.round(
+    baseValue + Math.log2(gameState.currentWave + 1) * scalingFactor
+  );
 }

@@ -1,4 +1,9 @@
 import { enemyAI } from "../components/enemy-ai";
+import {
+  scaleEnemyDamage,
+  scaleEnemyHP,
+  scaleEnemyXP,
+} from "../utils/scale-enemy-stats";
 
 const initFastEnemy = (x: number, y: number) => {
   return add([
@@ -7,7 +12,7 @@ const initFastEnemy = (x: number, y: number) => {
     body(),
     area({ shape: new Rect(vec2(0, -2), 16, 32) }),
     anchor("center"),
-    health(10),
+    health(scaleEnemyHP(10)),
     z(1500),
     state("move", ["move", "idle", "attack", "destroy"]),
     enemyAI({
@@ -16,7 +21,11 @@ const initFastEnemy = (x: number, y: number) => {
       bulletSize: 6,
     }),
     "enemy",
-    { bulletDamage: 1, touchDamage: 1, expPoints: 1 },
+    {
+      bulletDamage: scaleEnemyDamage(1),
+      touchDamage: scaleEnemyDamage(1),
+      expPoints: scaleEnemyXP(2),
+    },
   ]);
 };
 

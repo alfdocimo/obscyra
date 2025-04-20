@@ -21,7 +21,7 @@ const INITAL_MAX_STAMINA = 20;
 const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
-const CORRUPTION_DECAY_DELAY = 3; // in seconds
+const CORRUPTION_DECAY_DELAY = 8; // in seconds
 const CORRUPTION_INCREMENT = 1;
 const STAT_WIDTH = 308;
 const SKILL_STAT_WIDTH = 142;
@@ -815,7 +815,7 @@ const initPlayer = () => {
     }
 
     if (player.isDecaying && player.corruption >= 0) {
-      player.corruption = Math.max(player.corruption - dt() * 8, 0);
+      player.corruption = Math.max(player.corruption - dt() * 2, 0);
       if (player.corruption <= 0) {
         player.corruption = 0;
         player.corruptionTimer = 0;

@@ -1,4 +1,9 @@
 import { enemyAI } from "../components/enemy-ai";
+import {
+  scaleEnemyDamage,
+  scaleEnemyHP,
+  scaleEnemyXP,
+} from "../utils/scale-enemy-stats";
 
 const MAX_TOTAL_ORBITERS = 6;
 
@@ -9,7 +14,7 @@ export const initHardEnemy = (x: number, y: number) => {
     body(),
     area({ shape: new Rect(vec2(0, -2), 80, 96) }),
     anchor("center"),
-    health(100),
+    health(scaleEnemyHP(100)),
     z(1500),
     state("move", ["idle", "attack", "laser-beam-attack", "move", "destroy"]),
     enemyAI({
@@ -20,9 +25,9 @@ export const initHardEnemy = (x: number, y: number) => {
     }),
     "enemy",
     {
-      bulletDamage: 20,
-      touchDamage: 15,
-      expPoints: 20,
+      bulletDamage: scaleEnemyDamage(22),
+      touchDamage: scaleEnemyDamage(15),
+      expPoints: scaleEnemyXP(20),
       totalOrbiters: MAX_TOTAL_ORBITERS,
     },
   ]);

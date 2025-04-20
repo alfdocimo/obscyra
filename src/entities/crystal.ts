@@ -1,14 +1,6 @@
 import { player } from "./player";
 
-export function initCrystal({
-  x,
-  y,
-  healAmount = 3,
-}: {
-  healAmount: number;
-  x: number;
-  y: number;
-}) {
+export function initCrystal({ x, y }: { x: number; y: number }) {
   const crystal = add([
     sprite("crystal", { width: 25, height: 25, anim: "idle" }),
     pos(x, y),
@@ -20,7 +12,6 @@ export function initCrystal({
   ]);
 
   crystal.onCollide("player", () => {
-    player.corruption -= 5;
     player.corruptionTimer = 0;
     player.isDecaying = true;
 
