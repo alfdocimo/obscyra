@@ -216,13 +216,15 @@ export function enemyAI(
       });
 
       self.onStateEnter("destroy", () => {
-        flashAndPerformAction({
-          maxFlashes: 4,
-          self,
-          action: () => die(),
-          fromColor: [255, 255, 255],
-          toColor: [255, 0, 0],
-        });
+        // Flash is causing an issue with mobs spawning
+        // flashAndPerformAction({
+        //   maxFlashes: 4,
+        //   self,
+        //   action: () => die(),
+        //   fromColor: [255, 255, 255],
+        //   toColor: [255, 0, 0],
+        // });
+        die();
       });
 
       self.onCollide("player-bullet", (playerBullet) => {
@@ -346,14 +348,16 @@ export function enemyAI(
         }
 
         player.expPoints += self.expPoints;
-        gameState.currentMobs--;
+        gameState.currentMobs -= 1;
         gameState.totalMobsKilled++;
 
+        console.log("Mob destroyed. Current:", gameState.currentMobs);
         destroy(self);
       }
 
       function removeOutOfBounds() {
-        gameState.currentMobs--;
+        gameState.currentMobs -= 1;
+        console.log("Mob destroyed. Current:", gameState.currentMobs);
         destroy(self);
       }
     },

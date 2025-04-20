@@ -313,82 +313,65 @@ scene("game", () => {
   // });
 
   // MAIN GAME LOOP FOR MOBS
+  let mobTimers = {
+    perinola: 0,
+    fast: 0,
+    mid: 0,
+    hard: 0,
+  };
+
   onUpdate(() => {
-    if (!player.exists()) return;
-    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+    if (!player.exists() || !gameState.gameStarted) return;
+
+    const dtVal = dt();
+
+    // Helper to try spawning a mob, only if we're under the cap
+    function trySpawnMob(timerName, cooldownRange, spawnFn) {
+      console.log("Spawning mob. Current:", gameState.currentMobs);
+      mobTimers[timerName] -= dtVal;
+
+      if (
+        mobTimers[timerName] <= 0 &&
+        gameState.currentMobs < gameState.maxCurrentMobs
+      ) {
+        const { x, y } = getMobRandomPos(player.pos);
+        spawnFn(x, y);
+        gameState.currentMobs++;
+
+        mobTimers[timerName] = rand(...cooldownRange);
+      }
+    }
 
     if (gameState.currentWave >= 1) {
-      let mobSpawnTime = rand(
-        gameState.mobsSpawnTime * 1.5,
-        gameState.mobsSpawnTime * 3
+      trySpawnMob(
+        "perinola",
+        [gameState.mobsSpawnTime * 1.5, gameState.mobsSpawnTime * 3],
+        initPerinolaEnemy
       );
-      wait(mobSpawnTime, () => {
-        if (!gameState.gameStarted) return;
-        if (!player.exists()) return;
-
-        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-        let { x, y } = getMobRandomPos(player.pos);
-        initPerinolaEnemy(x, y);
-        gameState.currentMobs++;
-        gameState.totalMobsSpawned++;
-      });
     }
 
     if (gameState.currentWave >= 3) {
-      let mobSpawnTime = rand(
-        gameState.mobsSpawnTime * 2,
-        gameState.mobsSpawnTime * 4
+      trySpawnMob(
+        "fast",
+        [gameState.mobsSpawnTime * 2, gameState.mobsSpawnTime * 4],
+        initFastEnemy
       );
-
-      wait(mobSpawnTime, () => {
-        if (!gameState.gameStarted) return;
-        if (!player.exists()) return;
-
-        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-        let { x, y } = getMobRandomPos(player.pos);
-        initFastEnemy(x, y);
-        gameState.currentMobs++;
-        gameState.totalMobsSpawned++;
-      });
     }
 
     if (gameState.currentWave >= 10) {
-      let mobSpawnTime = rand(
-        gameState.mobsSpawnTime * 3,
-        gameState.mobsSpawnTime * 5
+      trySpawnMob(
+        "mid",
+        [gameState.mobsSpawnTime * 3, gameState.mobsSpawnTime * 5],
+        initMidEnemy
       );
-      wait(mobSpawnTime, () => {
-        if (!gameState.gameStarted) return;
-        if (!player.exists()) return;
-
-        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-        let { x, y } = getMobRandomPos(player.pos);
-        initMidEnemy(x, y);
-        gameState.currentMobs++;
-        gameState.totalMobsSpawned++;
-      });
     }
 
     if (gameState.currentWave >= 20) {
-      let mobSpawnTime = rand(
-        gameState.mobsSpawnTime * 5,
-        gameState.mobsSpawnTime * 10
+      trySpawnMob(
+        "hard",
+        [gameState.mobsSpawnTime * 5, gameState.mobsSpawnTime * 10],
+        initHardEnemy
       );
-
-      wait(mobSpawnTime, () => {
-        if (!gameState.gameStarted) return;
-        if (!player.exists()) return;
-
-        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
-
-        let { x, y } = getMobRandomPos(player.pos);
-        initHardEnemy(x, y);
-        gameState.currentMobs++;
-        gameState.totalMobsSpawned++;
-      });
     }
   });
 
