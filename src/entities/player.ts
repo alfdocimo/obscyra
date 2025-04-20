@@ -315,7 +315,7 @@ const initPlayer = () => {
                 canHeal: true,
                 update() {
                   player.canTakeDamage = false;
-                  player.stamina -= dt() * 3;
+                  player.stamina -= dt() * 8;
                   if (player.stamina <= 0) {
                     destroy(this);
                   }
