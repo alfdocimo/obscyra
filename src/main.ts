@@ -312,61 +312,85 @@ scene("game", () => {
   //   gameState.gameStarted = true;
   // });
 
-  if (gameState.currentWave >= 1) {
-    loop(gameState.mobsSpawnTime, () => {
-      if (!gameState.gameStarted) return;
-      if (!player.exists()) return;
+  // MAIN GAME LOOP FOR MOBS
+  onUpdate(() => {
+    if (!player.exists()) return;
+    if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-      if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+    if (gameState.currentWave >= 1) {
+      let mobSpawnTime = rand(
+        gameState.mobsSpawnTime * 1.5,
+        gameState.mobsSpawnTime * 3
+      );
+      wait(mobSpawnTime, () => {
+        if (!gameState.gameStarted) return;
+        if (!player.exists()) return;
 
-      let { x, y } = getMobRandomPos(player.pos);
-      initPerinolaEnemy(x, y);
-      gameState.currentMobs++;
-      gameState.totalMobsSpawned++;
-    });
-  }
+        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-  if (gameState.currentWave >= 3) {
-    loop(gameState.mobsSpawnTime * 3, () => {
-      if (!gameState.gameStarted) return;
-      if (!player.exists()) return;
+        let { x, y } = getMobRandomPos(player.pos);
+        initPerinolaEnemy(x, y);
+        gameState.currentMobs++;
+        gameState.totalMobsSpawned++;
+      });
+    }
 
-      if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+    if (gameState.currentWave >= 3) {
+      let mobSpawnTime = rand(
+        gameState.mobsSpawnTime * 2,
+        gameState.mobsSpawnTime * 4
+      );
 
-      let { x, y } = getMobRandomPos(player.pos);
-      initFastEnemy(x, y);
-      gameState.currentMobs++;
-      gameState.totalMobsSpawned++;
-    });
-  }
+      wait(mobSpawnTime, () => {
+        if (!gameState.gameStarted) return;
+        if (!player.exists()) return;
 
-  if (gameState.currentWave >= 10) {
-    loop(gameState.mobsSpawnTime * 2, () => {
-      if (!gameState.gameStarted) return;
-      if (!player.exists()) return;
+        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-      if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+        let { x, y } = getMobRandomPos(player.pos);
+        initFastEnemy(x, y);
+        gameState.currentMobs++;
+        gameState.totalMobsSpawned++;
+      });
+    }
 
-      let { x, y } = getMobRandomPos(player.pos);
-      initMidEnemy(x, y);
-      gameState.currentMobs++;
-      gameState.totalMobsSpawned++;
-    });
-  }
+    if (gameState.currentWave >= 10) {
+      let mobSpawnTime = rand(
+        gameState.mobsSpawnTime * 3,
+        gameState.mobsSpawnTime * 5
+      );
+      wait(mobSpawnTime, () => {
+        if (!gameState.gameStarted) return;
+        if (!player.exists()) return;
 
-  if (gameState.currentWave >= 20) {
-    loop(gameState.mobsSpawnTime * 10, () => {
-      if (!gameState.gameStarted) return;
-      if (!player.exists()) return;
+        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
 
-      if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+        let { x, y } = getMobRandomPos(player.pos);
+        initMidEnemy(x, y);
+        gameState.currentMobs++;
+        gameState.totalMobsSpawned++;
+      });
+    }
 
-      let { x, y } = getMobRandomPos(player.pos);
-      initHardEnemy(x, y);
-      gameState.currentMobs++;
-      gameState.totalMobsSpawned++;
-    });
-  }
+    if (gameState.currentWave >= 20) {
+      let mobSpawnTime = rand(
+        gameState.mobsSpawnTime * 5,
+        gameState.mobsSpawnTime * 10
+      );
+
+      wait(mobSpawnTime, () => {
+        if (!gameState.gameStarted) return;
+        if (!player.exists()) return;
+
+        if (gameState.currentMobs >= gameState.maxCurrentMobs) return;
+
+        let { x, y } = getMobRandomPos(player.pos);
+        initHardEnemy(x, y);
+        gameState.currentMobs++;
+        gameState.totalMobsSpawned++;
+      });
+    }
+  });
 
   onUpdate(() => {
     if (gameState.mobsToBeKilledUntilNextWave <= gameState.totalMobsKilled) {
@@ -383,22 +407,6 @@ scene("game", () => {
       gameState.mobsToBeKilledUntilNextWave - gameState.totalMobsKilled
     }`;
   });
-
-  // loop(1, () => {
-  //   if (!player.exists()) return;
-
-  //   let { x, y } = getMobRandomPos(player.pos);
-
-  //   initTinyGhosty(x, y);
-  // });
-
-  // loop(10, () => {
-  //   if (!player.exists()) return;
-
-  //   let { x, y } = getMobRandomPos(player.pos);
-
-  //   initGigagantrum(x, y);
-  // });
 
   onUpdate(() => {
     if (!player.exists()) return;

@@ -15,11 +15,11 @@ import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
 const INITIAL_HP = 30;
 const SPEED = 300;
 const BULLET_SPEED = 800;
-const INITAL_ENERGY = 20;
-const INITAL_MAX_ENERGY = 20;
-const INITAL_MAX_STAMINA = 20;
+const INITAL_ENERGY = 40;
+const INITAL_MAX_ENERGY = INITAL_ENERGY;
+const INITAL_STAMINA = 30;
+const INITAL_MAX_STAMINA = INITAL_STAMINA;
 
-const INITAL_STAMINA = 20;
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
 const CORRUPTION_DECAY_DELAY = 8; // in seconds
@@ -39,7 +39,7 @@ const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 export const HP_COLOR = [221, 78, 37];
 export const ENERGY_COLOR = [34, 175, 228];
 const STAMINA_COLOR = [34, 228, 87];
-const CORRUPTION_COLOR = [255, 38, 162];
+export const CORRUPTION_COLOR = [255, 38, 162];
 const EXPERIENCE_COLOR = [240, 212, 120];
 
 type Skill = {
@@ -112,7 +112,7 @@ const initPlayer = () => {
       canTakeDamage: true,
       canRegenStamina: true,
       level: 1,
-      expPoints: 19,
+      expPoints: 0,
       nextLevelExpPoints: 20,
       baseMeeleDamage: 5,
       baseRangedDamage: 10,
@@ -130,7 +130,7 @@ const initPlayer = () => {
         {
           name: "skill-sword-slash",
           energyCost: 0,
-          staminaCost: 5,
+          staminaCost: 3,
           unlockLevel: 1,
           type: "melee",
           damage: 5,
@@ -171,8 +171,8 @@ const initPlayer = () => {
         {
           name: "skill-long-slash",
           energyCost: 0,
-          staminaCost: 10,
-          unlockLevel: 2,
+          staminaCost: 7,
+          unlockLevel: 5,
           type: "melee",
           damage: 10,
           cooldownTime: 1,
@@ -230,11 +230,11 @@ const initPlayer = () => {
         {
           name: "skill-circle-slash",
           energyCost: 0,
-          staminaCost: 10,
-          unlockLevel: 2,
+          staminaCost: 12,
+          unlockLevel: 15,
           type: "melee",
-          damage: 10,
-          cooldownTime: 1,
+          damage: 15,
+          cooldownTime: 1.5,
           isCoolingDown: false,
           invoke: () => {
             // const SLASH_LENGTH = 60;
@@ -272,7 +272,7 @@ const initPlayer = () => {
           name: "skill-protect",
           energyCost: 0,
           staminaCost: 0,
-          unlockLevel: 1,
+          unlockLevel: 20,
           type: "melee",
           damage: 5,
           cooldownTime: 5,
@@ -373,12 +373,12 @@ const initPlayer = () => {
       rangedSKills: [
         {
           name: "skill-single-shot",
-          damage: 1,
+          damage: 4,
           energyCost: 1,
-          staminaCost: 3,
+          staminaCost: 0,
           unlockLevel: 1,
           type: "ranged",
-          cooldownTime: 0.5,
+          cooldownTime: 0.3,
           isCoolingDown: false,
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
@@ -408,12 +408,12 @@ const initPlayer = () => {
         },
         {
           name: "skill-tri-shot",
-          damage: 5,
+          damage: 12,
           energyCost: 5,
-          staminaCost: 3,
-          unlockLevel: 2,
+          staminaCost: 0,
+          unlockLevel: 5,
           type: "ranged",
-          cooldownTime: 0.5,
+          cooldownTime: 0.3,
           isCoolingDown: false,
           invoke: () => {
             const ANGLE_OFFSET = 10; // degrees
@@ -460,12 +460,12 @@ const initPlayer = () => {
         },
         {
           name: "skill-moving-shot",
-          damage: 1,
-          energyCost: 1,
-          staminaCost: 3,
-          unlockLevel: 2,
+          damage: 12,
+          energyCost: 7,
+          staminaCost: 0,
+          unlockLevel: 15,
           type: "ranged",
-          cooldownTime: 0.5,
+          cooldownTime: 0.8,
           isCoolingDown: false,
           invoke: () => {
             const dir = toWorld(mousePos()).sub(player.worldPos()).unit();
@@ -530,12 +530,12 @@ const initPlayer = () => {
         },
         {
           name: "skill-final-shot",
-          damage: 1,
-          energyCost: 1,
-          staminaCost: 3,
-          unlockLevel: 2,
+          damage: 25,
+          energyCost: 0,
+          staminaCost: 0,
+          unlockLevel: 20,
           type: "ranged",
-          cooldownTime: 0.5,
+          cooldownTime: 5,
           isCoolingDown: false,
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
@@ -759,17 +759,21 @@ const initPlayer = () => {
   });
 
   onUpdate(() => {
-    if (player.level >= 2) {
+    if (player.level >= 5) {
       skillTriShot.opacity = 1;
       skillLongSlash.opacity = 1;
+    }
+
+    if (player.level >= 15) {
       skillMovingShot.opacity = 1;
       skillCircleSlash.opacity = 1;
+    }
+
+    if (player.level >= 20) {
       skillFinalShot.opacity = 1;
       skillProtect.opacity = 1;
     }
   });
-
-  /// ----
 
   const aimCircle = initializeAimIndicator();
 
@@ -920,14 +924,11 @@ function handleMaxCorruption() {
 
   takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
-  add([
-    text("CORRUPTION OVERLOAD!", { size: 16 }),
-    pos(player.worldPos().x, player.worldPos().y - 40),
-    opacity(1),
-    color(255, 0, 0),
-    lifespan(1, { fade: 0.5 }),
-    z(999),
-  ]);
+  addFadingText({
+    gameObj: player,
+    txt: "Corruption overload!",
+    txtColor: CORRUPTION_COLOR,
+  });
 }
 
 function checkCorrutionAmountInPlayer() {
@@ -1303,7 +1304,11 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.hurt(damage);
 
-  addFadingNumber({ gameObj: player, number: damage, txtColor: HP_COLOR });
+  addFadingNumber({
+    gameObj: player,
+    number: damage,
+    txtColor: [255, 255, 255],
+  });
 
   player.use(color(255, 0, 0));
 
@@ -1348,13 +1353,21 @@ function takeCorruptionDamage({ damage }: { damage: number }) {
 
 function castSelectedRangedSkill() {
   let selectedSkill = player.selectedRangedSkill;
-  if (selectedSkill.isCoolingDown) return;
+  if (selectedSkill.isCoolingDown) {
+    return;
+  }
   selectedSkill?.invoke();
 
   selectedSkill.isCoolingDown = true;
 
   player.energy -= player.selectedRangedSkill.energyCost;
   player.stamina -= player.selectedRangedSkill.staminaCost;
+
+  //Special case:
+  if (selectedSkill.name === "skill-final-shot") {
+    player.energy -= player.energy / 2;
+  }
+
   wait(selectedSkill.cooldownTime, () => {
     selectedSkill.isCoolingDown = false;
   });
@@ -1362,7 +1375,9 @@ function castSelectedRangedSkill() {
 
 function castSelectedMeeleSkill() {
   let selectedSkill = player.selectedMeleeSkill;
-  if (selectedSkill.isCoolingDown) return;
+  if (selectedSkill.isCoolingDown) {
+    return;
+  }
   selectedSkill?.invoke();
 
   selectedSkill.isCoolingDown = true;
