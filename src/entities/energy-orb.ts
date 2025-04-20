@@ -1,4 +1,4 @@
-import { addFadingDamage } from "../utils/add-fading-text";
+import { addFadingNumber } from "../utils/add-fading-text";
 import { ENERGY_COLOR, player } from "./player";
 
 export function initEnergyOrb({
@@ -24,8 +24,8 @@ export function initEnergyOrb({
     const AMOUNT = amount;
 
     // Not really damage..
-    addFadingDamage({
-      damage: AMOUNT,
+    addFadingNumber({
+      number: AMOUNT,
       gameObj: player,
       txtColor: ENERGY_COLOR,
     });

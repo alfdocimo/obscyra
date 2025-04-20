@@ -1,4 +1,4 @@
-import { addFadingDamage } from "../utils/add-fading-text";
+import { addFadingNumber } from "../utils/add-fading-text";
 import { HP_COLOR, player } from "./player";
 
 export function initLifeOrb({
@@ -23,8 +23,8 @@ export function initLifeOrb({
   lifeOrb.onCollide("player", () => {
     const AMOUNT = amount;
 
-    addFadingDamage({
-      damage: AMOUNT,
+    addFadingNumber({
+      number: AMOUNT,
       gameObj: player,
       txtColor: HP_COLOR,
     });

@@ -10,7 +10,7 @@ import {
   ColorComp,
 } from "kaplay";
 import { GAME } from "../config";
-import { addFadingDamage, addFadingText } from "../utils/add-fading-text";
+import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -282,9 +282,9 @@ const initPlayer = () => {
             // const SLASH_WIDTH = 10;
 
             function displayAddHpFromProtectText(hpToAdd: number) {
-              addFadingDamage({
+              addFadingNumber({
                 gameObj: player,
-                damage: hpToAdd,
+                number: hpToAdd,
                 txtColor: HP_COLOR,
               });
             }
@@ -1303,7 +1303,7 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.hurt(damage);
 
-  addFadingDamage({ gameObj: player, damage, txtColor: HP_COLOR });
+  addFadingNumber({ gameObj: player, number: damage, txtColor: HP_COLOR });
 
   player.use(color(255, 0, 0));
 

@@ -15,7 +15,7 @@ import { initCrystal } from "../entities/crystal";
 import { gameState } from "../game-state";
 import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
-import { addFadingDamage } from "../utils/add-fading-text";
+import { addFadingNumber } from "../utils/add-fading-text";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -271,9 +271,9 @@ export function enemyAI(
 
         self.hurt(damageToTakeAmount);
 
-        addFadingDamage({
+        addFadingNumber({
           gameObj: self,
-          damage: damageToTakeAmount,
+          number: damageToTakeAmount,
           txtColor: getCorruptionDamageColor(),
         });
         // let damageTakenText = add([

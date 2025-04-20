@@ -33,21 +33,21 @@ export function addFadingText({
   );
 }
 
-export function addFadingDamage({
+export function addFadingNumber({
   gameObj,
-  damage,
+  number,
   txtColor = [255, 255, 255],
   fadeDuration = 0.2,
   size = 16,
 }: {
   gameObj: GameObj;
-  damage: number;
+  number: number;
   txtColor?: number[];
   fadeDuration?: number;
   size?: number;
 }) {
   let damageTakenText = gameObj.add([
-    text(`${Math.round(damage)}`, { size }),
+    text(`${Math.round(number)}`, { size }),
     animate(),
     pos(0, 0),
     anchor("center"),
