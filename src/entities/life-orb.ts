@@ -1,4 +1,5 @@
-import { player } from "./player";
+import { addFadingDamage } from "../utils/add-fading-text";
+import { HP_COLOR, player } from "./player";
 
 export function initLifeOrb({
   x,
@@ -21,6 +22,12 @@ export function initLifeOrb({
 
   lifeOrb.onCollide("player", () => {
     const AMOUNT = amount;
+
+    addFadingDamage({
+      damage: AMOUNT,
+      gameObj: player,
+      txtColor: HP_COLOR,
+    });
 
     if (player.hp() + AMOUNT >= player.maxHP()) {
       player.setHP(player.maxHP());

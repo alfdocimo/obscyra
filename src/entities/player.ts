@@ -10,6 +10,7 @@ import {
   ColorComp,
 } from "kaplay";
 import { GAME } from "../config";
+import { addFadingDamage, addFadingText } from "../utils/add-fading-text";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -35,8 +36,8 @@ const EXPERIENCE_STATUS_WIDTH = 138;
 const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 
-const HP_COLOR = [221, 78, 37];
-const ENERGY_COLOR = [34, 175, 228];
+export const HP_COLOR = [221, 78, 37];
+export const ENERGY_COLOR = [34, 175, 228];
 const STAMINA_COLOR = [34, 228, 87];
 const CORRUPTION_COLOR = [255, 38, 162];
 const EXPERIENCE_COLOR = [240, 212, 120];
@@ -281,20 +282,11 @@ const initPlayer = () => {
             // const SLASH_WIDTH = 10;
 
             function displayAddHpFromProtectText(hpToAdd: number) {
-              let hpAdded = add([
-                text(String(Math.round(hpToAdd)), { size: 16 }),
-                animate(),
-                pos(player.worldPos().x, player.worldPos().y - 30),
-                opacity(1),
-                color(Color.WHITE),
-                lifespan(0.2, { fade: 0.2 }),
-                z(3000),
-              ]);
-              hpAdded.animate(
-                "pos",
-                [vec2(hpAdded.pos), vec2(hpAdded.pos.x, hpAdded.pos.y - 30)],
-                { duration: 0.2, loops: 1 }
-              );
+              addFadingDamage({
+                gameObj: player,
+                damage: hpToAdd,
+                txtColor: HP_COLOR,
+              });
             }
 
             // let duration = player.stamina;
@@ -1224,14 +1216,19 @@ function handleLevelUp() {
       player.expPoints = 0;
       player.nextLevelExpPoints = getNextLevelExp(player.level);
 
-      add([
-        text(`LEVEL ${player.level} OVERLOAD!`, { size: 16 }),
-        pos(player.worldPos().x, player.worldPos().y - 40),
-        opacity(1),
-        color(0, 255, 100),
-        lifespan(1.2, { fade: 0.5 }),
-        z(999),
-      ]);
+      addFadingText({
+        gameObj: player,
+        txt: "Level up!",
+        txtColor: EXPERIENCE_COLOR,
+        fadeDuration: 2,
+        size: 18,
+      });
+
+      player.use(color(Color.fromArray(EXPERIENCE_COLOR)));
+
+      wait(2, () => {
+        player.use(color(255, 255, 255)); // Revert to white or original color
+      });
     }
   });
 }
@@ -1306,23 +1303,7 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.hurt(damage);
 
-  let damageTakenText = add([
-    text(`${Math.round(damage)}`, { size: 16 }),
-    animate(),
-    pos(player.worldPos().x, player.worldPos().y - 30),
-    opacity(1),
-    color(230, 100, 100),
-    lifespan(0.2, { fade: 0.2 }),
-    z(3000),
-  ]);
-  damageTakenText.animate(
-    "pos",
-    [
-      vec2(damageTakenText.pos),
-      vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
-    ],
-    { duration: 0.2, loops: 1 }
-  );
+  addFadingDamage({ gameObj: player, damage, txtColor: HP_COLOR });
 
   player.use(color(255, 0, 0));
 

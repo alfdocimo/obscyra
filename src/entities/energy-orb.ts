@@ -1,4 +1,5 @@
-import { player } from "./player";
+import { addFadingDamage } from "../utils/add-fading-text";
+import { ENERGY_COLOR, player } from "./player";
 
 export function initEnergyOrb({
   x,
@@ -21,6 +22,13 @@ export function initEnergyOrb({
 
   energyOrb.onCollide("player", () => {
     const AMOUNT = amount;
+
+    // Not really damage..
+    addFadingDamage({
+      damage: AMOUNT,
+      gameObj: player,
+      txtColor: ENERGY_COLOR,
+    });
 
     if (player.energy + AMOUNT >= player.maxEnergy) {
       player.energy = player.maxEnergy;

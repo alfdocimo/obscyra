@@ -15,6 +15,7 @@ import { initCrystal } from "../entities/crystal";
 import { gameState } from "../game-state";
 import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
+import { addFadingDamage } from "../utils/add-fading-text";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -270,24 +271,29 @@ export function enemyAI(
 
         self.hurt(damageToTakeAmount);
 
-        let damageTakenText = add([
-          text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
-          animate(),
-          pos(self.worldPos().x, self.worldPos().y - 30),
-          opacity(1),
-          color(0, 200, 200),
-          lifespan(0.2, { fade: 0.2 }),
-          z(3000),
-        ]);
+        addFadingDamage({
+          gameObj: self,
+          damage: damageToTakeAmount,
+          txtColor: getCorruptionDamageColor(),
+        });
+        // let damageTakenText = add([
+        //   text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
+        //   animate(),
+        //   pos(self.worldPos().x, self.worldPos().y - 30),
+        //   opacity(1),
+        //   color(0, 200, 200),
+        //   lifespan(0.2, { fade: 0.2 }),
+        //   z(3000),
+        // ]);
 
-        damageTakenText.animate(
-          "pos",
-          [
-            vec2(damageTakenText.pos),
-            vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
-          ],
-          { duration: 0.2, loops: 1 }
-        );
+        // damageTakenText.animate(
+        //   "pos",
+        //   [
+        //     vec2(damageTakenText.pos),
+        //     vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
+        //   ],
+        //   { duration: 0.2, loops: 1 }
+        // );
 
         shake(2);
         hpBar.width = (self.hp() * 50) / initialHealth;
@@ -416,4 +422,17 @@ function getOrbRecoveryAmount(baseValue: number): number {
   return Math.round(
     baseValue + Math.log2(gameState.currentWave + 1) * scalingFactor
   );
+}
+
+function getCorruptionDamageColor(): number[] {
+  const t = player.corruption / player.maxCorruption;
+
+  const white = [255, 255, 255];
+  const vibrantPurple = [255, 38, 162];
+
+  const r = Math.floor(white[0] + (vibrantPurple[0] - white[0]) * t);
+  const g = Math.floor(white[1] + (vibrantPurple[1] - white[1]) * t);
+  const b = Math.floor(white[2] + (vibrantPurple[2] - white[2]) * t);
+
+  return [r, g, b];
 }
