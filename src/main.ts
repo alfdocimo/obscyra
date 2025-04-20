@@ -231,6 +231,7 @@ loadSprite("circle-slash", "/sprites/circle-slash.png", {
   },
 });
 loadSprite("skill-circle-slash", "/sprites/skill-circle-slash.png");
+loadSprite("purple-particle", "/sprites/purple-particle.png");
 
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);

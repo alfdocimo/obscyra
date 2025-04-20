@@ -11,6 +11,7 @@ import {
 } from "kaplay";
 import { GAME } from "../config";
 import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
+import { spawnParticles } from "../utils/spawn-particles";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -41,6 +42,7 @@ export const ENERGY_COLOR = [34, 175, 228];
 const STAMINA_COLOR = [34, 228, 87];
 export const CORRUPTION_COLOR = [255, 38, 162];
 const EXPERIENCE_COLOR = [240, 212, 120];
+export const LIGHT_RED = [255, 111, 111];
 
 type Skill = {
   name: string;
@@ -1309,6 +1311,12 @@ function takeDamage({ damage }: { damage: number }) {
     number: damage,
     txtColor: [255, 255, 255],
   });
+
+  const parts = spawnParticles({
+    gameObj: player,
+    colors: [Color.fromArray(LIGHT_RED)],
+  });
+  parts.emit(4);
 
   player.use(color(255, 0, 0));
 

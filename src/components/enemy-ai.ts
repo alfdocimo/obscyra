@@ -7,8 +7,10 @@ import {
   AnchorComp,
 } from "kaplay";
 import {
+  CORRUPTION_COLOR,
   getSelectedMeleeSkillDamage,
   getSelectedRangedSkillDamage,
+  HP_COLOR,
   player,
 } from "../entities/player";
 import { initCrystal } from "../entities/crystal";
@@ -16,6 +18,7 @@ import { gameState } from "../game-state";
 import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
 import { addFadingNumber } from "../utils/add-fading-text";
+import { spawnParticles } from "../utils/spawn-particles";
 
 type EnemyAIConfig = {
   bulletColor?: [number, number, number];
@@ -276,8 +279,41 @@ export function enemyAI(
         addFadingNumber({
           gameObj: self,
           number: damageToTakeAmount,
-          txtColor: getCorruptionDamageColor(),
+          txtColor: [255, 255, 255],
+          size:
+            16 +
+            (Math.min(player.corruption, player.maxCorruption) /
+              player.maxCorruption) *
+              10,
         });
+
+        // const parts = self.add([
+        //   particles(
+        //     {
+        //       max: 30,
+        //       speed: [300, 400], // 🔥 faster burst
+        //       angle: [120, 360], // or narrow it like [250, 290] for cone
+        //       angularVelocity: [300, 360], // 🎯 more spin = more energy
+        //       lifeTime: [0.3, 0.6], // ⏱️ fast fade
+        //       colors: [Color.fromArray(CORRUPTION_COLOR), Color.WHITE],
+        //       opacities: [1.0, 0.6, 0.0], // 🚀 punch then fade
+        //       scales: [1.2, 1.8, 0.5], // 💥 pop then shrink
+        //       texture: getSprite("purple-particle").data.tex,
+        //       quads: [getSprite("purple-particle").data.frames[0]],
+        //     },
+        //     {
+        //       lifetime: 0.6,
+        //       rate: 0, // still manual burst
+        //       direction: rand(250, 290), // 💨 tighter directional burst
+        //       spread: 80, // still a bit wild
+        //     }
+        //   ),
+        // ]);
+        const parts = spawnParticles({
+          gameObj: self,
+          colors: [Color.fromArray(CORRUPTION_COLOR), Color.WHITE],
+        });
+        parts.emit(6);
         // let damageTakenText = add([
         //   text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
         //   animate(),

@@ -1,5 +1,5 @@
 import { addFadingNumber } from "../utils/add-fading-text";
-import { HP_COLOR, player } from "./player";
+import { HP_COLOR, LIGHT_RED, player } from "./player";
 
 export function initLifeOrb({
   x,
@@ -26,7 +26,7 @@ export function initLifeOrb({
     addFadingNumber({
       number: AMOUNT,
       gameObj: player,
-      txtColor: HP_COLOR,
+      txtColor: LIGHT_RED,
     });
 
     if (player.hp() + AMOUNT >= player.maxHP()) {
