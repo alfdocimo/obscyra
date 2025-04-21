@@ -187,10 +187,14 @@ export function enemyAI(
             flashInterval: 0.125,
             self,
             action: () => {
+              if (!self.exists()) return;
+
               const dir = player.worldPos().sub(self.worldPos()).unit();
               const gunOffset = dir.scale(80); // move it forward from the enemy
               const angle = player.worldPos().sub(self.worldPos()).angle();
               const bulletStartPos = self.worldPos().add(gunOffset);
+
+              play("boss-laser", { loop: false });
 
               const beam = add([
                 rect(600, 8),
