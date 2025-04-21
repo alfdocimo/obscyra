@@ -138,13 +138,13 @@ export function spawnParticlesFromCenter({
     particles(
       {
         max: 20,
-        speed: [250, 500],
+        speed: [100, 250],
         angle: [0, 360],
         angularVelocity: [180, 720],
         lifeTime: [0.5, 1.2],
         colors,
         opacities: [1.0, 0.7, 0.0],
-        scales: [rand(0.3, 0.6), rand(1, 1.3), rand(0.1, 0.4)],
+        scales: [rand(0.2, 0.6), rand(1, 1.3), rand(0.1, 0.4)],
         texture: getSprite("purple-particle").data.tex,
         quads: getSprite("purple-particle").data.frames,
       },

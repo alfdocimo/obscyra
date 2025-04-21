@@ -15,6 +15,7 @@ import {
   spawnParticlesAtGameObj,
   spawnParticlesAtPlayerDeathPosition,
   spawnParticlesAtPosition,
+  spawnParticlesFromCenter,
 } from "../utils/spawn-particles";
 
 const INITIAL_HP = 30;
@@ -128,7 +129,7 @@ const initPlayer = () => {
       maxStamina: INITAL_MAX_STAMINA,
       energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: INITIAL_CORRUPTION, // current corruption points
+      corruption: INITIAL_CORRUPTION + 49, // current corruption points
       maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
       corruptionTimer: 0, // countdown timer (in seconds)
       isDecaying: false, // flag to indicate we are in decay mode
@@ -944,9 +945,14 @@ function handleMaxCorruption() {
   play("max-corruption-explotion", { loop: false, volume: 0.5 });
   takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
-  let parts = spawnParticlesAtGameObj({
-    gameObj: player,
-    colors: [Color.fromArray(CORRUPTION_COLOR), Color.fromArray(LIGHT_RED)],
+  let parts = spawnParticlesFromCenter({
+    x: player.pos.x,
+    y: player.pos.y,
+    colors: [
+      Color.fromArray(CORRUPTION_COLOR),
+      Color.BLACK,
+      Color.fromArray(HP_COLOR),
+    ],
   });
   parts.emit(10);
 }
@@ -1354,27 +1360,15 @@ function takeDamage({ damage }: { damage: number }) {
 
 function takeCorruptionDamage({ damage }: { damage: number }) {
   player.play("hurt");
-  shake(5);
+  shake(10);
 
   player.hurt(damage);
 
-  let damageTakenText = add([
-    text(`${Math.round(damage)}`, { size: 16 }),
-    animate(),
-    pos(player.worldPos().x, player.worldPos().y - 30),
-    opacity(1),
-    color(230, 100, 100),
-    lifespan(0.2, { fade: 0.2 }),
-    z(3000),
-  ]);
-  damageTakenText.animate(
-    "pos",
-    [
-      vec2(damageTakenText.pos),
-      vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
-    ],
-    { duration: 0.2, loops: 1 }
-  );
+  addFadingText({
+    gameObj: player,
+    txt: `-${Math.round(damage)}`,
+    txtColor: HP_COLOR,
+  });
 
   player.use(color(255, 0, 255));
 
