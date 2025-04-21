@@ -1,4 +1,4 @@
-import { Color, GameObj } from "kaplay";
+import { Color, GameObj, PosComp, Vec2 } from "kaplay";
 
 export function spawnParticlesAtGameObj({
   gameObj,
@@ -152,6 +152,43 @@ export function spawnParticlesFromCenter({
         lifetime: 0.6,
         rate: 0,
         direction: rand(0, 360),
+        spread: 360,
+      }
+    ),
+  ]);
+
+  return parts;
+}
+
+export function spawnGunParticles({
+  posVec2,
+  colors = [
+    rgb(255, 240, 200), // warm flash
+    rgb(255, 200, 100), // golden spark
+  ],
+}: {
+  posVec2: Vec2;
+  colors?: Color[];
+}) {
+  const parts = add([
+    pos(posVec2),
+    particles(
+      {
+        max: 10,
+        speed: [100, 180],
+        angle: [0, 360],
+        angularVelocity: [0, 180],
+        lifeTime: [0.15, 0.25],
+        colors,
+        opacities: [1.0, 0.5, 0.0],
+        scales: [rand(0.2, 0.4), rand(0.4, 0.6), rand(0.1, 0.3)],
+        texture: getSprite("purple-particle").data.tex,
+        quads: getSprite("purple-particle").data.frames,
+      },
+      {
+        lifetime: 0.2,
+        rate: 0,
+        direction: 0, // still needed even with 360 spread
         spread: 360,
       }
     ),

@@ -12,6 +12,7 @@ import {
 import { GAME } from "../config";
 import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
 import {
+  spawnGunParticles,
   spawnParticlesAtGameObj,
   spawnParticlesAtPlayerDeathPosition,
   spawnParticlesAtPosition,
@@ -19,7 +20,7 @@ import {
 } from "../utils/spawn-particles";
 import { gameState } from "../game-state";
 
-const INITIAL_HP = 1;
+const INITIAL_HP = 30;
 const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_ENERGY = 40;
@@ -402,7 +403,7 @@ const initPlayer = () => {
             let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
 
             let bulletStartPos = player.worldPos().add(gunOffset);
-            // Create bullet
+
             let playerBullet = add([
               // rect(4, 4), // bullet shape (12x12)
               sprite("player-bullet-basic", {
@@ -417,6 +418,16 @@ const initPlayer = () => {
               color(212, 30, 255), // blue bullet color
               "player-bullet", // tag for bullet (useful for collision detection)
             ]);
+
+            let muzzleFlashOffset = dir.scale(32); // tweak this number to go further from the gun
+            let muzzleFlashPos = player.worldPos().add(muzzleFlashOffset);
+
+            let part = spawnGunParticles({
+              posVec2: muzzleFlashPos,
+              colors: [Color.fromArray(EXPERIENCE_COLOR), Color.WHITE],
+            });
+            // Create bullet
+            part.emit(6);
 
             playerBullet.onCollide("wall", () => {
               playerBullet.destroy();
