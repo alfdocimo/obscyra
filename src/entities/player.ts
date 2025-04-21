@@ -129,7 +129,7 @@ const initPlayer = () => {
       maxStamina: INITAL_MAX_STAMINA,
       energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: INITIAL_CORRUPTION + 49, // current corruption points
+      corruption: INITIAL_CORRUPTION, // current corruption points
       maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
       corruptionTimer: 0, // countdown timer (in seconds)
       isDecaying: false, // flag to indicate we are in decay mode

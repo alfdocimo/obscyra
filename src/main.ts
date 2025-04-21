@@ -365,7 +365,7 @@ scene("game", () => {
   wait(5, () => {
     player.add([
       text(
-        "[black]Run. Resist. Before the [/black][purple]corruption[/purple][black] \n \n takes everything[/black]",
+        "[black]Don’t let the [/black][purple]crystals[/purple][black]\n\nerase what’s left of you.[/black]",
         {
           size: 26,
           width: width() - 100,
@@ -381,7 +381,7 @@ scene("game", () => {
       ),
       anchor("center"),
       opacity(1),
-      pos(20, -100),
+      pos(100, -100),
       lifespan(7, {
         fade: 0.5,
       }),
