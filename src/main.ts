@@ -242,6 +242,7 @@ loadSprite("purple-particle", "/sprites/purple-particle.png");
 loadSprite("intro-bg", "/bg/intro.png");
 loadSprite("crystal-option", "/sprites/crystal-option-no-bg.png");
 
+loadSound("new-game", "/sounds/new-game.wav");
 loadSound("hurt", "/sounds/hurt-test.wav");
 loadSound("shoot", "/sounds/shoot.wav");
 loadSound("hurt-perinola", "/sounds/hurt-perinola.wav");
@@ -266,7 +267,7 @@ loadSound("boss-laser", "/sounds/boss-laser.wav");
 
 scene("menu", () => {
   add([
-    text("Lorem ipsum", { size: 48 }),
+    text("Obscyra", { size: 48 }),
     fadeIn(0.4),
     opacity(),
     pos(400, 100),
@@ -297,7 +298,7 @@ scene("menu", () => {
 
   startGameText.onHover(() => {
     crystalOption.opacity = 1;
-    startGameText.color = Color.MAGENTA;
+    startGameText.color = Color.fromArray([116, 16, 113]);
   });
 
   startGameText.onHoverEnd(() => {
@@ -307,7 +308,7 @@ scene("menu", () => {
 
   add([sprite("intro-bg")]);
   onClick("start-game-text", () => {
-    play("sword-swoosh", { loop: false });
+    play("new-game", { loop: false });
 
     add([
       rect(width(), height()),
@@ -372,7 +373,7 @@ scene("game", () => {
           width: width() - 100,
           styles: {
             purple: {
-              color: Color.fromArray(CORRUPTION_COLOR),
+              color: Color.fromArray([116, 16, 113]),
             },
             black: {
               color: Color.BLACK,
