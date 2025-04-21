@@ -120,3 +120,42 @@ export function spawnParticlesAtPlayerDeathPosition({
 
   return parts;
 }
+
+export function spawnBossEnemyBulletParticles({
+  x,
+  y,
+  colors = [
+    rgb(100, 40, 100), // arcane
+    rgb(0, 40, 100), // ethereal glow
+  ],
+}: {
+  x: number;
+  y: number;
+  colors?: Color[];
+}) {
+  const parts = add([
+    pos(x, y),
+    particles(
+      {
+        max: 20,
+        speed: [250, 500],
+        angle: [0, 360],
+        angularVelocity: [180, 720],
+        lifeTime: [0.5, 1.2],
+        colors,
+        opacities: [1.0, 0.7, 0.0],
+        scales: [rand(0.3, 0.6), rand(1, 1.3), rand(0.1, 0.4)],
+        texture: getSprite("purple-particle").data.tex,
+        quads: getSprite("purple-particle").data.frames,
+      },
+      {
+        lifetime: 0.6,
+        rate: 0,
+        direction: rand(0, 360),
+        spread: 360,
+      }
+    ),
+  ]);
+
+  return parts;
+}

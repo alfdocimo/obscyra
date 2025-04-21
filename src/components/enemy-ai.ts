@@ -19,12 +19,17 @@ import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
 import { addFadingNumber } from "../utils/add-fading-text";
 import {
+  spawnBossEnemyBulletParticles,
   spawnParticlesAtGameObj,
   spawnParticlesAtPosition,
 } from "../utils/spawn-particles";
 
+export const LASER_COLOR = [255, 68, 142];
+export const ENEMY_ACTION_COLOR = [255, 211, 15];
+export const ENEMY_ACTION_COLOR_ACCENT = [255, 158, 15];
+
 type EnemyAIConfig = {
-  bulletColor?: [number, number, number];
+  bulletColor?: number[];
   attackDuration?: number;
   moveDuration?: number;
   idleDuration?: number;
@@ -116,13 +121,22 @@ export function enemyAI(
                 let enemyBullet = add([
                   pos(self.pos),
                   move(dir, bulletSpeed),
-                  sprite("hard-enemy-osc", { width: 20, height: 20 }),
+                  rect(bulletSize, bulletSize),
+                  color(Color.BLACK),
                   area(),
                   offscreen({ destroy: true }),
                   anchor("center"),
-                  color(bulletColor),
                   "bullet",
-                  { bulletDamage: self.bulletDamage },
+                  {
+                    bulletDamage: self.bulletDamage,
+                    update() {
+                      let part = spawnBossEnemyBulletParticles({
+                        x: this.pos.x,
+                        y: this.pos.y,
+                      });
+                      part.emit(5);
+                    },
+                  },
                 ]);
 
                 enemyBullet.onCollide("player", () => {
@@ -135,7 +149,7 @@ export function enemyAI(
               },
 
               fromColor: [255, 255, 255],
-              toColor: [255, 38, 162],
+              toColor: LASER_COLOR,
             });
           } else {
             await flashAndPerformAction({
@@ -153,7 +167,7 @@ export function enemyAI(
                   area(),
                   offscreen({ destroy: true }),
                   anchor("center"),
-                  color(bulletColor),
+                  color(Color.fromArray(ENEMY_ACTION_COLOR_ACCENT)),
                   "bullet",
                   { bulletDamage: self.bulletDamage },
                 ]);
@@ -169,7 +183,7 @@ export function enemyAI(
                 });
               },
               fromColor: [255, 255, 255],
-              toColor: [245, 221, 24],
+              toColor: ENEMY_ACTION_COLOR,
             });
           }
         }
@@ -183,7 +197,7 @@ export function enemyAI(
         const p = player;
         if (p.exists() && self.exists()) {
           await flashAndPerformAction({
-            maxFlashes: 16,
+            maxFlashes: 20,
             flashInterval: 0.125,
             self,
             action: () => {
@@ -197,12 +211,12 @@ export function enemyAI(
               play("boss-laser", { loop: false });
 
               const beam = add([
-                rect(600, 8),
+                rect(700, 8),
                 pos(bulletStartPos),
                 anchor(vec2(-1, 0)), // pivot from the left side, just like in your example
                 rotate(angle),
                 area(),
-                color(255, 38, 162),
+                color(Color.fromArray(LASER_COLOR)),
                 opacity(1),
                 lifespan(0.3, { fade: 0.1 }),
                 z(9000),
@@ -212,7 +226,7 @@ export function enemyAI(
             },
 
             fromColor: [255, 255, 255],
-            toColor: [255, 38, 162],
+            toColor: LASER_COLOR,
           });
         }
 
@@ -440,8 +454,8 @@ export function enemyAI(
     self: EnemyAIContext;
     flashInterval?: number;
     maxFlashes?: number;
-    fromColor: [number, number, number];
-    toColor: [number, number, number];
+    fromColor: number[];
+    toColor: number[];
     action: () => void;
   }) {
     for (let i = 0; i < maxFlashes; i++) {
@@ -474,7 +488,7 @@ function getCorruptionDamageColor(): number[] {
   const t = player.corruption / player.maxCorruption;
 
   const white = [255, 255, 255];
-  const vibrantPurple = [255, 38, 162];
+  const vibrantPurple = ENEMY_ACTION_COLOR;
 
   const r = Math.floor(white[0] + (vibrantPurple[0] - white[0]) * t);
   const g = Math.floor(white[1] + (vibrantPurple[1] - white[1]) * t);
