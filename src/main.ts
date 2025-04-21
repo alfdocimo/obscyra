@@ -232,6 +232,7 @@ loadSprite("circle-slash", "/sprites/circle-slash.png", {
 });
 loadSprite("skill-circle-slash", "/sprites/skill-circle-slash.png");
 loadSprite("purple-particle", "/sprites/purple-particle.png");
+loadSprite("intro-bg", "/bg/intro.png");
 
 loadSound("hurt", "/sounds/hurt-test.wav");
 loadSound("shoot", "/sounds/shoot.wav");
@@ -251,7 +252,16 @@ loadSound("max-corruption", "/sounds/max-corruption.wav");
 loadSound("max-corruption-explotion", "/sounds/max-corruption-explotion.wav");
 
 scene("menu", () => {
-  add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
+  add([
+    text("Lorem ipsum", { size: 48 }),
+    fadeIn(0.4),
+    opacity(),
+    pos(400, 100),
+    anchor("center"),
+    z(10000),
+    color(0, 0, 0),
+  ]);
+  add([sprite("intro-bg")]);
   onKeyPress("enter", () => {
     go("game");
   });

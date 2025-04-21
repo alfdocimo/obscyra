@@ -124,7 +124,7 @@ const initPlayer = () => {
       maxStamina: INITAL_MAX_STAMINA,
       energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: 49, // current corruption points
+      corruption: INITIAL_CORRUPTION, // current corruption points
       maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
       corruptionTimer: 0, // countdown timer (in seconds)
       isDecaying: false, // flag to indicate we are in decay mode
@@ -936,8 +936,8 @@ function handleMaxCorruption() {
   player.isDecaying = false;
   player.enterState("normal"); // if you’re using state system, clear the current one
 
-  play("max-corruption", { loop: false, volume: 0.7 });
-  play("max-corruption-explotion", { loop: false, volume: 0.7 });
+  play("max-corruption", { loop: false, volume: 0.5 });
+  play("max-corruption-explotion", { loop: false, volume: 0.5 });
   takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
   let parts = spawnParticlesAtGameObj({
