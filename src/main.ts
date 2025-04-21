@@ -1,6 +1,6 @@
 import kaplay from "kaplay";
 import "kaplay/global";
-import { initPlayer, player } from "./entities/player";
+import { CORRUPTION_COLOR, initPlayer, player } from "./entities/player";
 import { initPerinolaEnemy } from "./entities/perinola";
 
 import { initMidEnemy } from "./entities/mid-enemy";
@@ -307,43 +307,42 @@ scene("game", () => {
   // debug.inspect = true;
 
   const player = initPlayer();
-  gameState.gameStarted = true;
+  // gameState.gameStarted = true;
   // TODO: Enable intro
-  // wait(5, () => {
-  //   player.add([
-  //     text(
-  //       "[green]oh hi[/green] here's some [wavy][rainbow]styled[/rainbow][/wavy] text",
-  //       {
-  //         width: width(),
-  //         styles: {
-  //           green: {
-  //             color: rgb(128, 128, 255),
-  //           },
-  //           wavy: (idx, ch) => ({
-  //             pos: vec2(0, wave(-4, 4, time() * 6 + idx * 0.5)),
-  //           }),
-  //           rainbow: (idx, ch) => ({
-  //             color: hsl2rgb((time() * 0.2 + idx * 0.1) % 1, 0.7, 0.8),
-  //           }),
-  //         },
-  //       }
-  //     ),
-  //     anchor("center"),
-  //     opacity(1),
-  //     pos(20, -20),
-  //     lifespan(7, {
-  //       fade: 0.5,
-  //     }),
-  //     fadeIn(0.5),
-  //     // scale(0.5),
-  //   ]);
-  // });
+  wait(5, () => {
+    player.add([
+      text(
+        "[black]Run. Resist. Before the [/black][purple]corruption[/purple][black] takes everything[/black]",
+        {
+          size: 30,
+          width: width() - 100,
+          styles: {
+            purple: {
+              color: rgb(204, 48, 193),
+            },
+            black: {
+              color: Color.BLACK,
+            },
+          },
+        }
+      ),
+      anchor("center"),
+      opacity(1),
+      pos(20, -100),
+      lifespan(7, {
+        fade: 0.5,
+      }),
 
-  // wait(15, () => {
-  //   // Todo intro here lalala...
+      fadeIn(0.5),
+      // scale(0.5),
+    ]);
+  });
 
-  //   gameState.gameStarted = true;
-  // });
+  wait(15, () => {
+    // Todo intro here lalala...
+
+    gameState.gameStarted = true;
+  });
 
   // MAIN GAME LOOP FOR MOBS
   let mobTimers = {
