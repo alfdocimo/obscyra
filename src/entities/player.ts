@@ -795,7 +795,7 @@ const initPlayer = () => {
     }
   });
 
-  const aimCircle = initializeAimIndicator();
+  initializeAimIndicator();
 
   registerInputHandlers();
 

@@ -265,7 +265,26 @@ loadSound("life-orb", "/sounds/life-orb.wav");
 loadSound("energy-orb", "/sounds/energy-orb.wav");
 loadSound("boss-laser", "/sounds/boss-laser.wav");
 
+function initializeAimIndicator() {
+  let aimCircle = add([
+    pos(toWorld(mousePos())),
+    anchor("center"),
+    sprite("aim-circle"),
+    z(30000),
+    "cursor",
+  ]);
+
+  aimCircle.onUpdate(() => {
+    aimCircle.pos = toWorld(mousePos());
+  });
+
+  return aimCircle;
+}
+
 scene("menu", () => {
+  setCursor("none");
+  initializeAimIndicator();
+
   add([
     text("Obscyra", { size: 48 }),
     fadeIn(0.4),
@@ -331,7 +350,6 @@ scene("game", () => {
   addBackground();
   addWorldBounds();
   spawnRandomWalls();
-  setCursor("none");
 
   let currentWaveText = add([
     text(`Wave: ${gameState.currentWave}`, { size: 16 }),
