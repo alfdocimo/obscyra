@@ -110,6 +110,7 @@ loadSprite("heart", "/sprites/heart.png", {
   },
 });
 loadSprite("steel", "/sprites/steel.png");
+loadSprite("steel-purple", "/sprites/steel-purple.png");
 loadSprite("level", "/bg/level.png");
 loadSprite("test-map", "/bg/test-map.png", {
   singular: true,

@@ -11,7 +11,7 @@ const initPerinolaEnemy = (x: number, y: number) => {
     sprite("tri-mob", { width: 32, height: 64, anim: "float" }),
     pos(x, y),
     body(),
-    area({ shape: new Rect(vec2(0, -8), 16, 32) }),
+    area({ shape: new Rect(vec2(0, 0), 24, 60) }),
     anchor("center"),
     health(scaleEnemyHP(30)),
     z(1500),
