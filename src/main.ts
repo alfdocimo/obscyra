@@ -17,10 +17,16 @@ import { initHardEnemy } from "./entities/hard-enemy";
 
 kaplay({
   root: document.querySelector("#game-container"),
+  font: "ode_to_idle_gaming",
   width: GAME.CANVAS_WIDTH,
   height: GAME.CANVAS_HEIGHT,
   scale: 1,
 });
+
+loadFont(
+  "ode_to_idle_gaming",
+  "/fonts/ode_to_idle_gaming/ode_to_idle_gaming.woff"
+);
 
 loadSprite("player", "/sprites/cosito32.png", {
   sliceX: 4,
@@ -233,6 +239,7 @@ loadSprite("circle-slash", "/sprites/circle-slash.png", {
 loadSprite("skill-circle-slash", "/sprites/skill-circle-slash.png");
 loadSprite("purple-particle", "/sprites/purple-particle.png");
 loadSprite("intro-bg", "/bg/intro.png");
+loadSprite("crystal-option", "/sprites/crystal-option-no-bg.png");
 
 loadSound("hurt", "/sounds/hurt-test.wav");
 loadSound("shoot", "/sounds/shoot.wav");
@@ -266,9 +273,55 @@ scene("menu", () => {
     z(10000),
     color(0, 0, 0),
   ]);
+
+  const startGameText = add([
+    text("start", { size: 30 }),
+    area(),
+    opacity(),
+    pos(400, 180),
+    anchor("center"),
+    z(10000),
+    color(Color.BLACK),
+    "start-game-text",
+  ]);
+
+  let crystalOption = startGameText.add([
+    sprite("crystal-option"),
+    opacity(0),
+    anchor("center"),
+    pos(-100, 0),
+    scale(0.2),
+    "crystal-option",
+  ]);
+
+  startGameText.onHover(() => {
+    crystalOption.opacity = 1;
+    startGameText.color = Color.MAGENTA;
+  });
+
+  startGameText.onHoverEnd(() => {
+    crystalOption.opacity = 0;
+    startGameText.color = Color.BLACK;
+  });
+
   add([sprite("intro-bg")]);
-  onKeyPress("enter", () => {
-    go("game");
+  onClick("start-game-text", () => {
+    play("sword-swoosh", { loop: false });
+
+    add([
+      rect(width(), height()),
+      pos(center()),
+      anchor("center"),
+      color(Color.BLACK),
+      opacity(2),
+      fadeIn(2),
+      lifespan(2, { fade: 0.5 }),
+      z(10000),
+    ]);
+
+    wait(1.8, () => {
+      go("game");
+    });
   });
 });
 
