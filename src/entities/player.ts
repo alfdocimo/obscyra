@@ -53,6 +53,7 @@ type Skill = {
   invoke: () => void;
   isCoolingDown?: boolean;
   cooldownTime?: number;
+  soundName?: string;
 };
 
 type RangedSkill = Skill & {
@@ -113,7 +114,7 @@ const initPlayer = () => {
     {
       canTakeDamage: true,
       canRegenStamina: true,
-      level: 1,
+      level: 21,
       expPoints: 0,
       nextLevelExpPoints: 20,
       baseMeeleDamage: 5,
@@ -123,7 +124,7 @@ const initPlayer = () => {
       maxStamina: INITAL_MAX_STAMINA,
       energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: INITIAL_CORRUPTION, // current corruption points
+      corruption: 49, // current corruption points
       maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
       corruptionTimer: 0, // countdown timer (in seconds)
       isDecaying: false, // flag to indicate we are in decay mode
@@ -138,6 +139,7 @@ const initPlayer = () => {
           damage: 5,
           cooldownTime: 1,
           isCoolingDown: false,
+          soundName: "sword-swoosh",
           invoke: () => {
             // const SLASH_LENGTH = 60;
             // const SLASH_WIDTH = 10;
@@ -179,6 +181,7 @@ const initPlayer = () => {
           damage: 10,
           cooldownTime: 1,
           isCoolingDown: false,
+          soundName: "long-slash",
           invoke: () => {
             // const SLASH_LENGTH = 60;
             // const SLASH_WIDTH = 10;
@@ -238,6 +241,7 @@ const initPlayer = () => {
           damage: 15,
           cooldownTime: 1.5,
           isCoolingDown: false,
+          soundName: "circle-slash",
           invoke: () => {
             // const SLASH_LENGTH = 60;
             // const SLASH_WIDTH = 10;
@@ -279,6 +283,7 @@ const initPlayer = () => {
           damage: 5,
           cooldownTime: 5,
           isCoolingDown: false,
+          soundName: "protect",
           invoke: () => {
             // const SLASH_LENGTH = 60;
             // const SLASH_WIDTH = 10;
@@ -322,6 +327,7 @@ const initPlayer = () => {
             ]);
 
             protect.onCollide("enemy", (enemy) => {
+              play("protect-damage", { loop: false });
               if (protect.canHeal) {
                 let healAmount = enemy.touchDamage / 2;
                 player.heal(healAmount);
@@ -333,6 +339,8 @@ const initPlayer = () => {
               }
             });
             protect.onCollide("bullet", (bullet) => {
+              play("protect-damage", { loop: false });
+
               destroy(bullet);
               if (protect.canHeal) {
                 let healAmount = bullet.bulletDamage / 2;
@@ -382,6 +390,7 @@ const initPlayer = () => {
           type: "ranged",
           cooldownTime: 0.3,
           isCoolingDown: false,
+          soundName: "shoot",
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
             let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
@@ -417,6 +426,7 @@ const initPlayer = () => {
           type: "ranged",
           cooldownTime: 0.3,
           isCoolingDown: false,
+          soundName: "tri-shot",
           invoke: () => {
             const ANGLE_OFFSET = 10; // degrees
             const BULLET_SPEED_MULTIPLIER = 1.5;
@@ -469,6 +479,7 @@ const initPlayer = () => {
           type: "ranged",
           cooldownTime: 0.8,
           isCoolingDown: false,
+          soundName: "moving-shot",
           invoke: () => {
             const dir = toWorld(mousePos()).sub(player.worldPos()).unit();
             const speed = BULLET_SPEED / 2;
@@ -539,6 +550,7 @@ const initPlayer = () => {
           type: "ranged",
           cooldownTime: 5,
           isCoolingDown: false,
+          soundName: "final-shot",
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
             let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
@@ -924,13 +936,15 @@ function handleMaxCorruption() {
   player.isDecaying = false;
   player.enterState("normal"); // if you’re using state system, clear the current one
 
+  play("max-corruption", { loop: false, volume: 0.7 });
+  play("max-corruption-explotion", { loop: false, volume: 0.7 });
   takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
-  addFadingText({
+  let parts = spawnParticlesAtGameObj({
     gameObj: player,
-    txt: "Corruption overload!",
-    txtColor: CORRUPTION_COLOR,
+    colors: [Color.fromArray(CORRUPTION_COLOR), Color.fromArray(LIGHT_RED)],
   });
+  parts.emit(10);
 }
 
 function checkCorrutionAmountInPlayer() {
@@ -1198,6 +1212,8 @@ function handleLevelUp() {
     if (!player.exists()) return;
 
     if (player.expPoints >= player.nextLevelExpPoints) {
+      play("level-up", { loop: false });
+
       player.level += 1;
 
       // Apply dynamic level-up effects
@@ -1302,6 +1318,9 @@ function takeDamage({ damage }: { damage: number }) {
   player.canTakeDamage = false;
 
   player.play("hurt");
+  play("hurt", {
+    loop: false,
+  });
   shake(5);
 
   player.hurt(damage);
@@ -1365,6 +1384,9 @@ function castSelectedRangedSkill() {
     return;
   }
   selectedSkill?.invoke();
+  play(selectedSkill.soundName, {
+    loop: false,
+  });
 
   selectedSkill.isCoolingDown = true;
 
@@ -1387,6 +1409,9 @@ function castSelectedMeeleSkill() {
     return;
   }
   selectedSkill?.invoke();
+  play(selectedSkill.soundName, {
+    loop: false,
+  });
 
   selectedSkill.isCoolingDown = true;
 

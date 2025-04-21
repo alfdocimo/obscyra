@@ -19,6 +19,8 @@ const initMidEnemy = (x: number, y: number) => {
       bulletColor: [239, 194, 72],
       speed: 80,
       bulletSize: 10,
+      hurtSound: "perinola-shoot",
+      shootSound: "hurt-perinola",
     }),
     "enemy",
     {

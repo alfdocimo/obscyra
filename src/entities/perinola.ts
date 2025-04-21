@@ -20,6 +20,8 @@ const initPerinolaEnemy = (x: number, y: number) => {
       bulletColor: [239, 194, 72],
       speed: 100,
       bulletSize: 6,
+      hurtSound: "perinola-shoot",
+      shootSound: "hurt-perinola",
     }),
     "enemy",
     {

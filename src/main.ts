@@ -233,6 +233,23 @@ loadSprite("circle-slash", "/sprites/circle-slash.png", {
 loadSprite("skill-circle-slash", "/sprites/skill-circle-slash.png");
 loadSprite("purple-particle", "/sprites/purple-particle.png");
 
+loadSound("hurt", "/sounds/hurt-test.wav");
+loadSound("shoot", "/sounds/shoot.wav");
+loadSound("hurt-perinola", "/sounds/hurt-perinola.wav");
+loadSound("sword-swoosh", "/sounds/sword-swoosh.wav");
+loadSound("perinola-shoot", "/sounds/perinola-shoot.wav");
+loadSound("tri-shot", "/sounds/tri-shot.wav");
+loadSound("moving-shot", "/sounds/moving-shot.wav");
+loadSound("final-shot", "/sounds/final-shot.wav");
+loadSound("long-slash", "/sounds/long-slash.wav");
+loadSound("circle-slash", "/sounds/circle-slash.wav");
+loadSound("cooling-down", "/sounds/cooling-down.wav");
+loadSound("protect", "/sounds/protect.wav");
+loadSound("protect-damage", "/sounds/protect-damage.wav");
+loadSound("level-up", "/sounds/level-up.wav");
+loadSound("max-corruption", "/sounds/max-corruption.wav");
+loadSound("max-corruption-explotion", "/sounds/max-corruption-explotion.wav");
+
 scene("menu", () => {
   add([text("Press Enter to Start", { size: 48 }), pos(0, 0), color(0, 0, 0)]);
   onKeyPress("enter", () => {

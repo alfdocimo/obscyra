@@ -22,6 +22,8 @@ export const initHardEnemy = (x: number, y: number) => {
       speed: 120,
       bulletSize: 20,
       isBoss: true,
+      hurtSound: "perinola-shoot",
+      shootSound: "hurt-perinola",
     }),
     "enemy",
     {

@@ -33,6 +33,8 @@ type EnemyAIConfig = {
   isBoss?: boolean;
   isRunningEnemy?: boolean;
   speed?: number;
+  shootSound: string;
+  hurtSound: string;
 };
 
 type EnemyAIContext = GameObj<
@@ -48,6 +50,8 @@ export function enemyAI(
   config: EnemyAIConfig = {
     isBoss: false,
     isRunningEnemy: false,
+    hurtSound: "perinola-shoot",
+    shootSound: "hurt-perinola",
   }
 ) {
   let initialHealth = undefined;
@@ -153,6 +157,8 @@ export function enemyAI(
                   "bullet",
                   { bulletDamage: self.bulletDamage },
                 ]);
+
+                play(config.shootSound, { loop: false });
 
                 enemyBullet.onCollide("player", () => {
                   destroy(enemyBullet);
@@ -285,6 +291,7 @@ export function enemyAI(
         }
 
         self.hurt(damageToTakeAmount);
+        play(config.hurtSound, { loop: false });
 
         addFadingNumber({
           gameObj: self,
