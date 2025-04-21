@@ -76,3 +76,47 @@ export function spawnParticlesAtPosition({
 
   return parts;
 }
+export function spawnParticlesAtPlayerDeathPosition({
+  x,
+  y,
+  colors = [
+    rgb(255, 255, 255), // pure light
+    rgb(100, 0, 255), // arcane
+    rgb(255, 0, 0), // power spike
+    rgb(0, 255, 255), // ethereal glow
+  ],
+}: {
+  x: number;
+  y: number;
+  colors?: Color[];
+}) {
+  const parts = add([
+    pos(x, y),
+    particles(
+      {
+        max: 120,
+        speed: [250, 500],
+        angle: [0, 360],
+        angularVelocity: [180, 720],
+        lifeTime: [0.5, 1.2],
+        colors,
+        opacities: [1.0, 0.7, 0.0],
+        scales: [rand(0.3, 0.6), rand(1.2, 2.5), rand(0.1, 0.4)],
+        texture: getSprite("purple-particle").data.tex,
+        quads: getSprite("purple-particle").data.frames,
+      },
+      {
+        lifetime: 1.2,
+        rate: 0,
+        direction: rand(0, 360),
+        spread: 360,
+      }
+    ),
+  ]);
+
+  parts.emit(60);
+  wait(0.05, () => parts.emit(30));
+  wait(0.1, () => parts.emit(20));
+
+  return parts;
+}

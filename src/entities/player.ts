@@ -11,7 +11,11 @@ import {
 } from "kaplay";
 import { GAME } from "../config";
 import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
-import { spawnParticlesAtGameObj } from "../utils/spawn-particles";
+import {
+  spawnParticlesAtGameObj,
+  spawnParticlesAtPlayerDeathPosition,
+  spawnParticlesAtPosition,
+} from "../utils/spawn-particles";
 
 const INITIAL_HP = 30;
 const SPEED = 300;
@@ -114,7 +118,7 @@ const initPlayer = () => {
     {
       canTakeDamage: true,
       canRegenStamina: true,
-      level: 21,
+      level: 1,
       expPoints: 0,
       nextLevelExpPoints: 20,
       baseMeeleDamage: 5,
@@ -1163,15 +1167,17 @@ function handleCorruptionGain() {
 
 function registerPlayerDeathHandler() {
   player.on("death", () => {
+    let playerPos = {
+      x: player.pos.x,
+      y: player.pos.y,
+    };
     destroy(player);
-    add([
-      text("Morido", { size: 16 }),
-      pos(player.worldPos().x, player.worldPos().y - 40),
-      opacity(1),
-      color(255, 0, 0),
-      lifespan(1, { fade: 0.5 }),
-      z(999),
-    ]);
+    play("death", { loop: false });
+    let parts = spawnParticlesAtPlayerDeathPosition({
+      x: playerPos.x,
+      y: playerPos.y,
+    });
+    parts.emit(30);
   });
 }
 

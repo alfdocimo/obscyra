@@ -250,6 +250,7 @@ loadSound("protect-damage", "/sounds/protect-damage.wav");
 loadSound("level-up", "/sounds/level-up.wav");
 loadSound("max-corruption", "/sounds/max-corruption.wav");
 loadSound("max-corruption-explotion", "/sounds/max-corruption-explotion.wav");
+loadSound("death", "/sounds/death.wav");
 
 scene("menu", () => {
   add([
