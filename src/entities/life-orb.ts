@@ -21,6 +21,8 @@ export function initLifeOrb({
   ]);
 
   lifeOrb.onCollide("player", () => {
+    play("life-orb", { loop: false });
+
     const AMOUNT = amount;
 
     addFadingNumber({

@@ -21,6 +21,7 @@ export function initEnergyOrb({
   ]);
 
   energyOrb.onCollide("player", () => {
+    play("energy-orb", { loop: false });
     const AMOUNT = amount;
 
     // Not really damage..

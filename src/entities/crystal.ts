@@ -12,6 +12,8 @@ export function initCrystal({ x, y }: { x: number; y: number }) {
   ]);
 
   crystal.onCollide("player", () => {
+    play("crystal", { loop: false });
+
     player.corruption -= 3;
     player.corruptionTimer = 0;
     player.isDecaying = true;

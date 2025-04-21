@@ -251,6 +251,9 @@ loadSound("level-up", "/sounds/level-up.wav");
 loadSound("max-corruption", "/sounds/max-corruption.wav");
 loadSound("max-corruption-explotion", "/sounds/max-corruption-explotion.wav");
 loadSound("death", "/sounds/death.wav");
+loadSound("crystal", "/sounds/crystal.wav");
+loadSound("life-orb", "/sounds/life-orb.wav");
+loadSound("energy-orb", "/sounds/energy-orb.wav");
 
 scene("menu", () => {
   add([
