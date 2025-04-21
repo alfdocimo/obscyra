@@ -17,8 +17,9 @@ import {
   spawnParticlesAtPosition,
   spawnParticlesFromCenter,
 } from "../utils/spawn-particles";
+import { gameState } from "../game-state";
 
-const INITIAL_HP = 30;
+const INITIAL_HP = 1;
 const SPEED = 300;
 const BULLET_SPEED = 800;
 const INITAL_ENERGY = 40;
@@ -1184,6 +1185,45 @@ function registerPlayerDeathHandler() {
       y: playerPos.y,
     });
     parts.emit(30);
+
+    wait(2, () => {
+      add([
+        rect(width(), height()),
+        pos(toWorld(center())),
+        anchor("center"),
+        color(Color.BLACK),
+        opacity(1),
+        fadeIn(2),
+
+        z(10000),
+      ]);
+
+      wait(2, () => {
+        add([
+          text("You died..."),
+          z(11000),
+          pos(toWorld(center())),
+          anchor("center"),
+        ]);
+        add([
+          text(`Max wave reached: ${gameState.currentWave}`, { size: 20 }),
+          z(11000),
+          pos(toWorld(center()).add(0, 60)),
+          anchor("center"),
+        ]);
+
+        add([
+          text(`Try again...?`, { size: 20 }),
+          z(11000),
+          pos(toWorld(center()).add(0, 120)),
+          anchor("center"),
+        ]);
+      });
+
+      wait(10, () => {
+        go("menu");
+      });
+    });
   });
 }
 
