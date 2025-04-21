@@ -293,9 +293,9 @@ const initPlayer = () => {
             // const SLASH_WIDTH = 10;
 
             function displayAddHpFromProtectText(hpToAdd: number) {
-              addFadingNumber({
+              addFadingText({
                 gameObj: player,
-                number: hpToAdd,
+                txt: `+${Math.round(hpToAdd)}`,
                 txtColor: HP_COLOR,
               });
             }
@@ -1331,15 +1331,15 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.hurt(damage);
 
-  addFadingNumber({
+  addFadingText({
     gameObj: player,
-    number: damage,
-    txtColor: [255, 255, 255],
+    txt: `-${Math.round(damage)}`,
+    txtColor: HP_COLOR,
   });
 
   const parts = spawnParticlesAtGameObj({
     gameObj: player,
-    colors: [Color.fromArray(LIGHT_RED)],
+    colors: [Color.fromArray(HP_COLOR), Color.BLACK],
   });
   parts.emit(4);
 

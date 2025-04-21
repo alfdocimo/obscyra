@@ -1,4 +1,4 @@
-import { addFadingNumber } from "../utils/add-fading-text";
+import { addFadingNumber, addFadingText } from "../utils/add-fading-text";
 import { HP_COLOR, LIGHT_RED, player } from "./player";
 
 export function initLifeOrb({
@@ -25,9 +25,9 @@ export function initLifeOrb({
 
     const AMOUNT = amount;
 
-    addFadingNumber({
-      number: AMOUNT,
+    addFadingText({
       gameObj: player,
+      txt: `+${Math.round(AMOUNT)}`,
       txtColor: LIGHT_RED,
     });
 
