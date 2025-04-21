@@ -1,6 +1,6 @@
 export const gameState = {
   gameStarted: false,
-  currentWave: 21,
+  currentWave: 1,
   maxCurrentMobs: 10,
   currentMobs: 0,
   totalMobsKilled: 0,

@@ -121,7 +121,7 @@ export function spawnParticlesAtPlayerDeathPosition({
   return parts;
 }
 
-export function spawnBossEnemyBulletParticles({
+export function spawnParticlesFromCenter({
   x,
   y,
   colors = [

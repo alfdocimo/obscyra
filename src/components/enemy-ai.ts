@@ -19,7 +19,7 @@ import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
 import { addFadingNumber } from "../utils/add-fading-text";
 import {
-  spawnBossEnemyBulletParticles,
+  spawnParticlesFromCenter,
   spawnParticlesAtGameObj,
   spawnParticlesAtPosition,
 } from "../utils/spawn-particles";
@@ -76,8 +76,8 @@ export function enemyAI(
       const hpBar = self.add([
         rect(50, 5),
         pos(-25, hpYPosition),
-        outline(0.5, Color.fromArray([221, 78, 37])),
-        color(221, 78, 37),
+        // outline(0.5, Color.fromArray([221, 78, 37])),
+        color(Color.fromArray([146, 0, 10])),
         anchor("left"),
         "enemy-health-bar",
       ]);
@@ -130,7 +130,7 @@ export function enemyAI(
                   {
                     bulletDamage: self.bulletDamage,
                     update() {
-                      let part = spawnBossEnemyBulletParticles({
+                      let part = spawnParticlesFromCenter({
                         x: this.pos.x,
                         y: this.pos.y,
                       });
@@ -256,10 +256,14 @@ export function enemyAI(
         };
         die();
 
-        let parts = spawnParticlesAtPosition({
+        let parts = spawnParticlesFromCenter({
           x: currentPos.x,
           y: currentPos.y,
-          colors: [Color.fromArray([95, 10, 87])],
+          colors: [
+            Color.WHITE,
+            Color.fromArray(ENEMY_ACTION_COLOR),
+            Color.fromArray(ENEMY_ACTION_COLOR_ACCENT),
+          ],
         });
         parts.emit(10);
       });

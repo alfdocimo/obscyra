@@ -41,11 +41,11 @@ const EXPERIENCE_STATUS_WIDTH = 138;
 const SELECTED_SKILL_COLOR = [200, 200, 240];
 const UNSELECTED_SKILL_COLOR = [255, 255, 255];
 
-export const HP_COLOR = [221, 78, 37];
+export const HP_COLOR = [146, 0, 10];
 export const ENERGY_COLOR = [34, 175, 228];
-const STAMINA_COLOR = [34, 228, 87];
+const STAMINA_COLOR = [125, 180, 87];
 export const CORRUPTION_COLOR = [255, 38, 162];
-const EXPERIENCE_COLOR = [240, 212, 120];
+const EXPERIENCE_COLOR = [235, 157, 15];
 export const LIGHT_RED = [255, 111, 111];
 
 type Skill = {
@@ -1062,8 +1062,8 @@ function initPlayerStatsUI() {
 
   let heathBarText = healthBar.add([
     text("", { size: 10 }),
-    pos(10, 0),
-    color(255, 255, 255),
+    pos(10, 1),
+    color(Color.WHITE),
     anchor("left"),
     z(1000),
   ]);
@@ -1080,7 +1080,7 @@ function initPlayerStatsUI() {
   let staminaText = staminaBar.add([
     text("", { size: 10 }),
     pos(10, 0),
-    color(255, 255, 255),
+    color(Color.WHITE),
     anchor("left"),
     z(1000),
   ]);
@@ -1096,7 +1096,7 @@ function initPlayerStatsUI() {
   let energyText = energyBar.add([
     text("", { size: 10 }),
     pos(10, 0),
-    color(255, 255, 255),
+    color(Color.WHITE),
     anchor("left"),
     z(1000),
   ]);
@@ -1111,8 +1111,8 @@ function initPlayerStatsUI() {
 
   let corruptionText = corruptionBar.add([
     text("", { size: 10 }),
-    pos(10, 0),
-    color(255, 255, 255),
+    pos(10, 1),
+    color(Color.WHITE),
     anchor("left"),
     z(1000),
   ]);
