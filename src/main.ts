@@ -139,7 +139,7 @@ loadSprite("energy-orb", "/sprites/energy-orb.png", {
 
 loadSprite("aim-circle", "/sprites/aim-circle.png");
 
-loadSprite("player-stats", "/sprites/test-ui-stats-2.png");
+loadSprite("player-stats", "/sprites/test-ui-stats-3.png");
 
 loadSprite("player-skills-ui", "/sprites/test-player-skills-ui-2.png");
 loadSprite("level-stats-ui", "/sprites/level-stats-ui.png");
@@ -333,7 +333,7 @@ scene("game", () => {
 
   let currentWaveText = add([
     text(`Wave: ${gameState.currentWave}`, { size: 16 }),
-    pos(GAME.CANVAS_WIDTH - 30, 12),
+    pos(GAME.CANVAS_WIDTH - 9, 12),
     anchor("topright"),
     fixed(),
     z(10000),
@@ -341,7 +341,7 @@ scene("game", () => {
 
   let currentMobsKilledText = add([
     text(`Slayed: ${gameState.totalMobsKilled}`, { size: 16 }),
-    pos(GAME.CANVAS_WIDTH - 30, 32),
+    pos(GAME.CANVAS_WIDTH - 9, 32),
     anchor("topright"),
     fixed(),
     z(10000),
@@ -351,7 +351,7 @@ scene("game", () => {
     text(`Next wave in: ${gameState.mobsToBeKilledUntilNextWave}`, {
       size: 16,
     }),
-    pos(GAME.CANVAS_WIDTH - 30, 52),
+    pos(GAME.CANVAS_WIDTH - 9, 52),
     anchor("topright"),
     fixed(),
     z(10000),
@@ -365,13 +365,13 @@ scene("game", () => {
   wait(5, () => {
     player.add([
       text(
-        "[black]Run. Resist. Before the [/black][purple]corruption[/purple][black] takes everything[/black]",
+        "[black]Run. Resist. Before the [/black][purple]corruption[/purple][black] \n \n takes everything[/black]",
         {
-          size: 30,
+          size: 26,
           width: width() - 100,
           styles: {
             purple: {
-              color: rgb(204, 48, 193),
+              color: Color.fromArray(CORRUPTION_COLOR),
             },
             black: {
               color: Color.BLACK,

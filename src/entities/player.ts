@@ -1020,7 +1020,7 @@ function initPlayerStatsUI() {
   ]);
 
   let levelStatsText = levelStats.add([
-    text("", { size: 12 }),
+    text("", { size: 8 }),
     pos(6, 10),
     color(Color.BLACK),
     anchor("left"),
@@ -1028,7 +1028,7 @@ function initPlayerStatsUI() {
   ]);
 
   let totalExperienceStatsText = levelStats.add([
-    text("", { size: 12 }),
+    text("", { size: 8 }),
     pos(12, 25),
     color(Color.BLACK),
     anchor("left"),
@@ -1053,8 +1053,8 @@ function initPlayerStatsUI() {
   ]);
 
   let healthBar = playerStats.add([
-    rect(HEALTH_STATUS_WIDTH, 11),
-    pos(80, 18),
+    rect(HEALTH_STATUS_WIDTH, 32),
+    pos(80, 25),
     color(Color.fromArray(HP_COLOR)),
     anchor("left"),
     "health-bar",
@@ -1102,8 +1102,8 @@ function initPlayerStatsUI() {
   ]);
 
   let corruptionBar = playerStats.add([
-    rect(CORRUPTION_STATUS_WIDTH, 11),
-    pos(80, 34),
+    rect(CORRUPTION_STATUS_WIDTH, 32),
+    pos(80, 62),
     color(Color.fromArray(CORRUPTION_COLOR)),
     anchor("left"),
     "energy-bar",
