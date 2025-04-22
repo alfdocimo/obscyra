@@ -289,7 +289,7 @@ scene("menu", () => {
     text("Obscyra", { size: 48 }),
     fadeIn(0.4),
     opacity(),
-    pos(400, 100),
+    pos(400, 60),
     anchor("center"),
     z(10000),
     color(0, 0, 0),
@@ -299,14 +299,25 @@ scene("menu", () => {
     text("start", { size: 30 }),
     area(),
     opacity(),
-    pos(400, 180),
+    pos(400, 120),
     anchor("center"),
     z(10000),
     color(Color.BLACK),
     "start-game-text",
   ]);
 
-  let crystalOption = startGameText.add([
+  const instructionsGameText = add([
+    text("instructions", { size: 30 }),
+    area(),
+    opacity(),
+    pos(400, 180),
+    anchor("center"),
+    z(10000),
+    color(Color.BLACK),
+    "instructions-text",
+  ]);
+
+  let crystalOptionStart = startGameText.add([
     sprite("crystal-option"),
     opacity(0),
     anchor("center"),
@@ -315,14 +326,33 @@ scene("menu", () => {
     "crystal-option",
   ]);
 
+  let crystalOptionInstruction = instructionsGameText.add([
+    sprite("crystal-option"),
+    opacity(0),
+    anchor("center"),
+    pos(-180, 0),
+    scale(0.2),
+    "crystal-option",
+  ]);
+
   startGameText.onHover(() => {
-    crystalOption.opacity = 1;
+    crystalOptionStart.opacity = 1;
     startGameText.color = Color.fromArray([116, 16, 113]);
   });
 
   startGameText.onHoverEnd(() => {
-    crystalOption.opacity = 0;
+    crystalOptionStart.opacity = 0;
     startGameText.color = Color.BLACK;
+  });
+
+  instructionsGameText.onHover(() => {
+    crystalOptionInstruction.opacity = 1;
+    instructionsGameText.color = Color.fromArray([116, 16, 113]);
+  });
+
+  instructionsGameText.onHoverEnd(() => {
+    crystalOptionInstruction.opacity = 0;
+    instructionsGameText.color = Color.BLACK;
   });
 
   add([sprite("intro-bg")]);
@@ -344,6 +374,78 @@ scene("menu", () => {
       go("game");
     });
   });
+
+  onClick("instructions-text", () => {
+    go("instructions-1");
+  });
+});
+
+scene("instructions-1", () => {
+  setCursor("none");
+  initializeAimIndicator();
+  setBackground(Color.fromArray([116, 15, 113]));
+
+  add([
+    text("Instructions", { size: 20 }),
+    fadeIn(0.4),
+    opacity(),
+    pos(8, 20),
+    anchor("topleft"),
+    z(10000),
+    color(Color.WHITE),
+  ]);
+
+  add([
+    text(
+      `You are escaping the realm of corruption. Every monster you kill has the ability to curse you with <corruption> upon dying.
+      \n
+      The more corrupted you get, the more power you can <unleash> - but beware as there's a limit amount of corruption you can handle,
+      and it can damage you profundly. Wait for the corruption to go down, time your attacks.
+      \n
+      -> W A S D to move
+      \n
+      -> Left click fire your gun.
+      \n
+      -> Right click to use your sword
+      \n
+      As you level up, you unlock new skills. Switch between these skills with 1, 2, 3, 4 and  z, x, c, v on your keyboard. 
+      `,
+      { size: 14, width: width() - 8, lineSpacing: 5 }
+    ),
+    fadeIn(0.4),
+    opacity(),
+    pos(8, 50),
+    anchor("topleft"),
+    z(10000),
+    color(Color.WHITE),
+  ]);
+
+  add([sprite("crystal", { anim: "idle" }), pos(8, 500)]).add([
+    text("Corruption crystal, lowers your corruption level", {
+      size: 14,
+      width: width() - 8,
+      lineSpacing: 5,
+    }),
+    pos(32, 6),
+  ]);
+
+  add([sprite("life-orb", { anim: "idle" }), pos(8, 540)]).add([
+    text("Life orb, recovers your HP", {
+      size: 14,
+      width: width() - 8,
+      lineSpacing: 5,
+    }),
+    pos(32, 6),
+  ]);
+
+  add([sprite("energy-orb", { anim: "idle" }), pos(8, 580)]).add([
+    text("Energy orb, recovers your energy", {
+      size: 14,
+      width: width() - 8,
+      lineSpacing: 5,
+    }),
+    pos(32, 6),
+  ]);
 });
 
 scene("game", () => {
