@@ -61,7 +61,7 @@ loadSprite("blade", "/sprites/blade.png", {
   },
 });
 loadSprite("gun", "/sprites/gun.png");
-loadSprite("ghosty", "/sprites/ghosty.png");
+
 loadSprite("tri-mob", "/sprites/tri-mob.png", {
   sliceX: 4,
   sliceY: 2,
@@ -96,8 +96,7 @@ loadSprite("mid-enemy", "/sprites/mid-enemy.png", {
   },
 });
 loadSprite("player-bullet-basic", "/sprites/player-bullet.png");
-loadSprite("tiny-ghosty", "/sprites/ghostiny.png");
-loadSprite("gigagantrum", "/sprites/gigagantrum.png");
+
 loadSprite("heart", "/sprites/heart.png", {
   sliceX: 3,
   sliceY: 3,
@@ -357,7 +356,7 @@ scene("menu", () => {
 
   add([sprite("intro-bg")]);
   onClick("start-game-text", () => {
-    play("new-game", { loop: false });
+    play("new-game", { loop: false, volume: 0.3 });
 
     add([
       rect(width(), height()),
@@ -579,6 +578,87 @@ scene("game", () => {
         [gameState.mobsSpawnTime * 5, gameState.mobsSpawnTime * 10],
         initHardEnemy
       );
+    }
+  });
+
+  onUpdate(() => {
+    if (gameState.currentWave < 30) return;
+    if (gameState.currentWave === 30 && !gameState.hasReachedFinalWave) {
+      gameState.hasReachedFinalWave = true;
+      gameState.gameStarted = false;
+
+      // YOU WIN!
+      destroyAll("enemy");
+      setBackground(Color.WHITE);
+      [1, 2, 3].forEach((time) => {
+        wait(time, () => {
+          shake(10);
+        });
+      });
+
+      loop(0.5, () => {
+        const parts = add([
+          pos(
+            toWorld(center()).add(randi(300)).x,
+            toWorld(center()).add(randi(300)).y
+          ),
+          z(11000),
+          particles(
+            {
+              max: 120,
+              speed: [250, 500],
+              angle: [0, 360],
+              angularVelocity: [180, 720],
+              lifeTime: [0.5, 1.2],
+              colors: [
+                rgb(255, 255, 255), // pure light
+                rgb(100, 0, 255), // arcane
+                rgb(255, 0, 0), // power spike
+                rgb(0, 255, 255), // ethereal glow
+              ],
+              opacities: [1.0, 0.7, 0.0],
+              scales: [rand(0.3, 0.6), rand(1.2, 2.5), rand(0.1, 0.4)],
+              texture: getSprite("purple-particle").data.tex,
+              quads: getSprite("purple-particle").data.frames,
+            },
+            {
+              lifetime: 1.2,
+              rate: 0,
+              direction: rand(0, 360),
+              spread: 360,
+            }
+          ),
+        ]);
+        parts.emit(10);
+      });
+
+      wait(1, () => {
+        let finalRect = add([
+          rect(width(), height()),
+          pos(0, 0),
+          anchor("topleft"),
+          color(Color.WHITE),
+          opacity(1),
+          fadeIn(1),
+          fixed(),
+          z(10000),
+        ]);
+
+        add([
+          text("You have escaped!"),
+          z(11000),
+          pos(toWorld(center())),
+          anchor("center"),
+          opacity(1),
+          fadeIn(1),
+          color(Color.BLACK),
+          fixed(),
+        ]);
+      });
+
+      wait(15, () => {
+        go("menu");
+      });
     }
   });
 

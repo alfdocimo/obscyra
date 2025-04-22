@@ -1224,7 +1224,7 @@ function registerPlayerDeathHandler() {
         ]);
 
         add([
-          text(`Try again...?`, { size: 20 }),
+          text(`Going back to menu...`, { size: 20 }),
           z(11000),
           pos(toWorld(center()).add(0, 120)),
           anchor("center"),

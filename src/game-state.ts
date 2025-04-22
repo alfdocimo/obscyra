@@ -7,4 +7,5 @@ export const gameState = {
   mobsToBeKilledUntilNextWave: 10,
   mobsSpawnTime: 1,
   totalMobsSpawned: 0,
+  hasReachedFinalWave: false,
 };
