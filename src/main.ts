@@ -396,19 +396,25 @@ scene("instructions-1", () => {
 
   add([
     text(
-      `You are escaping the realm of corruption. Every monster you kill has the ability to curse you with <corruption> upon dying.
+      `You are escaping the Realm of Corruption.
       \n
-      The more corrupted you get, the more power you can <unleash> - but beware as there's a limit amount of corruption you can handle,
-      and it can damage you profundly. Wait for the corruption to go down, time your attacks.
-      \n
-      -> W A S D to move
-      \n
-      -> Left click fire your gun.
-      \n
-      -> Right click to use your sword
-      \n
-      As you level up, you unlock new skills. Switch between these skills with 1, 2, 3, 4 and  z, x, c, v on your keyboard. 
-      `,
+      Every monster you slay releases <corruption> into the air.
+      The more corruption you absorb, the more power you can <unleash> — but beware: there’s only so much you can handle.
+      Push too far, and it will break you.
+      \n    
+      Let the corruption settle. Time your strikes. Survive.
+     \n    
+      → W A S D to move  
+      → Left Click to fire your gun  
+      → Right Click to slash with your sword  
+      \n    
+      As you level up, you unlock new skills.  
+      Use 1, 2, 3, 4 and Z, X, C, V to switch between them.
+      \n    
+      Endure wave after wave…  
+      If you reach Wave 30, the truth may reveal itself.  
+      Few return. None remain unchanged.
+          `,
       { size: 14, width: width() - 8, lineSpacing: 5 }
     ),
     fadeIn(0.4),
@@ -419,8 +425,8 @@ scene("instructions-1", () => {
     color(Color.WHITE),
   ]);
 
-  add([sprite("crystal", { anim: "idle" }), pos(8, 500)]).add([
-    text("Corruption crystal, lowers your corruption level", {
+  add([sprite("crystal", { anim: "idle" }), pos(8, 540)]).add([
+    text("Corruption crystal — slows the spread, clears your mind", {
       size: 14,
       width: width() - 8,
       lineSpacing: 5,
@@ -428,8 +434,8 @@ scene("instructions-1", () => {
     pos(32, 6),
   ]);
 
-  add([sprite("life-orb", { anim: "idle" }), pos(8, 540)]).add([
-    text("Life orb, recovers your HP", {
+  add([sprite("life-orb", { anim: "idle" }), pos(8, 580)]).add([
+    text("Life orb — restores your strength, buys you time", {
       size: 14,
       width: width() - 8,
       lineSpacing: 5,
@@ -437,14 +443,31 @@ scene("instructions-1", () => {
     pos(32, 6),
   ]);
 
-  add([sprite("energy-orb", { anim: "idle" }), pos(8, 580)]).add([
-    text("Energy orb, recovers your energy", {
+  add([sprite("energy-orb", { anim: "idle" }), pos(8, 620)]).add([
+    text("Energy orb — fuels your will, sharpens your edge", {
       size: 14,
       width: width() - 8,
       lineSpacing: 5,
     }),
     pos(32, 6),
   ]);
+
+  add([
+    text("Back", {
+      size: 16,
+    }),
+    pos(width() - 20, height() - 20),
+    anchor("botright"),
+    area(),
+    z(9999),
+    color(255, 255, 255),
+    "back-button",
+    opacity(1),
+  ]);
+
+  onClick("back-button", () => {
+    go("menu"); // Replace with your desired scene
+  });
 });
 
 scene("game", () => {
