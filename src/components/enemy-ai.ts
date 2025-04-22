@@ -17,7 +17,10 @@ import { initCrystal } from "../entities/crystal";
 import { gameState } from "../game-state";
 import { initLifeOrb } from "../entities/life-orb";
 import { initEnergyOrb } from "../entities/energy-orb";
-import { addFadingNumber } from "../utils/add-fading-text";
+import {
+  addFadingNumber,
+  addFadingNumberAtPos,
+} from "../utils/add-fading-text";
 import {
   spawnParticlesFromCenter,
   spawnParticlesAtGameObj,
@@ -172,7 +175,7 @@ export function enemyAI(
                   { bulletDamage: self.bulletDamage },
                 ]);
 
-                play(config.shootSound, { loop: false });
+                play(config.shootSound, { loop: false, volume: 0.3 });
 
                 enemyBullet.onCollide("player", () => {
                   destroy(enemyBullet);
@@ -208,7 +211,7 @@ export function enemyAI(
               const angle = player.worldPos().sub(self.worldPos()).angle();
               const bulletStartPos = self.worldPos().add(gunOffset);
 
-              play("boss-laser", { loop: false });
+              play("boss-laser", { loop: false, volume: 0.3 });
 
               const beam = add([
                 rect(700, 8),
@@ -313,18 +316,32 @@ export function enemyAI(
         }
 
         self.hurt(damageToTakeAmount);
-        play(config.hurtSound, { loop: false });
-
-        addFadingNumber({
-          gameObj: self,
+        play(config.hurtSound, { loop: false, volume: 0.3 });
+        let enemyPost = {
+          x: self.pos.x,
+          y: self.pos.y,
+        };
+        addFadingNumberAtPos({
+          x: enemyPost.x,
+          y: enemyPost.y,
           number: damageToTakeAmount,
-          txtColor: [255, 255, 255],
+          txtColor: getCorruptionDamageColor(),
           size:
             16 +
             (Math.min(player.corruption, player.maxCorruption) /
               player.maxCorruption) *
               10,
         });
+        // addFadingNumber({
+        //   gameObj: self,
+        //   number: damageToTakeAmount,
+        //   txtColor: getCorruptionDamageColor(),
+        //   size:
+        //     16 +
+        //     (Math.min(player.corruption, player.maxCorruption) /
+        //       player.maxCorruption) *
+        //       10,
+        // });
 
         // const parts = self.add([
         //   particles(
@@ -492,7 +509,7 @@ function getCorruptionDamageColor(): number[] {
   const t = player.corruption / player.maxCorruption;
 
   const white = [255, 255, 255];
-  const vibrantPurple = ENEMY_ACTION_COLOR;
+  const vibrantPurple = CORRUPTION_COLOR;
 
   const r = Math.floor(white[0] + (vibrantPurple[0] - white[0]) * t);
   const g = Math.floor(white[1] + (vibrantPurple[1] - white[1]) * t);

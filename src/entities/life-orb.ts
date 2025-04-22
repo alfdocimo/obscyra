@@ -21,7 +21,7 @@ export function initLifeOrb({
   ]);
 
   lifeOrb.onCollide("player", () => {
-    play("life-orb", { loop: false });
+    play("life-orb", { loop: false, volume: 0.3 });
 
     const AMOUNT = amount;
 

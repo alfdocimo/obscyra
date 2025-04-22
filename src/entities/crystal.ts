@@ -12,7 +12,7 @@ export function initCrystal({ x, y }: { x: number; y: number }) {
   ]);
 
   crystal.onCollide("player", () => {
-    play("crystal", { loop: false });
+    play("crystal", { loop: false, volume: 0.3 });
 
     player.corruption -= 3;
     player.corruptionTimer = 0;

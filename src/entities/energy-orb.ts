@@ -21,7 +21,7 @@ export function initEnergyOrb({
   ]);
 
   energyOrb.onCollide("player", () => {
-    play("energy-orb", { loop: false });
+    play("energy-orb", { loop: false, volume: 0.3 });
     const AMOUNT = amount;
 
     addFadingText({

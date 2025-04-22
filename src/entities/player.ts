@@ -334,7 +334,7 @@ const initPlayer = () => {
             ]);
 
             protect.onCollide("enemy", (enemy) => {
-              play("protect-damage", { loop: false });
+              play("protect-damage", { loop: false, volume: 0.3 });
               if (protect.canHeal) {
                 let healAmount = enemy.touchDamage / 2;
                 player.heal(healAmount);
@@ -346,7 +346,7 @@ const initPlayer = () => {
               }
             });
             protect.onCollide("bullet", (bullet) => {
-              play("protect-damage", { loop: false });
+              play("protect-damage", { loop: false, volume: 0.3 });
 
               destroy(bullet);
               if (protect.canHeal) {
@@ -1190,7 +1190,7 @@ function registerPlayerDeathHandler() {
       y: player.pos.y,
     };
     destroy(player);
-    play("death", { loop: false });
+    play("death", { loop: false, volume: 0.3 });
     let parts = spawnParticlesAtPlayerDeathPosition({
       x: playerPos.x,
       y: playerPos.y,
@@ -1275,7 +1275,7 @@ function handleLevelUp() {
     if (!player.exists()) return;
 
     if (player.expPoints >= player.nextLevelExpPoints) {
-      play("level-up", { loop: false });
+      play("level-up", { loop: false, volume: 0.3 });
 
       player.level += 1;
 
@@ -1437,6 +1437,7 @@ function castSelectedRangedSkill() {
   selectedSkill?.invoke();
   play(selectedSkill.soundName, {
     loop: false,
+    volume: 0.3,
   });
 
   selectedSkill.isCoolingDown = true;
@@ -1462,6 +1463,7 @@ function castSelectedMeeleSkill() {
   selectedSkill?.invoke();
   play(selectedSkill.soundName, {
     loop: false,
+    volume: 0.3,
   });
 
   selectedSkill.isCoolingDown = true;

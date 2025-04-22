@@ -65,3 +65,38 @@ export function addFadingNumber({
     { duration: 0.2, loops: 1 }
   );
 }
+
+export function addFadingNumberAtPos({
+  x,
+  y,
+  number,
+  txtColor = [255, 255, 255],
+  fadeDuration = 0.2,
+  size = 16,
+}: {
+  x: number;
+  y: number;
+  number: number;
+  txtColor?: number[];
+  fadeDuration?: number;
+  size?: number;
+}) {
+  let damageTakenText = add([
+    text(`${Math.round(number)}`, { size }),
+    animate(),
+    pos(x, y),
+    anchor("center"),
+    opacity(1),
+    color(Color.fromArray(txtColor)),
+    lifespan(fadeDuration, { fade: 0.2 }),
+    z(3000),
+  ]);
+  damageTakenText.animate(
+    "pos",
+    [
+      vec2(damageTakenText.pos),
+      vec2(damageTakenText.pos.x, damageTakenText.pos.y - 50),
+    ],
+    { duration: 0.2, loops: 1 }
+  );
+}
