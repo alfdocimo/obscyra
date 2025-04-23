@@ -1,7 +1,7 @@
 import kaplay from "kaplay";
 import "kaplay/global";
 import { CORRUPTION_COLOR, initPlayer, player } from "./entities/player";
-import { initPerinolaEnemy } from "./entities/perinola";
+import { initNormalEnemy } from "./entities/normal-enemy";
 
 import { initMidEnemy } from "./entities/mid-enemy";
 import { GAME } from "./config";
@@ -666,7 +666,7 @@ scene("game", () => {
       trySpawnMob(
         "perinola",
         [gameState.mobsSpawnTime * 1.5, gameState.mobsSpawnTime * 3],
-        initPerinolaEnemy
+        initNormalEnemy
       );
     }
 

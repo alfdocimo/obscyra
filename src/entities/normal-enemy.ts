@@ -6,7 +6,7 @@ import {
   scaleEnemyXP,
 } from "../utils/scale-enemy-stats";
 
-const initPerinolaEnemy = (x: number, y: number) => {
+const initNormalEnemy = (x: number, y: number) => {
   return add([
     sprite("tri-mob", { width: 32, height: 64, anim: "float" }),
     pos(x, y),
@@ -32,4 +32,4 @@ const initPerinolaEnemy = (x: number, y: number) => {
   ]);
 };
 
-export { initPerinolaEnemy };
+export { initNormalEnemy };
