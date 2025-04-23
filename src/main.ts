@@ -16,12 +16,13 @@ import { initHardEnemy } from "./entities/hard-enemy";
 // Use state() component to handle basic AI
 
 kaplay({
-  root: document.querySelector("#game-container"),
   font: "ode_to_idle_gaming",
   width: GAME.CANVAS_WIDTH,
   height: GAME.CANVAS_HEIGHT,
   scale: 1,
 });
+
+loadRoot(".");
 
 loadFont(
   "ode_to_idle_gaming",
