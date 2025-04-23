@@ -14,7 +14,6 @@ export function addWorldBounds() {
     "wall",
   ]);
 
-  // Bottom wall
   add([
     pos(0, worldHeight - thickness),
     rect(worldWidth, thickness),
@@ -25,7 +24,6 @@ export function addWorldBounds() {
     "wall",
   ]);
 
-  // Left wall
   add([
     pos(0, 0),
     rect(thickness, worldHeight),
@@ -36,7 +34,6 @@ export function addWorldBounds() {
     "wall",
   ]);
 
-  // Right wall
   add([
     pos(worldWidth - thickness, 0),
     rect(thickness, worldHeight),
@@ -99,7 +96,6 @@ export function spawnRandomWalls() {
     const baseX = randi(GRID_MARGIN, maxGridX - GRID_MARGIN);
     const baseY = randi(GRID_MARGIN, maxGridY - GRID_MARGIN);
 
-    // Randomize cluster sprite style
     const clusterStyle = choose(["uniform", "mixed"]);
     const clusterSprite = choose(["steel", "steel-purple"]);
 

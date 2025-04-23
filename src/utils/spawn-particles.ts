@@ -11,25 +11,21 @@ export function spawnParticlesAtGameObj({
     particles(
       {
         max: 30,
-        speed: [300, 400], // 🔥 faster burst
-        angle: [120, 360], // or narrow it like [250, 290] for cone
-        angularVelocity: [300, 360], // 🎯 more spin = more energy
-        lifeTime: [0.3, 0.6], // ⏱️ fast fade
+        speed: [300, 400],
+        angle: [120, 360],
+        angularVelocity: [300, 360],
+        lifeTime: [0.3, 0.6],
         colors,
-        opacities: [1.0, 0.6, 0.0], // 🚀 punch then fade
-        scales: [
-          rand(0.4, 1.0), // start small or mid
-          rand(1.0, 2.0), // pop!
-          rand(0.2, 0.5), // fade out small
-        ],
+        opacities: [1.0, 0.6, 0.0],
+        scales: [rand(0.4, 1.0), rand(1.0, 2.0), rand(0.2, 0.5)],
         texture: getSprite("purple-particle").data.tex,
         quads: [getSprite("purple-particle").data.frames[0]],
       },
       {
         lifetime: 0.6,
-        rate: 0, // still manual burst
-        direction: rand(250, 290), // 💨 tighter directional burst
-        spread: 80, // still a bit wild
+        rate: 0,
+        direction: rand(250, 290),
+        spread: 80,
       }
     ),
   ]);
@@ -51,25 +47,21 @@ export function spawnParticlesAtPosition({
     particles(
       {
         max: 30,
-        speed: [300, 400], // 🔥 faster burst
-        angle: [120, 360], // or narrow it like [250, 290] for cone
-        angularVelocity: [300, 360], // 🎯 more spin = more energy
-        lifeTime: [0.3, 0.6], // ⏱️ fast fade
+        speed: [300, 400],
+        angle: [120, 360],
+        angularVelocity: [300, 360],
+        lifeTime: [0.3, 0.6],
         colors,
-        opacities: [1.0, 0.6, 0.0], // 🚀 punch then fade
-        scales: [
-          rand(0.4, 1.0), // start small or mid
-          rand(1.0, 2.0), // pop!
-          rand(0.2, 0.5), // fade out small
-        ],
+        opacities: [1.0, 0.6, 0.0],
+        scales: [rand(0.4, 1.0), rand(1.0, 2.0), rand(0.2, 0.5)],
         texture: getSprite("purple-particle").data.tex,
         quads: [getSprite("purple-particle").data.frames[0]],
       },
       {
         lifetime: 0.6,
-        rate: 0, // still manual burst
-        direction: rand(250, 290), // 💨 tighter directional burst
-        spread: 80, // still a bit wild
+        rate: 0,
+        direction: rand(250, 290),
+        spread: 80,
       }
     ),
   ]);
@@ -80,10 +72,10 @@ export function spawnParticlesAtPlayerDeathPosition({
   x,
   y,
   colors = [
-    rgb(255, 255, 255), // pure light
-    rgb(100, 0, 255), // arcane
-    rgb(255, 0, 0), // power spike
-    rgb(0, 255, 255), // ethereal glow
+    rgb(255, 255, 255),
+    rgb(100, 0, 255),
+    rgb(255, 0, 0),
+    rgb(0, 255, 255),
   ],
 }: {
   x: number;
@@ -124,10 +116,7 @@ export function spawnParticlesAtPlayerDeathPosition({
 export function spawnParticlesFromCenter({
   x,
   y,
-  colors = [
-    rgb(100, 40, 100), // arcane
-    rgb(0, 40, 100), // ethereal glow
-  ],
+  colors = [rgb(100, 40, 100), rgb(0, 40, 100)],
 }: {
   x: number;
   y: number;
@@ -162,10 +151,7 @@ export function spawnParticlesFromCenter({
 
 export function spawnGunParticles({
   posVec2,
-  colors = [
-    rgb(255, 240, 200), // warm flash
-    rgb(255, 200, 100), // golden spark
-  ],
+  colors = [rgb(255, 240, 200), rgb(255, 200, 100)],
 }: {
   posVec2: Vec2;
   colors?: Color[];
@@ -188,7 +174,7 @@ export function spawnGunParticles({
       {
         lifetime: 0.2,
         rate: 0,
-        direction: 0, // still needed even with 360 spread
+        direction: 0,
         spread: 360,
       }
     ),

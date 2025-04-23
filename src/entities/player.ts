@@ -30,7 +30,7 @@ const INITAL_MAX_STAMINA = INITAL_STAMINA;
 
 const INITIAL_CORRUPTION = 0;
 const MAX_CORRUPTION = 50;
-const CORRUPTION_DECAY_DELAY = 8; // in seconds
+const CORRUPTION_DECAY_DELAY = 8;
 const CORRUPTION_INCREMENT = 1;
 const STAT_WIDTH = 308;
 const SKILL_STAT_WIDTH = 142;
@@ -98,8 +98,8 @@ let player: GameObj<
       canRegenStamina: boolean;
       rangedSKills: RangedSkill[];
       meeleSkills: MeleeSkill[];
-      selectedRangedSkill?: RangedSkill; // This ensures only "ranged" skills can be assigned here
-      selectedMeleeSkill?: MeleeSkill; // This ensures only "melee" skills can be assigned here
+      selectedRangedSkill?: RangedSkill;
+      selectedMeleeSkill?: MeleeSkill;
     }
 >;
 
@@ -131,10 +131,10 @@ const initPlayer = () => {
       maxStamina: INITAL_MAX_STAMINA,
       energy: INITAL_ENERGY,
       stamina: INITAL_STAMINA,
-      corruption: INITIAL_CORRUPTION, // current corruption points
-      maxCorruption: MAX_CORRUPTION, // maximum allowed corruption
-      corruptionTimer: 0, // countdown timer (in seconds)
-      isDecaying: false, // flag to indicate we are in decay mode
+      corruption: INITIAL_CORRUPTION,
+      maxCorruption: MAX_CORRUPTION,
+      corruptionTimer: 0,
+      isDecaying: false,
 
       meeleSkills: [
         {
@@ -148,9 +148,6 @@ const initPlayer = () => {
           isCoolingDown: false,
           soundName: "sword-swoosh",
           invoke: () => {
-            // const SLASH_LENGTH = 60;
-            // const SLASH_WIDTH = 10;
-
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
 
@@ -168,15 +165,6 @@ const initPlayer = () => {
               z(2000),
               "player-slash",
             ]);
-
-            // slash.animate("angle", [angle - 130, angle + 130], {
-            //   duration: duration,
-            //   loops: 1,
-            // });
-
-            // let slash = player.add([
-            //   sprite("testsword", { width: 64, height: 64, anim: "attack" }),
-            // ]);
           },
         },
         {
@@ -190,9 +178,6 @@ const initPlayer = () => {
           isCoolingDown: false,
           soundName: "long-slash",
           invoke: () => {
-            // const SLASH_LENGTH = 60;
-            // const SLASH_WIDTH = 10;
-
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
 
@@ -211,17 +196,16 @@ const initPlayer = () => {
               "player-slash",
             ]);
 
-            let blandOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+            let blandOffset = dir.scale(16);
 
             let bulletStartPos = player.worldPos().add(blandOffset);
-            // Create bullet
+
             let playerLongSlash = add([
-              // rect(4, 4), // bullet shape (12x12)
               sprite("long-slash", {
                 anim: "play",
               }),
-              pos(bulletStartPos), // spawn it at the player's position
-              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              pos(bulletStartPos),
+              move(dir, BULLET_SPEED * 1.5),
               area(),
               opacity(1),
               lifespan(0.05, {
@@ -230,8 +214,8 @@ const initPlayer = () => {
               anchor(vec2(-1, 0)),
               rotate(angle),
               offscreen({ destroy: true }),
-              color(212, 30, 255), // blue bullet color
-              "player-long-slash", // tag for bullet (useful for collision detection)
+              color(212, 30, 255),
+              "player-long-slash",
             ]);
 
             playerLongSlash.onCollide("wall", () => {
@@ -250,9 +234,6 @@ const initPlayer = () => {
           isCoolingDown: false,
           soundName: "circle-slash",
           invoke: () => {
-            // const SLASH_LENGTH = 60;
-            // const SLASH_WIDTH = 10;
-
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
 
@@ -270,15 +251,6 @@ const initPlayer = () => {
               z(2000),
               "player-circle-slash",
             ]);
-
-            // slash.animate("angle", [angle - 130, angle + 130], {
-            //   duration: duration,
-            //   loops: 1,
-            // });
-
-            // let slash = player.add([
-            //   sprite("testsword", { width: 64, height: 64, anim: "attack" }),
-            // ]);
           },
         },
         {
@@ -292,9 +264,6 @@ const initPlayer = () => {
           isCoolingDown: false,
           soundName: "protect",
           invoke: () => {
-            // const SLASH_LENGTH = 60;
-            // const SLASH_WIDTH = 10;
-
             function displayAddHpFromProtectText(hpToAdd: number) {
               addFadingText({
                 gameObj: player,
@@ -303,15 +272,13 @@ const initPlayer = () => {
               });
             }
 
-            // let duration = player.stamina;
             player.canRegenStamina = false;
 
             let protect = player.add([
               pos(0, 0),
               sprite("protect", { anim: "play" }),
-              // anchor(vec2(-1, 0)),
+
               anchor("center"),
-              // rotate(angle),
               area(),
               opacity(0.5),
               animate(),
@@ -400,33 +367,31 @@ const initPlayer = () => {
           soundName: "shoot",
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
-            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+            let gunOffset = dir.scale(16);
 
             let bulletStartPos = player.worldPos().add(gunOffset);
 
             let playerBullet = add([
-              // rect(4, 4), // bullet shape (12x12)
               sprite("player-bullet-basic", {
                 width: 6,
                 height: 6,
               }),
-              pos(bulletStartPos), // spawn it at the player's position
-              move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              pos(bulletStartPos),
+              move(dir, BULLET_SPEED * 1.5),
               area(),
               anchor("center"),
               offscreen({ destroy: true }),
-              color(212, 30, 255), // blue bullet color
-              "player-bullet", // tag for bullet (useful for collision detection)
+              color(212, 30, 255),
+              "player-bullet",
             ]);
 
-            let muzzleFlashOffset = dir.scale(32); // tweak this number to go further from the gun
+            let muzzleFlashOffset = dir.scale(32);
             let muzzleFlashPos = player.worldPos().add(muzzleFlashOffset);
 
             let part = spawnGunParticles({
               posVec2: muzzleFlashPos,
               colors: [Color.fromArray(EXPERIENCE_COLOR), Color.WHITE],
             });
-            // Create bullet
             part.emit(6);
 
             playerBullet.onCollide("wall", () => {
@@ -445,7 +410,7 @@ const initPlayer = () => {
           isCoolingDown: false,
           soundName: "tri-shot",
           invoke: () => {
-            const ANGLE_OFFSET = 10; // degrees
+            const ANGLE_OFFSET = 10;
             const BULLET_SPEED_MULTIPLIER = 1.5;
 
             function degToRad(deg) {
@@ -453,17 +418,15 @@ const initPlayer = () => {
             }
 
             const baseDir = toWorld(mousePos()).sub(player.worldPos()).unit();
-            const baseAngle = Math.atan2(baseDir.y, baseDir.x); // angle in radians
+            const baseAngle = Math.atan2(baseDir.y, baseDir.x);
 
-            // List of angles: center, above, below
             const angles = [
-              baseAngle, // straight
-              baseAngle - degToRad(ANGLE_OFFSET), // slightly up
-              baseAngle + degToRad(ANGLE_OFFSET), // slightly down
+              baseAngle,
+              baseAngle - degToRad(ANGLE_OFFSET),
+              baseAngle + degToRad(ANGLE_OFFSET),
             ];
 
             for (let angle of angles) {
-              // Rotate vector manually
               const rotatedDir = vec2(Math.cos(angle), Math.sin(angle));
               const bulletStartPos = player
                 .worldPos()
@@ -518,33 +481,28 @@ const initPlayer = () => {
               {
                 dir,
                 time: 0,
-                amplitude: 5, // start small
-                frequency: 30, // higher = tighter wave
+                amplitude: 5,
+                frequency: 30,
                 maxAmplitude: 600,
                 speed,
                 originalPos: startPos.clone(),
                 update() {
                   this.time += dt();
 
-                  // Increase amplitude over time, clamp it
                   this.amplitude = Math.min(
                     this.amplitude + dt() * 100,
                     this.maxAmplitude
                   );
 
-                  // Move forward
                   const forward = this.dir.scale(this.speed * dt());
                   this.originalPos = this.originalPos.add(forward);
 
-                  // Get a perpendicular vector for sine motion
                   const perp = vec2(-this.dir.y, this.dir.x);
 
-                  // Offset with sine wave
                   const waveOffset = perp.scale(
                     Math.sin(this.time * this.frequency) * this.amplitude
                   );
 
-                  // Set final position
                   this.pos = this.originalPos.add(waveOffset);
 
                   this.width = this.width + dt() * 50;
@@ -570,30 +528,25 @@ const initPlayer = () => {
           soundName: "final-shot",
           invoke: () => {
             let dir = toWorld(mousePos()).sub(player.worldPos()).unit();
-            let gunOffset = dir.scale(16); // 16px forward (half of 32px gun width)
+            let gunOffset = dir.scale(16);
 
             let angle = toWorld(mousePos()).sub(player.worldPos()).angle();
 
             let bulletStartPos = player.worldPos().add(gunOffset);
-            // Create bullet
+
             let playerBullet = add([
-              // pos(dir.scale(1)),
               anchor(vec2(-1, 0)),
               rotate(angle),
               sprite("final-shot", {
                 anim: "play",
                 animSpeed: 1.5,
               }),
-              pos(bulletStartPos), // spawn it at the player's position
-              // move(dir, BULLET_SPEED * 1.5), // move in the direction of the mouse with BULLET_SPEED
+              pos(bulletStartPos),
               area(),
-              // anchor("center"),
               opacity(1),
               lifespan(1, { fade: 0.25 }),
               z(9000),
-              // offscreen({ destroy: true }),
-              // color(212, 30, 255), // blue bullet color
-              "player-final-shot-bullet", // tag for bullet (useful for collision detection)
+              "player-final-shot-bullet",
               {
                 update() {
                   this.angle = toWorld(mousePos())
@@ -610,8 +563,6 @@ const initPlayer = () => {
   ]);
   player.setMaxHP(INITIAL_HP);
 
-  // debug.inspect = true;
-
   setDefaultPlayerSkills();
 
   let gun = initPlayerGun();
@@ -625,19 +576,14 @@ const initPlayer = () => {
     energyText,
     staminaBar,
     staminaText,
-    playerStats,
     playerSkillsStats,
     playerStatsUIAnim,
-    // experienceBar,
-    // experienceBarText,
     experienceBar,
     totalExperienceStatsText,
     levelStatsText,
   } = initPlayerStatsUI();
 
   updateCorruptionColorInPlayerStats(playerStatsUIAnim);
-
-  /// --- SKILLS
 
   let skillSingleShot = playerSkillsStats.add([
     sprite("skill-single-shot"),
@@ -752,7 +698,6 @@ const initPlayer = () => {
     skillProtect,
   ];
 
-  // Assign skill based on level logic
   const rangedSkillKeyboardInputs = ["1", "2", "3", "4"];
   rangedSkillKeyboardInputs.forEach((key, index) => {
     onKeyDown(key, () => {
@@ -810,30 +755,22 @@ const initPlayer = () => {
 
   registerInputHandlers();
 
-  // Take damage on collision with enemies
   handlePlayerCollisions();
 
-  // Level up system
   handleLevelUp();
 
-  // Regen stamina
   staminaRegenLoop();
-
-  // displayPlayerStats();
 
   registerPlayerDeathHandler();
 
-  // Register input handlers & movement
   registerPlayerFlipOnXAxis();
   registerMovementControls();
   registerAnimationsOnKeyPressed();
 
-  // When the player enters "corrupted", we apply the corruption logic
   player.onStateEnter("corrupted", () => {
     handleCorruptionGain();
   });
 
-  // While in "corrupted", manage the timer and decay
   player.onStateUpdate("corrupted", () => {
     if (player.corruptionTimer >= 0) {
       player.corruptionTimer -= dt();
@@ -852,7 +789,6 @@ const initPlayer = () => {
     }
   });
 
-  // Update player stats in UI
   updatePlayerStatsInUI({
     corruptionBar,
     corruptionText,
@@ -877,8 +813,8 @@ function updateCorruptionColorInPlayerStats(
 ) {
   onUpdate(() => {
     const t = player.corruption / player.maxCorruption;
-    // 255, 38, 162 <- Should be this color instead! Now is purple all the way
-    const r = 255; // stays constant
+
+    const r = 255;
     const g = 255 - (255 - 38) * t;
     const b = 255 - (255 - 162) * t;
 
@@ -899,7 +835,6 @@ function updatePlayerStatsInUI({
   experienceBar,
   totalExperienceStatsText,
 }) {
-  // EXP BAR
   onUpdate(() => {
     levelStatsText.text = `Level:  ${player.level}`;
     experienceBar.width =
@@ -910,10 +845,7 @@ function updatePlayerStatsInUI({
     )}/${Math.round(player.nextLevelExpPoints)}`;
   });
 
-  // CORRUPTION BAR 🟣
   onUpdate(() => {
-    // const percent = player.corruption / player.maxCorruption;
-    // corruptionBar.width = percent * 50;
     corruptionBar.width =
       (player.corruption * CORRUPTION_STATUS_WIDTH) / player.maxCorruption;
 
@@ -922,7 +854,6 @@ function updatePlayerStatsInUI({
     }`;
   });
 
-  // HP BAR 🟥
   onUpdate(() => {
     healthBar.width = (player.hp() * HEALTH_STATUS_WIDTH) / player.maxHP();
     heathBarText.text = `Health \t\t ${
@@ -930,13 +861,11 @@ function updatePlayerStatsInUI({
     }/${player.maxHP()}`;
   });
 
-  // ENERGY BAR 🟦
   onUpdate(() => {
     energyBar.width = (player.energy * ENERGY_STATUS_WIDTH) / player.maxEnergy;
     energyText.text = `Energy \t ${player.energy}/${player.maxEnergy}`;
   });
 
-  // STAMINA BAR 🟩
   onUpdate(() => {
     staminaBar.width =
       (player.stamina * STAMINA_STATUS_WIDTH) / player.maxStamina;
@@ -947,11 +876,10 @@ function updatePlayerStatsInUI({
 }
 
 function handleMaxCorruption() {
-  // Reset corruption state
   player.corruption = 0;
   player.corruptionTimer = 0;
   player.isDecaying = false;
-  player.enterState("normal"); // if you’re using state system, clear the current one
+  player.enterState("normal");
 
   play("max-corruption", { loop: false, volume: 0.3 });
   play("max-corruption-explotion", { loop: false, volume: 0.2 });
@@ -970,11 +898,8 @@ function handleMaxCorruption() {
 }
 
 function checkCorrutionAmountInPlayer() {
-  // Max corruption effect
   onUpdate(() => {
-    // Check if player is corrupted
     if (player.corruption >= player.maxCorruption) {
-      // 💥 Trigger max corruption effect
       handleMaxCorruption();
     }
   });
@@ -1135,25 +1060,7 @@ function initPlayerStatsUI() {
     z(1000),
   ]);
 
-  // let experienceBar = playerStats.add([
-  //   rect(EXPERIENCE_STATUS_WIDTH, 11),
-  //   pos(80, 82),
-  //   color(Color.fromArray(EXPERIENCE_COLOR)),
-  //   anchor("left"),
-  //   "energy-bar",
-  // ]);
-
-  // let experienceBarText = experienceBar.add([
-  //   text("", { size: 10 }),
-  //   pos(10, 0),
-  //   color(255, 255, 255),
-  //   anchor("left"),
-  //   z(1000),
-  // ]);
-
   return {
-    // experienceBar,
-    // experienceBarText,
     totalExperienceStatsText,
     levelStatsText,
     experienceBar,
@@ -1176,7 +1083,6 @@ function setDefaultPlayerSkills() {
   player.selectedMeleeSkill = player.meeleSkills[0];
 }
 
-// Helper function to increase corruption and reset decay timer
 function handleCorruptionGain() {
   player.corruption += randi(1, CORRUPTION_INCREMENT);
   player.corruptionTimer = CORRUPTION_DECAY_DELAY;
@@ -1279,7 +1185,6 @@ function handleLevelUp() {
 
       player.level += 1;
 
-      // Apply dynamic level-up effects
       player.baseMeeleDamage += getMeeleDamageIncrease(player.level);
       player.baseRangedDamage += getRangedDamageIncrease(player.level);
       player.cooldownReductionPercentage = getCooldownReduction(player.level);
@@ -1309,7 +1214,7 @@ function handleLevelUp() {
       player.use(color(Color.fromArray(EXPERIENCE_COLOR)));
 
       wait(2, () => {
-        player.use(color(255, 255, 255)); // Revert to white or original color
+        player.use(color(255, 255, 255));
       });
     }
   });
@@ -1324,7 +1229,7 @@ function handlePlayerCollisions() {
 
       if (obj.target.is("enemy")) {
         takeDamage({ damage: obj.target.touchDamage });
-        return; // stop after first valid collision
+        return;
       }
 
       if (obj.target.is("bullet")) {
@@ -1402,9 +1307,8 @@ function takeDamage({ damage }: { damage: number }) {
 
   player.use(color(255, 0, 0));
 
-  // Wait for 0.5 seconds, then revert to original color
   wait(1, () => {
-    player.use(color(255, 255, 255)); // Revert to white or original color
+    player.use(color(255, 255, 255));
     player.canTakeDamage = true;
   });
 }
@@ -1423,9 +1327,8 @@ function takeCorruptionDamage({ damage }: { damage: number }) {
 
   player.use(color(255, 0, 255));
 
-  // Wait for 0.5 seconds, then revert to original color
   wait(1, () => {
-    player.use(color(255, 255, 255)); // Revert to white or original color
+    player.use(color(255, 255, 255));
   });
 }
 
@@ -1520,15 +1423,15 @@ function getNextLevelExp(currentLevel: number): number {
 }
 
 function getMeeleDamageIncrease(currentLevel: number): number {
-  return Math.min(2 + Math.floor(currentLevel / 3), 10); // capped at +10
+  return Math.min(2 + Math.floor(currentLevel / 3), 10);
 }
 
 function getRangedDamageIncrease(currentLevel: number): number {
-  return Math.min(1 + Math.floor(currentLevel / 5), 6); // capped at +6
+  return Math.min(1 + Math.floor(currentLevel / 5), 6);
 }
 
 function getCooldownReduction(currentLevel: number): number {
-  return Math.min(0.1 + currentLevel * 0.01, 0.3); // capped at 30%
+  return Math.min(0.1 + currentLevel * 0.01, 0.3);
 }
 
 function getMaxHPIncrease(currentLevel: number): number {

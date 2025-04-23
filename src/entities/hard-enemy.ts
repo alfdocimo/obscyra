@@ -34,7 +34,6 @@ export const initHardEnemy = (x: number, y: number) => {
     },
   ]);
 
-  // Initial orbiters
   for (let i = 0; i < MAX_TOTAL_ORBITERS; i++) {
     spawnOrbiter(i, hardEnemy);
   }
@@ -44,17 +43,17 @@ export const initHardEnemy = (x: number, y: number) => {
 function spawnOrbiter(i: number, hardEnemy) {
   const initialAngle = (Math.PI * 2 * i) / 12;
   const baseRadius = rand(50, 90);
-  const angleSpeed = rand(3, 6); // radians/sec
+  const angleSpeed = rand(3, 6);
   const radiusVariation = rand(60, 90);
 
   let orbiter = hardEnemy.add([
     sprite("hard-enemy-osc", { width: 16, height: 16 }),
-    pos(0, 0), // relative to the hardEnemy
+    pos(0, 0),
 
     anchor("center"),
     color(239, 194, 72),
     area({ collisionIgnore: ["hard-enemy-osc", "enemy", "bullet"] }),
-    z(1000), // render just above the enemy
+    z(1000),
     "hard-enemy-osc",
     {
       bulletDamage: 10,
@@ -66,14 +65,11 @@ function spawnOrbiter(i: number, hardEnemy) {
       update() {
         this.time += dt();
 
-        // Pulsating radius
         const radius =
           this.baseRadius + Math.sin(this.time * 2) * this.radiusVariation;
 
-        // Angle rotation
         this.angle += this.angleSpeed * dt();
 
-        // Set position relative to parent (hardEnemy)
         const offset = vec2(
           Math.cos(this.angle) * radius,
           Math.sin(this.angle) * radius

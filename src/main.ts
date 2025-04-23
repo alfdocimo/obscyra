@@ -13,8 +13,6 @@ import { initHardEnemy } from "./entities/hard-enemy";
 
 // @ts-check
 
-// Use state() component to handle basic AI
-
 kaplay({
   font: "ode_to_idle_gaming",
   width: GAME.CANVAS_WIDTH,
@@ -343,7 +341,7 @@ scene("menu", () => {
     text("credits", { size: 30 }),
     area(),
     opacity(),
-    pos(400, 640), // position below the others
+    pos(400, 640),
     anchor("center"),
     z(10000),
     color(Color.BLACK),
@@ -506,7 +504,7 @@ scene("instructions-1", () => {
   ]);
 
   onClick("back-button", () => {
-    go("menu"); // Replace with your desired scene
+    go("menu");
   });
 });
 
@@ -566,7 +564,7 @@ scene("credits", () => {
   ]);
 
   onClick("back-button", () => {
-    go("menu"); // Replace with your desired scene
+    go("menu");
   });
 });
 
@@ -601,11 +599,8 @@ scene("game", () => {
     z(10000),
   ]);
 
-  // debug.inspect = true;
-
   const player = initPlayer();
-  // gameState.gameStarted = true;
-  // TODO: Enable intro
+
   wait(5, () => {
     player.add([
       text(
@@ -632,17 +627,13 @@ scene("game", () => {
       }),
 
       fadeIn(0.5),
-      // scale(0.5),
     ]);
   });
 
   wait(15, () => {
-    // Todo intro here lalala...
-
     gameState.gameStarted = true;
   });
 
-  // MAIN GAME LOOP FOR MOBS
   let mobTimers = {
     perinola: 0,
     fast: 0,
@@ -655,7 +646,6 @@ scene("game", () => {
 
     const dtVal = dt();
 
-    // Helper to try spawning a mob, only if we're under the cap
     function trySpawnMob(timerName, cooldownRange, spawnFn) {
       console.log("Spawning mob. Current:", gameState.currentMobs);
       mobTimers[timerName] -= dtVal;
@@ -711,7 +701,6 @@ scene("game", () => {
       gameState.hasReachedFinalWave = true;
       gameState.gameStarted = false;
 
-      // YOU WIN!
       destroyAll("enemy");
       setBackground(Color.WHITE);
       [1, 2, 3].forEach((time) => {
@@ -735,10 +724,10 @@ scene("game", () => {
               angularVelocity: [180, 720],
               lifeTime: [0.5, 1.2],
               colors: [
-                rgb(255, 255, 255), // pure light
-                rgb(100, 0, 255), // arcane
-                rgb(255, 0, 0), // power spike
-                rgb(0, 255, 255), // ethereal glow
+                rgb(255, 255, 255),
+                rgb(100, 0, 255),
+                rgb(255, 0, 0),
+                rgb(0, 255, 255),
               ],
               opacities: [1.0, 0.7, 0.0],
               scales: [rand(0.3, 0.6), rand(1.2, 2.5), rand(0.1, 0.4)],

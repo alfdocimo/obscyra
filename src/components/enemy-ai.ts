@@ -75,11 +75,11 @@ export function enemyAI(
       initialHealth = self.hp();
 
       let hpYPosition = config.isBoss ? -70 : -45;
-      // Create health bar
+
       const hpBar = self.add([
         rect(50, 5),
         pos(-25, hpYPosition),
-        // outline(0.5, Color.fromArray([221, 78, 37])),
+
         color(Color.fromArray([146, 0, 10])),
         anchor("left"),
         "enemy-health-bar",
@@ -207,7 +207,7 @@ export function enemyAI(
               if (!self.exists()) return;
 
               const dir = player.worldPos().sub(self.worldPos()).unit();
-              const gunOffset = dir.scale(80); // move it forward from the enemy
+              const gunOffset = dir.scale(80);
               const angle = player.worldPos().sub(self.worldPos()).angle();
               const bulletStartPos = self.worldPos().add(gunOffset);
 
@@ -216,7 +216,7 @@ export function enemyAI(
               const beam = add([
                 rect(700, 8),
                 pos(bulletStartPos),
-                anchor(vec2(-1, 0)), // pivot from the left side, just like in your example
+                anchor(vec2(-1, 0)),
                 rotate(angle),
                 area(),
                 color(Color.fromArray(LASER_COLOR)),
@@ -252,7 +252,6 @@ export function enemyAI(
       });
 
       self.onStateEnter("destroy", async () => {
-        // Flash is causing an issue with mobs spawning
         let currentPos = {
           x: self.pos.x,
           y: self.pos.y,
@@ -332,62 +331,11 @@ export function enemyAI(
               player.maxCorruption) *
               10,
         });
-        // addFadingNumber({
-        //   gameObj: self,
-        //   number: damageToTakeAmount,
-        //   txtColor: getCorruptionDamageColor(),
-        //   size:
-        //     16 +
-        //     (Math.min(player.corruption, player.maxCorruption) /
-        //       player.maxCorruption) *
-        //       10,
-        // });
-
-        // const parts = self.add([
-        //   particles(
-        //     {
-        //       max: 30,
-        //       speed: [300, 400], // 🔥 faster burst
-        //       angle: [120, 360], // or narrow it like [250, 290] for cone
-        //       angularVelocity: [300, 360], // 🎯 more spin = more energy
-        //       lifeTime: [0.3, 0.6], // ⏱️ fast fade
-        //       colors: [Color.fromArray(CORRUPTION_COLOR), Color.WHITE],
-        //       opacities: [1.0, 0.6, 0.0], // 🚀 punch then fade
-        //       scales: [1.2, 1.8, 0.5], // 💥 pop then shrink
-        //       texture: getSprite("purple-particle").data.tex,
-        //       quads: [getSprite("purple-particle").data.frames[0]],
-        //     },
-        //     {
-        //       lifetime: 0.6,
-        //       rate: 0, // still manual burst
-        //       direction: rand(250, 290), // 💨 tighter directional burst
-        //       spread: 80, // still a bit wild
-        //     }
-        //   ),
-        // ]);
         const parts = spawnParticlesAtGameObj({
           gameObj: self,
           colors: [Color.fromArray(CORRUPTION_COLOR), Color.WHITE],
         });
         parts.emit(3);
-        // let damageTakenText = add([
-        //   text(`${Math.round(damageToTakeAmount)}`, { size: 16 }),
-        //   animate(),
-        //   pos(self.worldPos().x, self.worldPos().y - 30),
-        //   opacity(1),
-        //   color(0, 200, 200),
-        //   lifespan(0.2, { fade: 0.2 }),
-        //   z(3000),
-        // ]);
-
-        // damageTakenText.animate(
-        //   "pos",
-        //   [
-        //     vec2(damageTakenText.pos),
-        //     vec2(damageTakenText.pos.x, damageTakenText.pos.y - 30),
-        //   ],
-        //   { duration: 0.2, loops: 1 }
-        // );
 
         shake(2);
         hpBar.width = (self.hp() * 50) / initialHealth;
@@ -446,22 +394,6 @@ export function enemyAI(
         destroy(self);
       }
     },
-
-    // destroy(this: EnemyAIContext) {
-    //   const self = this;
-    //   const willDropHeart = rand(100);
-    //   if (willDropHeart > 50) {
-    //     initHeart({
-    //       x: this.pos.x,
-    //       y: this.pos.y,
-    //       healAmount: 3,
-    //     });
-    //   }
-
-    //   player.expPoints += self.expPoints;
-    //   gameState.currentMobs--;
-    //   gameState.totalMobsKilled++;
-    // },
   };
 
   async function flashAndPerformAction({
@@ -488,18 +420,18 @@ export function enemyAI(
       await wait(flashInterval);
     }
 
-    self.use(color(rgb(255, 255, 255))); // Reset color
-    action(); // Only perform action once flash is done
+    self.use(color(rgb(255, 255, 255)));
+    action();
   }
 }
 
 function getCorruptionBonusDamage(corruption: number): number {
-  const scalingFactor = 1.5; // tweak this to make corruption more/less impactful
+  const scalingFactor = 1.5;
   return Math.log2(corruption + 1) * scalingFactor;
 }
 
 function getOrbRecoveryAmount(baseValue: number): number {
-  const scalingFactor = 1.2; // tune this to make it feel right
+  const scalingFactor = 1.2;
   return Math.round(
     baseValue + Math.log2(gameState.currentWave + 1) * scalingFactor
   );
