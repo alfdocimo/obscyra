@@ -338,6 +338,40 @@ scene("menu", () => {
     "crystal-option",
   ]);
 
+  const creditsGameText = add([
+    text("credits", { size: 30 }),
+    area(),
+    opacity(),
+    pos(400, 640), // position below the others
+    anchor("center"),
+    z(10000),
+    color(Color.BLACK),
+    "credits-text",
+  ]);
+
+  let crystalOptionCredits = creditsGameText.add([
+    sprite("crystal-option"),
+    opacity(0),
+    anchor("center"),
+    pos(-120, 0),
+    scale(0.2),
+    "crystal-option",
+  ]);
+
+  creditsGameText.onHover(() => {
+    crystalOptionCredits.opacity = 1;
+    creditsGameText.color = Color.fromArray([116, 16, 113]);
+  });
+
+  creditsGameText.onHoverEnd(() => {
+    crystalOptionCredits.opacity = 0;
+    creditsGameText.color = Color.BLACK;
+  });
+
+  onClick("credits-text", () => {
+    go("credits");
+  });
+
   startGameText.onHover(() => {
     crystalOptionStart.opacity = 1;
     startGameText.color = Color.fromArray([116, 16, 113]);
@@ -475,6 +509,66 @@ scene("instructions-1", () => {
   });
 });
 
+scene("credits", () => {
+  setCursor("none");
+  initializeAimIndicator();
+  setBackground(Color.fromArray([116, 15, 113]));
+
+  add([
+    text("Credits", { size: 20 }),
+    fadeIn(0.4),
+    opacity(),
+    pos(8, 20),
+    anchor("topleft"),
+    z(10000),
+    color(Color.WHITE),
+  ]);
+
+  add([
+    text(
+      `
+      \n
+      Character design: @alfdocimo
+      \n
+      Engine used: Kaplayjs
+      \n
+      Font: Ode to Idle Gaming
+      \n
+      Sounds: https://pro.sfxr.me
+      \n
+      Music: @alfdocimo
+      \n
+      Intro illustration: @killa.ek
+
+          `,
+      { size: 14, width: width() - 8, lineSpacing: 5 }
+    ),
+    fadeIn(0.4),
+    opacity(),
+    pos(8, 50),
+    anchor("topleft"),
+    z(10000),
+    color(Color.WHITE),
+  ]);
+
+  add([
+    text("Back", {
+      size: 16,
+    }),
+    pos(width() - 20, height() - 20),
+    anchor("botright"),
+    area(),
+    z(9999),
+    color(255, 255, 255),
+    "back-button",
+    opacity(1),
+  ]);
+
+  onClick("back-button", () => {
+    go("menu"); // Replace with your desired scene
+  });
+});
+
 scene("game", () => {
   addBackground();
   addWorldBounds();
@@ -514,9 +608,10 @@ scene("game", () => {
   wait(5, () => {
     player.add([
       text(
-        "[black]Don’t let the [/black][purple]crystals[/purple][black]\n\nerase what’s left of you.[/black]",
+        "[black]Don’t let the [/black][purple]corruption[/purple][black]\n take what’s left of you.[/black]",
         {
           size: 26,
+          lineSpacing: 3,
           width: width() - 100,
           styles: {
             purple: {
