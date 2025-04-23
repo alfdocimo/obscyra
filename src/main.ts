@@ -241,6 +241,7 @@ loadSprite("purple-particle", "/sprites/purple-particle.png");
 loadSprite("intro-bg", "/bg/intro.png");
 loadSprite("crystal-option", "/sprites/crystal-option-no-bg.png");
 
+loadSound("game-soundtrack", "/sounds/game-soundtrack.mp3");
 loadSound("new-game", "/sounds/new-game.wav");
 loadSound("hurt", "/sounds/hurt-test.wav");
 loadSound("shoot", "/sounds/shoot.wav");
@@ -264,6 +265,8 @@ loadSound("life-orb", "/sounds/life-orb.wav");
 loadSound("energy-orb", "/sounds/energy-orb.wav");
 loadSound("boss-laser", "/sounds/boss-laser.wav");
 
+let soundtrack;
+
 function initializeAimIndicator() {
   let aimCircle = add([
     pos(toWorld(mousePos())),
@@ -283,6 +286,7 @@ function initializeAimIndicator() {
 scene("menu", () => {
   setCursor("none");
   initializeAimIndicator();
+  soundtrack?.stop();
 
   add([
     text("Obscyra", { size: 48 }),
@@ -371,6 +375,7 @@ scene("menu", () => {
 
     wait(1.8, () => {
       go("game");
+      soundtrack = play("game-soundtrack", { volume: 0.4, loop: true });
     });
   });
 

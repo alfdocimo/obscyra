@@ -953,8 +953,8 @@ function handleMaxCorruption() {
   player.isDecaying = false;
   player.enterState("normal"); // if you’re using state system, clear the current one
 
-  play("max-corruption", { loop: false, volume: 0.5 });
-  play("max-corruption-explotion", { loop: false, volume: 0.5 });
+  play("max-corruption", { loop: false, volume: 0.3 });
+  play("max-corruption-explotion", { loop: false, volume: 0.2 });
   takeCorruptionDamage({ damage: Math.round(player.maxHP() / 1.25) });
 
   let parts = spawnParticlesFromCenter({
