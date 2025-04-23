@@ -27,7 +27,7 @@ loadFont(
   "/fonts/ode_to_idle_gaming/ode_to_idle_gaming.woff"
 );
 
-loadSprite("player", "/sprites/cosito32.png", {
+loadSprite("player", "/sprites/hero.png", {
   sliceX: 4,
   sliceY: 2,
   anims: {
@@ -96,17 +96,6 @@ loadSprite("mid-enemy", "/sprites/mid-enemy.png", {
 });
 loadSprite("player-bullet-basic", "/sprites/player-bullet.png");
 
-loadSprite("heart", "/sprites/heart.png", {
-  sliceX: 3,
-  sliceY: 3,
-  anims: {
-    idle: {
-      from: 0,
-      to: 6,
-      loop: true,
-    },
-  },
-});
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("steel-purple", "/sprites/steel-purple.png");
 loadSprite("level", "/bg/level.png");
@@ -143,7 +132,7 @@ loadSprite("player-stats", "/sprites/test-ui-stats-3.png");
 loadSprite("player-skills-ui", "/sprites/test-player-skills-ui-2.png");
 loadSprite("level-stats-ui", "/sprites/level-stats-ui.png");
 
-loadSprite("player-stats-ui-anim", "/sprites/cosito-stats-ui.png", {
+loadSprite("player-stats-ui-anim", "/sprites/hero-stats-ui.png", {
   sliceX: 5,
   sliceY: 5,
   anims: {
@@ -647,7 +636,6 @@ scene("game", () => {
     const dtVal = dt();
 
     function trySpawnMob(timerName, cooldownRange, spawnFn) {
-      console.log("Spawning mob. Current:", gameState.currentMobs);
       mobTimers[timerName] -= dtVal;
 
       if (

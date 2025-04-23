@@ -384,13 +384,12 @@ export function enemyAI(
         gameState.currentMobs -= 1;
         gameState.totalMobsKilled++;
 
-        console.log("Mob destroyed. Current:", gameState.currentMobs);
         destroy(self);
       }
 
       function removeOutOfBounds() {
         gameState.currentMobs -= 1;
-        console.log("Mob destroyed. Current:", gameState.currentMobs);
+
         destroy(self);
       }
     },
