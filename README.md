@@ -1,27 +1,26 @@
-# Folder structure
+# Obscyra
 
-- `src` - source code for your kaplay project
-- `dist` - distribution folder, contains your index.html, built js bundle and static assets
+"Obscyra" is a fast-paced survival action roguelite set in a corrupted realm where power comes at a cost.
 
+You are a lone soul escaping a world drowning in crystalized corruption. Each wave of enemies brings chaos, and every fallen foe unleashes a curse that threatens to consume what’s left of you. As corruption builds within you, your strength grows — but so does the danger.
 
-## Development
+Wield devastating melee and ranged attacks. Harness your corruption to unlock brutal abilities, but tread carefully: overuse it, and it will break you.
 
-```sh
-$ npm run dev
-```
+Time your attacks. Manage your resources. Resist the pull of oblivion.
 
-will start a dev server at http://localhost:8000
+🩸 Features:
+🧪 Corruption Mechanic: Power grows with corruption — until it breaks you.
 
-## Distribution
+⚔️ Dual Combat: Fluid ranged and melee combat with skill-switching and cooldowns.
 
-```sh
-$ npm run build
-```
+🌀 Dynamic Particle Effects that visually evolve with your corruption state.
 
-will build your js files into `dist/`
+🧠 Skill-based Leveling: Unlock and equip new abilities as you level.
 
-```sh
-$ npm run zip
-```
+💥 Wave-Based Mayhem: Survive up to 30 deadly waves of escalating enemies.
 
-will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+🌌 Minimalist Lore: A haunting world where every moment matters — and everything is fading.
+
+Don’t let the corruption take what’s left of you. Escape while you still remember who you are.
+
+Can you survive until wave 30?
